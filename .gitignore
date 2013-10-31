@@ -1,0 +1,8 @@
+*.swp
+tmp/
+bin/
+*.png
+build/
+build_mpi/
+*.root
+
