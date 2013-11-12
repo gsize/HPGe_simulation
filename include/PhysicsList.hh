@@ -24,37 +24,54 @@
 // ********************************************************************
 //
 //
-// $Id: MyAppPrimaryGeneratorAction.hh,v 1.7 2006-06-29 17:47:43 gunter Exp $
+// $Id:   PhysicsList.hh,v 1.12 2008-09-22 16:41:20 maire Exp $
 // GEANT4 tag $Name: not supported by cvs2svn $
 //
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#ifndef MyAppPrimaryGeneratorAction_h
-#define MyAppPrimaryGeneratorAction_h 1
+#ifndef   PhysicsList_h
+#define   PhysicsList_h 1
 
-#include "G4VUserPrimaryGeneratorAction.hh"
+//#include "G4VUserPhysicsList.hh"
+#include "G4VModularPhysicsList.hh"
+#include "globals.hh"
 
-class MyAppDetectorConstruction;
-//class G4ParticleGun;
-class G4Event;
-class G4GeneralParticleSource;
+class G4VPhysicsConstructor;
+
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-class MyAppPrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
+class   PhysicsList
+//: public G4VUserPhysicsList
+: public G4VModularPhysicsList
 {
   public:
-    MyAppPrimaryGeneratorAction(MyAppDetectorConstruction*);
-   ~MyAppPrimaryGeneratorAction();
+      PhysicsList();
+   ~  PhysicsList();
 
-  public:
-    void GeneratePrimaries(G4Event*);
-    G4GeneralParticleSource* GetParticleSource() {return theParticleSource;};
+  protected:
+    // Construct particle and physics
+    void ConstructParticle();
+    void ConstructProcess();
 
-  private:
-    //G4ParticleGun* particleGun;
-    G4GeneralParticleSource* theParticleSource;
-    MyAppDetectorConstruction* myDetector;
+    void SetCuts();
+
+
+  protected:
+    // these methods Construct particles
+    void ConstructBosons();
+    void ConstructLeptons();
+    void ConstructMesons();
+    void ConstructBaryons();
+
+  protected:
+  // these methods Construct physics processes and register them
+    void ConstructGeneral();
+    void ConstructEM();
+    void AddStepMax();
+
+    G4VPhysicsConstructor*             emPhysicsList;
+    G4VPhysicsConstructor*             decPhysicsList;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

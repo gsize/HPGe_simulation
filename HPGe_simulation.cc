@@ -31,20 +31,21 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#include "MyAppDetectorConstruction.hh"
-#include "MyAppPhysicsList.hh"
-#include "MyAppPrimaryGeneratorAction.hh"
-#include "MyAppRunAction.hh"
-#include "MyAppEventAction.hh"
-#include "MyAppSteppingAction.hh"
-//#include "MyAppSteppingVerbose.hh"
+#include "DetectorConstruction.hh"
+#include "PhysicsList.hh"
+#include "PrimaryGeneratorAction.hh"
+#include "RunAction.hh"
+#include "EventAction.hh"
+#include "SteppingAction.hh"
+//#include "SteppingVerbose.hh"
+//#include "HistoManager.hh"
 
 #include "G4RunManager.hh"
 #include "G4UImanager.hh"
 
 // MPI session
-#include "G4MPImanager.hh"
-#include "G4MPIsession.hh"
+//#include "G4MPImanager.hh"
+//#include "G4MPIsession.hh"
 
 
 #ifdef G4VIS_USE
@@ -65,9 +66,9 @@ int main(int argc,char** argv)
     CLHEP::HepRandom::setTheEngine(&randomEngine);
     // User Verbose output class
     //
-    //G4VSteppingVerbose* verbosity = new MyAppSteppingVerbose;
+    //G4VSteppingVerbose* verbosity = new  SteppingVerbose;
     //G4VSteppingVerbose::SetInstance(verbosity);
-
+/*
     // --------------------------------------------------------------------
     // MPI session
     // --------------------------------------------------------------------
@@ -83,7 +84,7 @@ int main(int argc,char** argv)
     prompt+= "G4MPI";
     prompt+= "[40;31m(%s)[40;36m[%/][00;30m:";
     session-> SetPrompt(prompt);
-
+*/
 
     // Run manager
     //
@@ -91,24 +92,24 @@ int main(int argc,char** argv)
 
     // User Initialization classes (mandatory)
     //
-    MyAppDetectorConstruction* detector = new MyAppDetectorConstruction;
+     DetectorConstruction* detector = new  DetectorConstruction;
     runManager->SetUserInitialization(detector);
     //
-    //G4VUserPhysicsList* physics = new MyAppPhysicsList;
-    runManager->SetUserInitialization(new MyAppPhysicsList());
+    //G4VUserPhysicsList* physics = new  PhysicsList;
+    runManager->SetUserInitialization(new  PhysicsList());
 
     // User Action classes
     //
-    G4VUserPrimaryGeneratorAction* gen_action = new MyAppPrimaryGeneratorAction(detector);
+    G4VUserPrimaryGeneratorAction* gen_action = new  PrimaryGeneratorAction(detector);
     runManager->SetUserAction(gen_action);
     //
-    G4UserRunAction* run_action = new MyAppRunAction;
+    G4UserRunAction* run_action = new  RunAction();
     runManager->SetUserAction(run_action);
     //
-    G4UserEventAction* event_action = new MyAppEventAction;
+    G4UserEventAction* event_action = new  EventAction;
     runManager->SetUserAction(event_action);
     //
-    G4UserSteppingAction* stepping_action = new MyAppSteppingAction;
+    G4UserSteppingAction* stepping_action = new  SteppingAction;
     runManager->SetUserAction(stepping_action);
 
     // Initialize G4 kernel
@@ -125,9 +126,9 @@ int main(int argc,char** argv)
     // MPIsession treats both interactive and batch modes.
     // Just start your session as below.
     // --------------------------------------------------------------------
-    session-> SessionStart();
+//    session-> SessionStart();
 
-    /*
+    
       // Get the pointer to the User Interface manager
       //
       G4UImanager * UImanager = G4UImanager::GetUIpointer();
@@ -149,7 +150,7 @@ int main(int argc,char** argv)
           delete ui;
     #endif
         }
-    */
+    
 
 #ifdef G4VIS_USE
     delete visManager;
@@ -159,7 +160,7 @@ int main(int argc,char** argv)
     //                 owned and deleted by the run manager, so they should not
     //                 be deleted in the main() program !
 
-    delete g4MPI;
+//    delete g4MPI;
 
     delete runManager;
     //delete verbosity;

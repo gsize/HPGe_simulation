@@ -24,14 +24,14 @@
 // ********************************************************************
 //
 //
-// $Id: MyAppDetectorConstruction.hh,v 1.10 2008-09-22 16:41:20 maire Exp $
+// $Id:   DetectorConstruction.hh,v 1.10 2008-09-22 16:41:20 maire Exp $
 // GEANT4 tag $Name: not supported by cvs2svn $
 //
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#ifndef MyAppDetectorConstruction_h
-#define MyAppDetectorConstruction_h 1
+#ifndef   DetectorConstruction_h
+#define   DetectorConstruction_h 1
 
 #include "globals.hh"
 #include "G4VUserDetectorConstruction.hh"
@@ -47,12 +47,12 @@ class G4UserLimits;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-class MyAppDetectorConstruction : public G4VUserDetectorConstruction
+class   DetectorConstruction : public G4VUserDetectorConstruction
 {
   public:
 
-     MyAppDetectorConstruction();
-    ~MyAppDetectorConstruction();
+       DetectorConstruction();
+    ~  DetectorConstruction();
 
   public:
 

@@ -24,13 +24,13 @@
 // ********************************************************************
 //
 //
-// $Id: MyAppDetectorConstruction.cc,v 1.22 2010-01-22 11:57:03 maire Exp $
+// $Id:   DetectorConstruction.cc,v 1.22 2010-01-22 11:57:03 maire Exp $
 // GEANT4 tag $Name: not supported by cvs2svn $
 //
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#include "MyAppDetectorConstruction.hh"
+#include "DetectorConstruction.hh"
 #include "SD.hh"
 
 #include "G4Material.hh"
@@ -55,7 +55,7 @@
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-MyAppDetectorConstruction::MyAppDetectorConstruction()
+  DetectorConstruction::  DetectorConstruction()
 :solidWorld(0)
 ,  logicWorld(0)
 ,  physiWorld(0)
@@ -66,14 +66,14 @@ MyAppDetectorConstruction::MyAppDetectorConstruction()
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-MyAppDetectorConstruction::~MyAppDetectorConstruction()
+  DetectorConstruction::~  DetectorConstruction()
 {
     delete stepLimit;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-G4VPhysicalVolume* MyAppDetectorConstruction::Construct()
+G4VPhysicalVolume*   DetectorConstruction::Construct()
 {
 //--------- Material definition ---------
 DefineMaterials();
@@ -327,7 +327,7 @@ G4Material* Shield_Air_hole = nist->FindOrBuildMaterial("G4_AIR");
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void MyAppDetectorConstruction::DefineMaterials()
+void   DetectorConstruction::DefineMaterials()
 {
   // Lead material defined using NIST Manager
   G4NistManager* nistManager = G4NistManager::Instance();

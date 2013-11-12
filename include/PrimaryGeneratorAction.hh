@@ -24,30 +24,37 @@
 // ********************************************************************
 //
 //
-// $Id: MyAppEventAction.hh,v 1.8 2006-06-29 17:47:35 gunter Exp $
+// $Id:   PrimaryGeneratorAction.hh,v 1.7 2006-06-29 17:47:43 gunter Exp $
 // GEANT4 tag $Name: not supported by cvs2svn $
 //
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#ifndef MyAppEventAction_h
-#define MyAppEventAction_h 1
+#ifndef   PrimaryGeneratorAction_h
+#define   PrimaryGeneratorAction_h 1
 
-#include "G4UserEventAction.hh"
+#include "G4VUserPrimaryGeneratorAction.hh"
 
+class   DetectorConstruction;
+//class G4ParticleGun;
 class G4Event;
-
+class G4GeneralParticleSource;
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-class MyAppEventAction : public G4UserEventAction
+class   PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
 {
   public:
-    MyAppEventAction();
-   ~MyAppEventAction();
+      PrimaryGeneratorAction(  DetectorConstruction*);
+   ~  PrimaryGeneratorAction();
 
   public:
-    void BeginOfEventAction(const G4Event*);
-    void EndOfEventAction(const G4Event*);
+    void GeneratePrimaries(G4Event*);
+    G4GeneralParticleSource* GetParticleSource() {return theParticleSource;};
+
+  private:
+    //G4ParticleGun* particleGun;
+    G4GeneralParticleSource* theParticleSource;
+      DetectorConstruction* myDetector;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

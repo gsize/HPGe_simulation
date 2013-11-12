@@ -24,14 +24,14 @@
 // ********************************************************************
 //
 //
-// $Id: MyAppPhysicsList.cc,v 1.27 2009-11-15 14:27:30 maire Exp $
+// $Id:   PhysicsList.cc,v 1.27 2009-11-15 14:27:30 maire Exp $
 // GEANT4 tag $Name: not supported by cvs2svn $
 //
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 #include "globals.hh"
-#include "MyAppPhysicsList.hh"
+#include "PhysicsList.hh"
 
 #include "G4ProcessManager.hh"
 #include "G4ParticleTypes.hh"
@@ -42,7 +42,7 @@
 #include "G4DecayPhysics.hh"
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-MyAppPhysicsList::MyAppPhysicsList()
+  PhysicsList::  PhysicsList()
 : emPhysicsList(0)
 //,  G4VUserPhysicsList()
 , G4VModularPhysicsList()
@@ -62,7 +62,7 @@ MyAppPhysicsList::MyAppPhysicsList()
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-MyAppPhysicsList::~MyAppPhysicsList()
+  PhysicsList::~  PhysicsList()
 {
     //if(emPhysicsList!=0)
     delete emPhysicsList;
@@ -71,7 +71,7 @@ MyAppPhysicsList::~MyAppPhysicsList()
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void MyAppPhysicsList::ConstructParticle()
+void   PhysicsList::ConstructParticle()
 {
   // In this method, static member functions should be called
   // for all particles which you want to use.
@@ -89,7 +89,7 @@ void MyAppPhysicsList::ConstructParticle()
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void MyAppPhysicsList::ConstructBosons()
+void   PhysicsList::ConstructBosons()
 {
   // pseudo-particles
   G4Geantino::GeantinoDefinition();
@@ -101,7 +101,7 @@ void MyAppPhysicsList::ConstructBosons()
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void MyAppPhysicsList::ConstructLeptons()
+void   PhysicsList::ConstructLeptons()
 {
   // leptons
   //  e+/-
@@ -120,7 +120,7 @@ void MyAppPhysicsList::ConstructLeptons()
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void MyAppPhysicsList::ConstructMesons()
+void   PhysicsList::ConstructMesons()
 {
   //  mesons
   //    light mesons
@@ -139,7 +139,7 @@ void MyAppPhysicsList::ConstructMesons()
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void MyAppPhysicsList::ConstructBaryons()
+void   PhysicsList::ConstructBaryons()
 {
   //  barions
   G4Proton::ProtonDefinition();
@@ -151,7 +151,7 @@ void MyAppPhysicsList::ConstructBaryons()
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void MyAppPhysicsList::ConstructProcess()
+void   PhysicsList::ConstructProcess()
 {
   AddTransportation();
   ConstructEM();
@@ -190,7 +190,7 @@ void MyAppPhysicsList::ConstructProcess()
 #include "G4EmLivermorePhysics.hh"
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void MyAppPhysicsList::ConstructEM()
+void   PhysicsList::ConstructEM()
 {
     emPhysicsList= new G4EmLivermorePhysics();
     //emPhysicsList = new G4EmStandardPhysics();
@@ -202,7 +202,7 @@ void MyAppPhysicsList::ConstructEM()
 
 #include "G4Decay.hh"
 
-void MyAppPhysicsList::ConstructGeneral()
+void   PhysicsList::ConstructGeneral()
 {
   G4PhysicsListHelper* ph = G4PhysicsListHelper::GetPhysicsListHelper();
 
@@ -237,7 +237,7 @@ void MyAppPhysicsList::ConstructGeneral()
 #include "G4StepLimiter.hh"
 #include "G4UserSpecialCuts.hh"
 
-void MyAppPhysicsList::AddStepMax()
+void   PhysicsList::AddStepMax()
 {
   // Step limitation seen as a process
   G4StepLimiter* stepLimiter = new G4StepLimiter();
@@ -259,7 +259,7 @@ void MyAppPhysicsList::AddStepMax()
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 #include "G4Region.hh"
 #include "G4RegionStore.hh"
-void MyAppPhysicsList::SetCuts()
+void   PhysicsList::SetCuts()
 {
   //G4VUserPhysicsList::SetCutsWithDefault method sets
   //the default cut value for all particle types

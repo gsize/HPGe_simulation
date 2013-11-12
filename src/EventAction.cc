@@ -24,47 +24,68 @@
 // ********************************************************************
 //
 //
-// $Id: MyAppRunAction.hh,v 1.8 2006-06-29 17:47:45 gunter Exp $
+// $Id:   EventAction.cc,v 1.11 2006-06-29 17:48:05 gunter Exp $
 // GEANT4 tag $Name: not supported by cvs2svn $
 //
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#ifndef MyAppRunAction_h
-#define MyAppRunAction_h 1
+#include "EventAction.hh"
 
-#include "G4UserRunAction.hh"
-#include "globals.hh"
-
+#include "G4Event.hh"
+#include "G4EventManager.hh"
+#include "G4TrajectoryContainer.hh"
+#include "G4Trajectory.hh"
+#include "G4ios.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-class G4Run;
-class RunMessenger;
-class HistoManager;
+  EventAction::  EventAction()
+{}
 
-class MyAppRunAction : public G4UserRunAction
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+  EventAction::~  EventAction()
+{}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+void   EventAction::BeginOfEventAction(const G4Event* event)
 {
-  public:
-    MyAppRunAction();
-   ~MyAppRunAction();
-
-  public:
-    void BeginOfRunAction(const G4Run*);
-    void EndOfRunAction(const G4Run*);
-    //void SetSaveFileName(G4String &filename);
-    
-  private:
-   HistoManager* histoManager;
-
-    RunMessenger *pMessenger;
-};
+	
+}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+#include "Analysis.hh"
+#include "G4PrimaryVertex.hh"
+#include "G4PrimaryParticle.hh"
 
-#endif
+void   EventAction::EndOfEventAction(const G4Event* evt)
+{
+  G4int event_id = evt->GetEventID();
+
+  // get number of stored trajectories
+  //
+  G4TrajectoryContainer* trajectoryContainer = evt->GetTrajectoryContainer();
+  G4int n_trajectories = 0;
+  if (trajectoryContainer) n_trajectories = trajectoryContainer->entries();
+
+  // periodic printing
+
+  /*if (event_id < 10 || event_id%100000 == 0) {
+    G4cout << ">>> Event " << evt->GetEventID() << G4endl;
+    G4cout << "    " << n_trajectories
+	   << " trajectories stored in this event." << G4endl;
+  }*/
+  G4double primary_energy = evt->GetPrimaryVertex()->GetPrimary()->GetTotalEnergy();
+  if(event_id < 50 )
+  G4cout << "PrimaryParticle Energy :" << primary_energy<<G4endl;
+  
+  G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
+	analysisManager->FillH1(1, primary_energy);
+  //analysisManager->FillNtupleDColumn(1, primary_energy);
+  //analysisManager->AddNtupleRow();
+}
 
 
-
-
-
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

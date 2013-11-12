@@ -24,54 +24,30 @@
 // ********************************************************************
 //
 //
-// $Id: MyAppPhysicsList.hh,v 1.12 2008-09-22 16:41:20 maire Exp $
+// $Id:   EventAction.hh,v 1.8 2006-06-29 17:47:35 gunter Exp $
 // GEANT4 tag $Name: not supported by cvs2svn $
 //
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#ifndef MyAppPhysicsList_h
-#define MyAppPhysicsList_h 1
+#ifndef   EventAction_h
+#define   EventAction_h 1
 
-//#include "G4VUserPhysicsList.hh"
-#include "G4VModularPhysicsList.hh"
-#include "globals.hh"
+#include "G4UserEventAction.hh"
 
-class G4VPhysicsConstructor;
+class G4Event;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-class MyAppPhysicsList
-//: public G4VUserPhysicsList
-: public G4VModularPhysicsList
+class   EventAction : public G4UserEventAction
 {
   public:
-    MyAppPhysicsList();
-   ~MyAppPhysicsList();
+      EventAction();
+   ~  EventAction();
 
-  protected:
-    // Construct particle and physics
-    void ConstructParticle();
-    void ConstructProcess();
-
-    void SetCuts();
-
-
-  protected:
-    // these methods Construct particles
-    void ConstructBosons();
-    void ConstructLeptons();
-    void ConstructMesons();
-    void ConstructBaryons();
-
-  protected:
-  // these methods Construct physics processes and register them
-    void ConstructGeneral();
-    void ConstructEM();
-    void AddStepMax();
-
-    G4VPhysicsConstructor*             emPhysicsList;
-    G4VPhysicsConstructor*             decPhysicsList;
+  public:
+    void BeginOfEventAction(const G4Event*);
+    void EndOfEventAction(const G4Event*);
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
