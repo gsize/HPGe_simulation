@@ -78,12 +78,12 @@ Double_t sum=hist->Integral(binmin,binmax);
 return sum/(binmax-binmin);
 }
 
-void plotE_L(){
+void plotE_L(TString file_name("test_gamma.root")){
     gROOT->Reset();
 
     // Draw histos filled by Geant4 simulation
     TCanvas* c1 = new TCanvas("c1", "  ");
-    TString tmp_file("test_gamma.root");
+    TString tmp_file(file_name);
     Int_t bins = 4096;
     TH1D *h1 = new TH1D("1.33MeV Gamma Spectrum","1.33MeV Gamma Spectrum",bins,0.,1.5);
     TH1D *h2 = new TH1D("e1.33MeV Gamma length","e1.33MeV Gamma length",bins,0.,250.);
