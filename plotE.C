@@ -5,14 +5,15 @@ Double_t fun_FWHM( Double_t *energy,Double_t *par)
 	return (par[0]+par[1]*TMath::Sqrt(x0 +par[2]* x0 * x0));
 }
 
-void plotE(TString file_name("data.root")){
+void plotE(TString file_name="test.root"){
 	gROOT->Reset();
 
-	TFile *f =new  TFile(Form("build/%s",file_name.Data()));
+	//TFile *f =new  TFile(Form("build/%s",file_name.Data()));
+	TFile *f =new  TFile(file_name.Data());
 	if(!f->IsOpen())
 	{
 		cout<<file_name<<"isn't opend"<<endl;
-		return 0;
+		return ;
 	}
 
 	TCanvas* c1 = new TCanvas("c1", "  ");

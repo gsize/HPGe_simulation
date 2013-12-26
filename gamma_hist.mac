@@ -1,0 +1,49 @@
+
+#gps set
+#/gps/energy 1.332 MeV
+/gps/particle gamma
+
+/gps/pos/type Point
+/gps/position 0. 0. 0. mm
+/gps/ang/type iso
+
+#/gps/ene/type Arb
+#/gps/hist/type arb
+/gps/ene/type User
+/gps/hist/type energy
+#/gps/hist/point 0.0 0.
+/gps/hist/point 0.062 0.
+/gps/hist/point 0.06202 4.
+/gps/hist/point 0.078 0.
+/gps/hist/point 0.07802 4.
+/gps/hist/point 0.086 0.
+/gps/hist/point 0.08602 4.
+/gps/hist/point 0.098 0.
+/gps/hist/point 0.09802 4.
+/gps/hist/point 0.121 0.
+/gps/hist/point 0.12102 3.0
+/gps/hist/point 0.230  0.
+/gps/hist/point 0.2302  4.0
+/gps/hist/point 0.350 0.
+/gps/hist/point 0.3502 6.0
+/gps/hist/point 0.449 0
+/gps/hist/point 0.44902 8.0
+/gps/hist/point 0.698 0.
+/gps/hist/point 0.69802 9
+/gps/hist/point 0.823  0
+/gps/hist/point 0.82302  19.0
+/gps/hist/point 0.935 0
+/gps/hist/point 0.93502 16.0
+/gps/hist/point 1.249 0
+/gps/hist/point 1.24902 30
+/gps/hist/point 1.449 0
+/gps/hist/point 1.44902 40
+/gps/hist/point 1.698 0
+/gps/hist/point 1.69802 50
+/gps/hist/point 1.849 0
+/gps/hist/point 1.84902 40
+/gps/hist/point 1.998 0
+/gps/hist/point 1.99802 60
+#/gps/hist/inter Log
+
+/run/beamOn 6001

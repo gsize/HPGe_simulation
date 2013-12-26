@@ -78,7 +78,7 @@ Double_t sum=hist->Integral(binmin,binmax);
 return sum/(binmax-binmin);
 }
 
-void plotE_L(TString file_name("test_gamma.root")){
+void plotE_L(TString file_name="test_gamma.root"){
     gROOT->Reset();
 
     // Draw histos filled by Geant4 simulation
@@ -131,6 +131,7 @@ void plotE_L(TString file_name("test_gamma.root")){
     h1->GetYaxis()->CenterTitle(true);
     h1->GetXaxis()->SetTitle("energy /MeV");
     h1->GetYaxis()->SetTitle("Count");
+    gPad->SetLogy(1);
     h1->Draw();
     double xxx=GetRateOfPeakComputom(h1);
     double kkk=0;
@@ -155,5 +156,5 @@ void plotE_L(TString file_name("test_gamma.root")){
 
     c1->cd();
 
-//plot_FWHM();
+plot_FWHM();
 }

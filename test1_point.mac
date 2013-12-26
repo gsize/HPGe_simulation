@@ -1,0 +1,10 @@
+
+#gps set
+/gps/energy 1.332 MeV
+/gps/particle gamma
+
+/gps/pos/type Point
+/gps/position 0. 0. 0. mm
+/gps/ang/type iso
+
+/run/beamOn 100001
