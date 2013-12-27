@@ -105,4 +105,5 @@
 /gps/hist/point 1.849 40
 /gps/hist/point 1.998 50
 
+#/run/numberOfThreads 4
 /run/beamOn 10

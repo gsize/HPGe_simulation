@@ -42,9 +42,8 @@
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-  PrimaryGeneratorAction::  PrimaryGeneratorAction(
-                                                 DetectorConstruction* myDC)
-:myDetector(myDC)
+  PrimaryGeneratorAction::  PrimaryGeneratorAction()
+  :G4VUserPrimaryGeneratorAction()
 {
     theParticleSource = new G4GeneralParticleSource();
     /*

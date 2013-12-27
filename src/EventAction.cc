@@ -34,13 +34,18 @@
 
 #include "G4Event.hh"
 #include "G4EventManager.hh"
+#include "G4SDManager.hh"
+#include "G4HCofThisEvent.hh"
 #include "G4TrajectoryContainer.hh"
 #include "G4Trajectory.hh"
 #include "G4ios.hh"
+#include "G4UnitsTable.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
   EventAction::  EventAction()
+  :G4UserEventAction(),
+   fHPGeEdepHCID(-1)
 {}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -59,14 +64,15 @@ void   EventAction::BeginOfEventAction(const G4Event* event)
 #include "Analysis.hh"
 #include "G4PrimaryVertex.hh"
 #include "G4PrimaryParticle.hh"
+#include "G4RunManager.hh"
 
-void   EventAction::EndOfEventAction(const G4Event* evt)
+void   EventAction::EndOfEventAction(const G4Event* event)
 {
-  G4int event_id = evt->GetEventID();
+  G4int event_id = event->GetEventID();
 
   // get number of stored trajectories
   //
-  G4TrajectoryContainer* trajectoryContainer = evt->GetTrajectoryContainer();
+  G4TrajectoryContainer* trajectoryContainer = event->GetTrajectoryContainer();
   G4int n_trajectories = 0;
   if (trajectoryContainer) n_trajectories = trajectoryContainer->entries();
 
@@ -77,7 +83,7 @@ void   EventAction::EndOfEventAction(const G4Event* evt)
     G4cout << "    " << n_trajectories
 	   << " trajectories stored in this event." << G4endl;
   }*/
-  G4double primary_energy = evt->GetPrimaryVertex()->GetPrimary()->GetTotalEnergy();
+  G4double primary_energy = event->GetPrimaryVertex()->GetPrimary()->GetTotalEnergy();
   if(event_id < 50 )
   G4cout << "PrimaryParticle Energy :" << primary_energy<<G4endl;
   
@@ -85,7 +91,86 @@ void   EventAction::EndOfEventAction(const G4Event* evt)
 	analysisManager->FillH1(1, primary_energy);
   //analysisManager->FillNtupleDColumn(1, primary_energy);
   //analysisManager->AddNtupleRow();
+  
+     // Get hist collections IDs
+  if ( fHPGeEdepHCID == -1 ) {
+    fHPGeEdepHCID 
+      = G4SDManager::GetSDMpointer()->GetCollectionID("HPGe/Edep");
+  }
+  // Get sum values from hits collections
+  //
+  G4double HPGeEdep = GetSum(GetHitsCollection(fHPGeEdepHCID, event));
+
+  // fill histograms
+  //  
+  analysisManager->FillH1(2, HPGeEdep);
+  
+  // fill ntuple
+  //
+  analysisManager->FillNtupleDColumn(0, primary_energy);
+  analysisManager->FillNtupleDColumn(1, HPGeEdep);
+  analysisManager->AddNtupleRow();
+  
+  //print per event (modulo n)
+  //
+  G4int eventID = event->GetEventID();
+  G4int printModulo = G4RunManager::GetRunManager()->GetPrintProgress();
+  if ( ( printModulo > 0 ) && ( eventID % printModulo == 0 ) ) {
+    G4cout << "---> End of event: " << eventID << G4endl;     
+    PrintEventStatistics(HPGeEdep);
+  }
 }
 
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+G4THitsMap<G4double>* 
+EventAction::GetHitsCollection(G4int hcID,
+                                  const G4Event* event) const
+{
+  G4THitsMap<G4double>* hitsCollection 
+    = static_cast<G4THitsMap<G4double>*>(
+        event->GetHCofThisEvent()->GetHC(hcID));
+  
+  if ( ! hitsCollection ) {
+    G4ExceptionDescription msg;
+    msg << "Cannot access hitsCollection ID " << hcID; 
+    G4Exception("B4dEventAction::GetHitsCollection()",
+      "MyCode0003", FatalException, msg);
+  }         
+
+  return hitsCollection;
+}    
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+G4double EventAction::GetSum(G4THitsMap<G4double>* hitsMap) const
+{
+  G4double sumValue = 0;
+  std::map<G4int, G4double*>::iterator it;
+  for ( it = hitsMap->GetMap()->begin(); it != hitsMap->GetMap()->end(); it++) {
+    sumValue += *(it->second);
+  }
+  return sumValue;  
+}  
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+void EventAction::PrintEventStatistics(
+                            G4double absoEdep) const
+{
+  // Print event statistics
+  //
+  G4cout
+     << "   Absorber: total energy: " 
+     << std::setw(7) << G4BestUnit(absoEdep, "Energy")
+/*     << "       total track length: " 
+     << std::setw(7) << G4BestUnit(absoTrackLength, "Length")
+     << G4endl
+     << "        Gap: total energy: " 
+     << std::setw(7) << G4BestUnit(gapEdep, "Energy")
+     << "       total track length: " 
+     << std::setw(7) << G4BestUnit(gapTrackLength, "Length")
+ */
+     << G4endl;
+}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

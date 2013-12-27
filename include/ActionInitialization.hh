@@ -23,62 +23,29 @@
 // * acceptance of all terms of the Geant4 Software license.          *
 // ********************************************************************
 //
+// $Id: B4dActionInitialization.hh 68058 2013-03-13 14:47:43Z gcosmo $
 //
-// $Id:   DetectorConstruction.hh,v 1.10 2008-09-22 16:41:20 maire Exp $
-// GEANT4 tag $Name: not supported by cvs2svn $
-//
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+/// \file B4dActionInitialization.hh
+/// \brief Definition of the B4dActionInitialization class
 
-#ifndef   DetectorConstruction_h
-#define   DetectorConstruction_h 1
+#ifndef ActionInitialization_h
+#define ActionInitialization_h 1
 
-#include "globals.hh"
-#include "G4VUserDetectorConstruction.hh"
+#include "G4VUserActionInitialization.hh"
 
-class G4GlobalMagFieldMessenger;
+/// Action initialization class.
+///
 
-class G4Box;
-class G4LogicalVolume;
-class G4VPhysicalVolume;
-class G4Material;
-class G4VPVParameterisation;
-class G4UserLimits;
-
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
-class   DetectorConstruction : public G4VUserDetectorConstruction
+class ActionInitialization : public G4VUserActionInitialization
 {
   public:
+    ActionInitialization();
+    virtual ~ActionInitialization();
 
-       DetectorConstruction();
-    ~  DetectorConstruction();
-
-  public:
-
-     G4VPhysicalVolume* Construct();
-	virtual void ConstructSDandField();
-
-  private:
-      void DefineMaterials();
-// data members
-    //
-     G4Box*             solidWorld;    // pointer to the solid envelope
-     G4LogicalVolume*   logicWorld;    // pointer to the logical envelope
-     G4VPhysicalVolume* physiWorld;    // pointer to the physical envelope
-    G4UserLimits* stepLimit;             // pointer to user step limits
-     G4Material* Shield_Fe;
-     G4Material* Shield_Cu;
-     G4Material* Shield_Sn;
-     G4Material* Shield_Pb;
-     G4Material* Shield_Air;
-     G4Material* HPGe_detector_Ge;
-
-    static G4ThreadLocal G4GlobalMagFieldMessenger*  fMagFieldMessenger; 
-                            // magnetic field messenger
+    virtual void BuildForMaster() const;
+    virtual void Build() const;
 };
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
 #endif
+
+    

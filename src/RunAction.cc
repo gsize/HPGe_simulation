@@ -31,11 +31,12 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 #include "RunAction.hh"
-
+#include "Analysis.hh"
 #include "G4Run.hh"
+#include "G4RunManager.hh"
 //#include "Analysis.hh"
-#include "HistoManager.hh"
-
+//#include "HistoManager.hh"
+#include "G4SystemOfUnits.hh"
 //#include "G4MPImanager.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -46,35 +47,64 @@
  //pMessenger = new RunMessenger(this);
    // set an HistoManager
   //
- histoManager = new HistoManager();
+    // Create analysis manager
+//   histoManager = new HistoManager();
+// histoManager->book();
+
+  // set printing event number per each event
+  G4RunManager::GetRunManager()->SetPrintProgress(1);    
+  // Create analysis manager
+  // The choice of analysis technology is done via selectin of a namespace
+  // in B4Analysis.hh
+  G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
+  G4cout << "Using " << analysisManager->GetType() << G4endl;
+
+  // Create directories 
+  //analysisManager->SetHistoDirectoryName("histograms");
+  //analysisManager->SetNtupleDirectoryName("ntuple");
+  analysisManager->SetVerboseLevel(1);
+  analysisManager->SetFirstHistoId(1);
+
+  // Book histograms, ntuple
+  //
+  
+  // Creating histograms
+  analysisManager->CreateH1("1","Gamma source (MeV)",
+                                              8192, 0., 2.0*MeV);
+  analysisManager->CreateH1("2","Gamma result (MeV)",
+                                              8192, 0., 2.0*MeV);
+
+
+  // Creating ntuple
+  //
+  analysisManager->CreateNtuple("HPGe_detector", "Gamma spectrum ");
+  analysisManager->CreateNtupleDColumn("Edep_init");
+  analysisManager->CreateNtupleDColumn("Edep");
+  analysisManager->FinishNtuple();
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
   RunAction::~  RunAction()
 {
-delete histoManager;
+//delete histoManager;
+  delete G4AnalysisManager::Instance();  
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void   RunAction::BeginOfRunAction(const G4Run* aRun)
 {
-  G4cout << "### Run " << aRun->GetRunID() << " start." << G4endl;
+ // G4cout << "### Run " << aRun->GetRunID() << " start." << G4endl;
+  
+   // Get analysis manager
+  G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
 
-  // Create analysis manager
-  // The choice of analysis technology is done via selectin of a namespace
-  // in B4Analysis.hh
-//  G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
-/*
   // Open an output file
-  G4int rank= G4MPImanager::GetManager()-> GetRank();
-    char str[64];
-  sprintf(str, "%03d.root", rank);
-  G4String fname(str);
-*/
+  //
+  G4String fileName = "HPGe_data";
+  analysisManager->OpenFile(fileName);
 
-  histoManager->book(); 
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -87,8 +117,13 @@ void   RunAction::EndOfRunAction(const G4Run* aRun)
   //save histograms
   //
   //histoManager->PrintStatistic();
-  histoManager->save();   
+  //histoManager->save();   
   
+  G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
+    // save histograms & ntuple
+  //
+  analysisManager->Write();
+  analysisManager->CloseFile();
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

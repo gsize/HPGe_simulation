@@ -35,7 +35,7 @@
 
 #include "G4VUserPrimaryGeneratorAction.hh"
 
-class   DetectorConstruction;
+//class   DetectorConstruction;
 //class G4ParticleGun;
 class G4Event;
 class G4GeneralParticleSource;
@@ -44,7 +44,7 @@ class G4GeneralParticleSource;
 class   PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
 {
   public:
-      PrimaryGeneratorAction(  DetectorConstruction*);
+      PrimaryGeneratorAction( );
    ~  PrimaryGeneratorAction();
 
   public:
@@ -54,7 +54,7 @@ class   PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
   private:
     //G4ParticleGun* particleGun;
     G4GeneralParticleSource* theParticleSource;
-      DetectorConstruction* myDetector;
+    //  DetectorConstruction* myDetector;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

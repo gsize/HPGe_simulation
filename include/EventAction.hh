@@ -34,6 +34,8 @@
 #define   EventAction_h 1
 
 #include "G4UserEventAction.hh"
+#include "G4THitsMap.hh"
+#include "globals.hh"
 
 class G4Event;
 
@@ -48,6 +50,16 @@ class   EventAction : public G4UserEventAction
   public:
     void BeginOfEventAction(const G4Event*);
     void EndOfEventAction(const G4Event*);
+  
+  private:
+      // methods
+  G4THitsMap<G4double>* GetHitsCollection(G4int hcID,
+                                          const G4Event* event) const;
+  G4double GetSum(G4THitsMap<G4double>* hitsMap) const;
+  void PrintEventStatistics(G4double absoEdep) const;
+  
+  // data members                   
+  G4int  fHPGeEdepHCID;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

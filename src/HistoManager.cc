@@ -33,7 +33,7 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo...... 
 
 #include "HistoManager.hh"
-#include "G4UnitsTable.hh"
+//#include "G4UnitsTable.hh"
 #include "G4SystemOfUnits.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -57,7 +57,9 @@ HistoManager::HistoManager()
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 HistoManager::~HistoManager()
-{ }
+{ 
+delete G4AnalysisManager::Instance();
+}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -73,8 +75,8 @@ void HistoManager::book()
   fileName[1] = fileName[0] + "." + extension;
       
   // Create directories 
-  analysisManager->SetHistoDirectoryName("histo");
-  analysisManager->SetNtupleDirectoryName("ntuple");
+  //analysisManager->SetHistoDirectoryName("histo");
+  //analysisManager->SetNtupleDirectoryName("ntuple");
     
   // Open an output file
   //
@@ -90,7 +92,6 @@ void HistoManager::book()
   // create selected histograms
   //
   analysisManager->SetFirstHistoId(1);
-
   fHistId[1] = analysisManager->CreateH1("1","Gamma source (MeV)",
                                               8192, 0., 2.0*MeV);
   fHistPt[1] = analysisManager->GetH1(fHistId[1]);
@@ -98,10 +99,13 @@ void HistoManager::book()
   fHistId[2] = analysisManager->CreateH1("2","Gamma result (MeV)",
                                               8192, 0., 2.0*MeV);
   fHistPt[2] = analysisManager->GetH1(fHistId[2]);
-                             
-  // Create 1 ntuple
-  //    
-  analysisManager->CreateNtuple("101", "Gamma spectrum");
+  
+  // Creating ntuple
+  //
+  analysisManager->CreateNtuple("HPGe_detector", "Gamma spectrum ");
+  analysisManager->CreateNtupleDColumn("Edep_init");
+  analysisManager->CreateNtupleDColumn("Edep");
+
   //analysisManager->SetFirstNtupleColumnId(1);
   //fNtColId[0] = analysisManager->CreateNtupleDColumn("energy_scr");
   //fNtColId[1] = analysisManager->CreateNtupleDColumn("energy_dest");
@@ -109,6 +113,7 @@ void HistoManager::book()
   
   factoryOn = true;       
   G4cout << "\n----> Histogram Tree is opened in " << fileName[1] << G4endl;
+  analysisManager->FinishNtuple();
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -125,19 +130,6 @@ void HistoManager::save()
     delete G4AnalysisManager::Instance();
     factoryOn = false;
   }                    
-}
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
-void HistoManager::FillHisto(G4int ih, G4double xbin, G4double weight)
-{
-  if (ih > MaxHisto) {
-    G4cout << "---> warning from HistoManager::FillHisto() : histo " << ih
-           << "does note xist; xbin= " << xbin << " w= " << weight << G4endl;
-    return;
-  }
-
-  if (fHistPt[ih]) fHistPt[ih]->fill(xbin, weight);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -171,6 +163,7 @@ void HistoManager::FillNtuple(int ih ,G4double energy)
 
 void HistoManager::PrintStatistic()
 {
+  /*
   if(factoryOn) {
     G4cout << "\n ----> print histograms statistic \n" << G4endl;
     
@@ -191,6 +184,7 @@ void HistoManager::PrintStatistic()
                << " rms = " << G4BestUnit(fHistPt[4]->rms(),  "Length") 
                << G4endl;
   }
+  */
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

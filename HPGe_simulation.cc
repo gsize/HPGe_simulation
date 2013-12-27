@@ -31,16 +31,23 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
+#ifdef G4MULTITHREADED
+#include "G4MTRunManager.hh"
+#else
+#include "G4RunManager.hh"
+#endif
+
+#include "FTFP_BERT.hh"
 #include "DetectorConstruction.hh"
-#include "PhysicsList.hh"
-#include "PrimaryGeneratorAction.hh"
-#include "RunAction.hh"
-#include "EventAction.hh"
-#include "SteppingAction.hh"
+#include "ActionInitialization.hh"
+//#include "PhysicsList.hh"
+//#include "PrimaryGeneratorAction.hh"
+//#include "RunAction.hh"
+//#include "EventAction.hh"
+//#include "SteppingAction.hh"
 //#include "SteppingVerbose.hh"
 //#include "HistoManager.hh"
 
-#include "G4RunManager.hh"
 #include "G4UImanager.hh"
 
 // MPI session
@@ -68,33 +75,27 @@ int main(int argc,char** argv)
     //
     //G4VSteppingVerbose* verbosity = new  SteppingVerbose;
     //G4VSteppingVerbose::SetInstance(verbosity);
-/*
-    // --------------------------------------------------------------------
-    // MPI session
-    // --------------------------------------------------------------------
-    // At first, G4MPImanager/G4MPIsession should be created.
-    G4MPImanager* g4MPI= new G4MPImanager(argc,argv);
-
-    // MPI session (G4MPIsession) instead of G4UIterminal
-    // Terminal availability depends on your MPI implementation.
-    G4MPIsession* session= g4MPI-> GetMPIsession();
-
-    // LAM/MPI users can use G4tcsh.
-    G4String prompt= "[40;01;33m";
-    prompt+= "G4MPI";
-    prompt+= "[40;31m(%s)[40;36m[%/][00;30m:";
-    session-> SetPrompt(prompt);
-*/
-
-    // Run manager
-    //
-    G4RunManager * runManager = new G4RunManager;
+  // Choose the Random engine
+  //
+  G4Random::setTheEngine(new CLHEP::RanecuEngine);
+     
+  // Construct the default run manager
+  //
+#ifdef G4MULTITHREADED
+  G4MTRunManager* runManager = new G4MTRunManager;
+  runManager->SetNumberOfThreads(2);
+#else
+  G4RunManager* runManager = new G4RunManager;
+#endif
 
     // User Initialization classes (mandatory)
     //
      DetectorConstruction* detector = new  DetectorConstruction;
     runManager->SetUserInitialization(detector);
-    //
+    
+      G4VModularPhysicsList* physicsList = new FTFP_BERT;
+  runManager->SetUserInitialization(physicsList);
+/*    //
     //G4VUserPhysicsList* physics = new  PhysicsList;
     runManager->SetUserInitialization(new  PhysicsList());
 
@@ -108,9 +109,13 @@ int main(int argc,char** argv)
     //
     G4UserEventAction* event_action = new  EventAction;
     runManager->SetUserAction(event_action);
+    */
+    ActionInitialization* actionInitialization
+     = new ActionInitialization();
+  runManager->SetUserInitialization(actionInitialization);
     //
-    G4UserSteppingAction* stepping_action = new  SteppingAction;
-    runManager->SetUserAction(stepping_action);
+ //   G4UserSteppingAction* stepping_action = new  SteppingAction;
+ //  runManager->SetUserAction(stepping_action);
 
     // Initialize G4 kernel
     //
@@ -127,7 +132,6 @@ int main(int argc,char** argv)
     // Just start your session as below.
     // --------------------------------------------------------------------
 //    session-> SessionStart();
-
     
       // Get the pointer to the User Interface manager
       //
@@ -151,7 +155,6 @@ int main(int argc,char** argv)
     #endif
         }
     
-
 #ifdef G4VIS_USE
     delete visManager;
 #endif
@@ -159,8 +162,6 @@ int main(int argc,char** argv)
     // Free the store: user actions, physics_list and detector_description are
     //                 owned and deleted by the run manager, so they should not
     //                 be deleted in the main() program !
-
-//    delete g4MPI;
 
     delete runManager;
     //delete verbosity;

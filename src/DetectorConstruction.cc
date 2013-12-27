@@ -31,7 +31,7 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 #include "DetectorConstruction.hh"
-#include "SD.hh"
+//#include "SD.hh"
 
 #include "G4Material.hh"
 #include "G4Box.hh"
@@ -39,12 +39,21 @@
 #include "G4LogicalVolume.hh"
 #include "G4PVPlacement.hh"
 #include "G4PVParameterised.hh"
-#include "G4SDManager.hh"
 #include "G4GeometryTolerance.hh"
 #include "G4GeometryManager.hh"
 
+#include "G4GlobalMagFieldMessenger.hh"
+#include "G4AutoDelete.hh"
+
+#include "G4SDManager.hh"
+//#include "G4SDChargedFilter.hh"
+#include "G4MultiFunctionalDetector.hh"
+#include "G4VPrimitiveScorer.hh"
+#include "G4PSEnergyDeposit.hh"
+
 #include "G4NistManager.hh"
-#include "G4UnitsTable.hh"
+//#include "G4UnitsTable.hh"
+#include "G4SystemOfUnits.hh"
 
 #include "G4UserLimits.hh"
 
@@ -52,6 +61,11 @@
 #include "G4Colour.hh"
 
 #include "G4ios.hh"
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+G4ThreadLocal 
+G4GlobalMagFieldMessenger* DetectorConstruction::fMagFieldMessenger = 0; 
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -299,12 +313,12 @@ G4Material* Shield_Air_hole = nist->FindOrBuildMaterial("G4_AIR");
   //------------------------------------------------
   // Add sensitive detectors here
   //------------------------------------------------
-   G4SDManager* fSDM = G4SDManager::GetSDMpointer();
+/*   G4SDManager* fSDM = G4SDManager::GetSDMpointer();
    G4String HPGeDetectorSDname = "/Matrix/HPGeDetectorSD";
    HPGeDetectorSD* aHPGeDetectorSD = new HPGeDetectorSD( HPGeDetectorSDname );
    fSDM->AddNewDetector( aHPGeDetectorSD );
    HPGe_detector_log->SetSensitiveDetector( aHPGeDetectorSD );
-
+*/
 //--------- example of User Limits -------------------------------
 
   // below is an example of how to set tracking constraints in a given
@@ -332,12 +346,11 @@ void   DetectorConstruction::DefineMaterials()
   // Lead material defined using NIST Manager
   G4NistManager* nistManager = G4NistManager::Instance();
   G4bool fromIsotopes = false;
-  nistManager->FindOrBuildMaterial("G4_Pb", fromIsotopes);
 
   // material
   nistManager->FindOrBuildMaterial("G4_Fe", fromIsotopes);
   nistManager->FindOrBuildMaterial("G4_Cu", fromIsotopes);
-  //nistManager->FindOrBuildMaterial("G4_Pb", fromIsotopes);
+  nistManager->FindOrBuildMaterial("G4_Pb", fromIsotopes);
   nistManager->FindOrBuildMaterial("G4_Sn", fromIsotopes);
   nistManager->FindOrBuildMaterial("G4_Ge", fromIsotopes);
   nistManager->FindOrBuildMaterial("G4_AIR");
@@ -347,5 +360,45 @@ void   DetectorConstruction::DefineMaterials()
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+void DetectorConstruction::ConstructSDandField()
+{
+  G4SDManager::GetSDMpointer()->SetVerboseLevel(1);
+  // 
+  // Scorers
+  //
+
+  // declare HPGe as a MultiFunctionalDetector scorer
+  //  
+  G4MultiFunctionalDetector* HPGeDetector 
+    = new G4MultiFunctionalDetector("HPGe");
+
+  G4VPrimitiveScorer* primitive;
+  primitive = new G4PSEnergyDeposit("Edep");
+  HPGeDetector->RegisterPrimitive(primitive);
+/*
+  primitive = new G4PSTrackLength("TrackLength");
+  G4SDChargedFilter* charged = new G4SDChargedFilter("chargedFilter");
+  primitive ->SetFilter(charged);
+  absDetector->RegisterPrimitive(primitive);  
+*/
+  SetSensitiveDetector("HPGe_detector",HPGeDetector);
+
+  // 
+  // Magnetic field
+  //
+  // Create global magnetic field messenger.
+  // Uniform magnetic field is then created automatically if
+  // the field value is not zero.
+  G4ThreeVector fieldValue = G4ThreeVector();
+  fMagFieldMessenger = new G4GlobalMagFieldMessenger(fieldValue);
+  fMagFieldMessenger->SetVerboseLevel(1);
+  
+  // Register the field messenger for deleting
+  G4AutoDelete::Register(fMagFieldMessenger);
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

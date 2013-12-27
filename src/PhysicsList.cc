@@ -38,6 +38,7 @@
 
 #include "G4EmStandardPhysics.hh"
 //#include "G4EmLivermorePhysics.hh"
+#include "G4SystemOfUnits.hh"
 
 #include "G4DecayPhysics.hh"
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
