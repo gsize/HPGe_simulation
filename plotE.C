@@ -13,22 +13,10 @@ Double_t fun_FWHM( Double_t *energy,Double_t *par)
 void plotE(TString file_name="HPGe_data")
 {
 	read_data(file_name);
-	TCanvas* c2 = new TCanvas("c2", "  ");
-	c2->Divide(1,2);
-	c2->cd(1);
-	h0->Draw("HIST");
-	c2->cd(2);
-	h1->Draw();
-	TCanvas* c1 = new TCanvas("c1", "  ");
-	c1->Divide(1,2);
-	c1->cd(1);
-	h_init->Draw("HIST");
-	c1->cd(2);
-	h_edep->Draw("HIST");
 
 	int num = 23;
 	Double_t energy_0[]={
-	 0.06202 , 0.07802 ,  0.08602 , 0.09802 , 
+	0.053, 0.06202  ,  0.08602 , 0.09802 , 
  0.121781 ,0.2446981, 0.295941 , 0.344281 ,
  0.3677891, 0.4111161, 0.4439651, 0.563991 ,
  0.688671 , 0.78891  , 0.867371 , 0.9640791,
@@ -45,25 +33,21 @@ int num1=h_init->GetNbinsX();
 cout<<num1<<endl;
 double *data_init= new double[num];
 double *data_edep= new double[num];
-int j=0,k=0;
+int j=0;
 	for(Int_t i=0; i<num1; i++)
 	{
 		if(h_init->GetBinContent(i+1)>5)
 		{
 			double ntmp=h_init->GetBinContent(i+1);
-			if(j==1 && k==0){
-				data_init[0] += ntmp;
-				k=1;
-			}else{
 			data_init[j]=ntmp;
 			j++;
-			}
 	}
 	}
 	for(int i=0;i<num;i++){
 Int_t btmp=h_edep->FindBin(energy_0[i]);
 data_edep[i]=get_area(btmp,h_edep);
-cout<<energy_0[i]<<"  "<<data_edep[i]<<endl;
+printf("%6.3lf\t%8.2lf\t%8.2lf\t%8.5lf\n",energy_0[i],data_init[i],data_edep[i],data_edep[i]/data_init[i]);
+//cout<<energy_0[i]<<"  "<<  <<"\t"<<data_edep[i]<<endl;
 	}
 TGraph *g_eff = new TGraph(num);
 g_eff->SetTitle("data_eff");
@@ -162,16 +146,30 @@ TString dir = gSystem->UnixPathName(gInterpreter->GetCurrentMacroName());
 	tr->SetBranchAddress("Edep",&edep);
 	h0 = new TH1D("edep_i","edep_0",8192,0,2.);
 	h1 = new TH1D("edep_1","edep_1",8192,0,2.);
+/*
 	for(Int_t i=0; i<nentries; i++)
 	{
 		tr->GetEntry(i);
 		h0->Fill(edep_init);
 		h1->Fill(edep);
 	}
+	TCanvas* c2 = new TCanvas("c2", "  ");
+	c2->Divide(1,2);
+	c2->cd(1);
+	h0->Draw("HIST");
+	c2->cd(2);
+	h1->Draw();
+	*/
 
 	TFile *f2= TFile::Open(Form("%sbuild/%s.root",dir.Data(),file_name.Data()));
   f2->GetObject("1;1",h_init);
   f2->GetObject("2;1",h_edep);
+	TCanvas* c1 = new TCanvas("c1", "  ");
+	c1->Divide(1,2);
+	c1->cd(1);
+	h_init->Draw("HIST");
+	c1->cd(2);
+	h_edep->Draw("HIST");
 }
     
         
