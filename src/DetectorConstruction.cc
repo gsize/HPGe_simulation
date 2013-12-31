@@ -308,43 +308,7 @@ G4double HPGe_hole_move = 8.15 *mm;
   G4VisAttributes* HPGe_hole_logVisAtt
     = new G4VisAttributes(G4Colour(8.0,6.0,1.20));
   HPGe_hole_log->SetVisAttributes(HPGe_hole_logVisAtt);
-/*
-  //shield Galactic_in_detector
-//G4double Galactic_move_len = 120 *mm
-G4double Shield_Galactic_in_Tubs_rMax = 0.5 * 76 *mm - 1.0*mm;
-G4double Shield_Galactic_in_Tubs_dz = 0.5*120*mm - 1.0*mm;
-Shield_Galactic_in = nist->FindOrBuildMaterial("G4_Galactic");
 
-    G4VSolid * Shield_Galactic_in_tubs
-    = new G4Tubs("Al_Tubs_tubs",Shield_Tubs_rmin,Shield_Galactic_in_Tubs_rMax,Shield_Galactic_in_Tubs_dz,
-                 Shield_Tubs_sphi,Shield_Tubs_dphi);
-  G4LogicalVolume * Shield_Galactic_in_log
-    = new G4LogicalVolume(Shield_Galactic_in_tubs,Shield_Galactic_in,"Shield Galactic_in",0,0,0);
-  // G4VPhysicalVolume * tracker_phys =
-      new G4PVPlacement(0,G4ThreeVector(0.*mm,0.*mm,move_len),Shield_Galactic_in_log,"Shield Galactic_in phys",
-			HPGe_detector_log,false,0);
-  G4VisAttributes* Shield_Galactic_in_logVisAtt
-    = new G4VisAttributes(G4Colour(1.0,0.0,1.0));
-  Shield_Galactic_in_log->SetVisAttributes(Shield_Galactic_in_logVisAtt);
-*/
-/*
-//Shield Air_hole
-G4double Shield_Air_hole_Tubs_rMax = 60.*mm;
-G4double Shield_Air_hole_Tubs_dz = 0.5*(Shield_Fe_Len + Shield_Pb_Len + Shield_Cu_Len + Shield_Sn_Len+30*mm);
-G4Material* Shield_Air_hole = nist->FindOrBuildMaterial("G4_AIR");
-
-    G4VSolid * Shield_Air_hole_tubs
-    = new G4Tubs("AirTubs_hole_tubs",Shield_Tubs_rmin,Shield_Air_hole_Tubs_rMax,Shield_Air_hole_Tubs_dz,
-                 Shield_Tubs_sphi,Shield_Tubs_dphi);
-  G4LogicalVolume * Shield_Air_hole_log
-    = new G4LogicalVolume(Shield_Air_hole_tubs,Shield_Air_hole,"Shield Air hole",0,0,0);
-  // G4VPhysicalVolume * tracker_phys =
-      new G4PVPlacement(0,G4ThreeVector(0. *mm,0. *mm,Shield_Air_Tubs_dz + Shield_Air_hole_Tubs_dz-15*mm),Shield_Air_hole_log,"Shield Air hole phys",
-			logicWorld,false,0);
-  G4VisAttributes* Shield_Air_hole_logVisAtt
-    = new G4VisAttributes(G4Colour(0.50,0.0,1.0));
-  Shield_Air_hole_log->SetVisAttributes(Shield_Air_hole_logVisAtt);
-*/
 
 //--------- example of User Limits -------------------------------
 
