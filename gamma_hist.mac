@@ -4,18 +4,19 @@
 /gps/particle gamma
 
 /gps/pos/type Point
-/gps/position 0. 0. 0. mm
+/gps/position 0. 0. -15. mm
 /gps/ang/type iso
 
 #/gps/ene/type Arb
 #/gps/hist/type arb
 /gps/ene/type User
 /gps/hist/type energy
-#/gps/hist/point 0.0 0.
-/gps/hist/point 0.062 0.
-/gps/hist/point 0.06202 4.
-#/gps/hist/point 0.078 0.
-#/gps/hist/point 0.07802 4.
+/gps/hist/point 0.0 0.
+/gps/hist/point 0.0531 0.
+/gps/hist/point 0.05312 4.
+/gps/hist/point 0.06251 0.
+/gps/hist/point 0.06252 4.
+
 /gps/hist/point 0.086 0.
 /gps/hist/point 0.08602 4.
 /gps/hist/point 0.098 0.
@@ -63,5 +64,5 @@
 
 
 #/gps/hist/inter Log
-/run/numberOfThreads 4
-/run/beamOn 6001
+#/run/numberOfThreads 3
+/run/beamOn 100000001

@@ -82,7 +82,7 @@
 /gps/particle gamma
 
 /gps/pos/type Point
-/gps/position 0. 0. 0. mm
+/gps/position 0. 0. -15. mm
 /gps/ang/type iso
 /gps/ene/type User
 #/gps/ene/emspec 0
@@ -106,4 +106,4 @@
 /gps/hist/point 1.998 50
 
 #/run/numberOfThreads 4
-/run/beamOn 10
+/run/beamOn 5
