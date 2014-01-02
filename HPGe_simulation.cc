@@ -38,6 +38,7 @@
 #endif
 
 #include "FTFP_BERT.hh"
+#include "QGSP_BERT_HP.hh"
 #include "DetectorConstruction.hh"
 #include "ActionInitialization.hh"
 //#include "PhysicsList.hh"
@@ -93,7 +94,7 @@ int main(int argc,char** argv)
      DetectorConstruction* detector = new  DetectorConstruction;
     runManager->SetUserInitialization(detector);
     
-      G4VModularPhysicsList* physicsList = new FTFP_BERT;
+      G4VModularPhysicsList* physicsList = new QGSP_BERT_HP;//FTFP_BERT;
   runManager->SetUserInitialization(physicsList);
 /*    //
     //G4VUserPhysicsList* physics = new  PhysicsList;

@@ -5,4 +5,4 @@ bin/
 build/
 build_mpi/
 *.root
-
+data/

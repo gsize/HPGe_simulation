@@ -58,7 +58,7 @@ Int_t btmp=h_edep->FindBin(energy_0[i]);
 data_edep[i]=get_area(btmp,h_edep);
 printf("%6.3lf\t%8.2lf\t%8.2lf\t%8.5lf\n",energy_0[i],data_init[i],data_edep[i],data_edep[i]/data_init[i]);
 	}
-	TF1 *fun_eff=  new TF1("fun_eff",eff_fun,0.05910,1.6,6);
+	TF1 *fun_eff=  new TF1("fun_eff",eff_fun,0.050,1.6,6);
 	fun_eff->SetParameters(0.109574,-7.255860, 1.839348,  -0.462271, 0.060579, -0.003032);
 	
 TGraph *g_eff = new TGraph(num);
@@ -68,8 +68,9 @@ for(int i=0; i<num;i++)
 	g_eff->SetPoint(i,energy_0[i],data_edep[i]/data_init[i]);
 }
 	TCanvas* c4 = new TCanvas("ce", "  ");
-	g_eff->Fit("fun_eff");
+	g_eff->Fit("fun_eff","R+");
 	g_eff->Draw("A*");
+	gPad->SetLogy(1);
 /*
 TGraph *g_0 = new TGraph(num);
 g_0->SetTitle("data_0");
@@ -179,9 +180,21 @@ TString dir = gSystem->UnixPathName(gInterpreter->GetCurrentMacroName());
 	TCanvas* c1 = new TCanvas("c1", "  ");
 	c1->Divide(1,2);
 	c1->cd(1);
+	h_init->SetTitle("Source of gamma spectrum");
+	h_init->GetXaxis()->SetTitle("Energy/MeV");
+	h_init->GetXaxis()->CenterTitle();
+	h_init->GetYaxis()->SetTitle("Count");
+	h_init->GetYaxis()->CenterTitle();
 	h_init->Draw("HIST");
+	gPad->SetLogy(1);
 	c1->cd(2);
+	h_edep->SetTitle("Respond");
+	h_edep->GetXaxis()->SetTitle("Energy/MeV");
+	h_edep->GetXaxis()->CenterTitle();
+	h_edep->GetYaxis()->SetTitle("Count");
+	h_edep->GetYaxis()->CenterTitle();
 	h_edep->Draw("HIST");
+	gPad->SetLogy(1);
 }
     
         
