@@ -56,21 +56,39 @@ int j=0;
 	for(int i=0;i<num;i++){
 Int_t btmp=h_edep->FindBin(energy_0[i]);
 data_edep[i]=get_area(btmp,h_edep);
-printf("%6.3lf\t%8.2lf\t%8.2lf\t%8.5lf\n",energy_0[i],data_init[i],data_edep[i],data_edep[i]/data_init[i]);
 	}
-	TF1 *fun_eff=  new TF1("fun_eff",eff_fun,0.050,1.6,6);
-	fun_eff->SetParameters(0.109574,-7.255860, 1.839348,  -0.462271, 0.060579, -0.003032);
+	TF1 *fun_eff=  new TF1("fun_eff",eff_fun,0.051,1.6,6);
+	fun_eff->SetParameters(-0.552,-5.687, 0.434, -0.0404, 0.0013, -0.00003);
+	TF1 *fun_eff1=  new TF1("fun_eff_0",eff_fun,0.051,1.6,6);
+	fun_eff1->SetParameters(-0.552,-5.687, 0.434, -0.0404, 0.0013, -0.00003);
 	
 TGraph *g_eff = new TGraph(num);
 g_eff->SetTitle("data_eff");
 for(int i=0; i<num;i++)
 {
 	g_eff->SetPoint(i,energy_0[i],data_edep[i]/data_init[i]);
+	printf("%d\t%6.3lf\t%10.2lf\t%8.2lf\t%6.5lf\n",i,energy_0[i],data_init[i],data_edep[i],data_edep[i]/data_init[i]);
 }
 	TCanvas* c4 = new TCanvas("ce", "  ");
 	g_eff->Fit("fun_eff","R+");
-	g_eff->Draw("A*");
+	g_eff->SetMarkerStyle(20);
+	g_eff->SetTitle(" ");
+	g_eff->GetXaxis()->SetTitle("Energy/MeV");
+	g_eff->GetXaxis()->CenterTitle();
+	g_eff->GetYaxis()->SetTitle("Efficiency");
+	g_eff->GetYaxis()->CenterTitle();
+	g_eff->Draw("AP");
+	fun_eff1->SetLineColor(kBlack);
+	fun_eff1->Draw("SAME");
 	gPad->SetLogy(1);
+	
+	TPaveText *pt = new TPaveText(0.6,0.7,0.98,0.98,"brNDC");
+   pt->SetFillColor(18);
+   pt->SetTextAlign(12);
+   pt->SetTextFont(12);
+   pt->AddText("Polynomial Fit");
+   pt->AddText(" #varepsilon = exp(#sum^{6}_{i=1} a_{i} E^{2-i})");
+   pt->Draw();
 /*
 TGraph *g_0 = new TGraph(num);
 g_0->SetTitle("data_0");
@@ -187,6 +205,8 @@ TString dir = gSystem->UnixPathName(gInterpreter->GetCurrentMacroName());
 	h_init->GetYaxis()->CenterTitle();
 	h_init->Draw("HIST");
 	gPad->SetLogy(1);
+	gPad->SetGridy(1);
+	gPad->SetGridx(1);
 	c1->cd(2);
 	h_edep->SetTitle("Respond");
 	h_edep->GetXaxis()->SetTitle("Energy/MeV");
@@ -195,6 +215,8 @@ TString dir = gSystem->UnixPathName(gInterpreter->GetCurrentMacroName());
 	h_edep->GetYaxis()->CenterTitle();
 	h_edep->Draw("HIST");
 	gPad->SetLogy(1);
+	gPad->SetGridy(1);
+	gPad->SetGridx(1);
 }
     
         

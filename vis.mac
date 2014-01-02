@@ -31,7 +31,7 @@
 /vis/drawVolume
 #
 # Specify view angle:
-/vis/viewer/set/viewpointThetaPhi 90. 180.
+/vis/viewer/set/viewpointThetaPhi -80. -90.
 #
 # Specify zoom value:
 /vis/viewer/zoom 1.4
@@ -82,7 +82,7 @@
 /gps/particle gamma
 
 /gps/pos/type Point
-/gps/position 0. 0. -15. mm
+/gps/position 0. 0. 80. mm
 /gps/ang/type iso
 /gps/ene/type User
 #/gps/ene/emspec 0
@@ -106,4 +106,4 @@
 /gps/hist/point 1.998 50
 
 #/run/numberOfThreads 4
-/run/beamOn 5
+#/run/beamOn 5

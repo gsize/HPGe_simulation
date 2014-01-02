@@ -94,7 +94,7 @@ int main(int argc,char** argv)
      DetectorConstruction* detector = new  DetectorConstruction;
     runManager->SetUserInitialization(detector);
     
-      G4VModularPhysicsList* physicsList = new QGSP_BERT_HP;//FTFP_BERT;
+      G4VModularPhysicsList* physicsList = new /*QGSP_BERT_HP;//*/FTFP_BERT;
   runManager->SetUserInitialization(physicsList);
 /*    //
     //G4VUserPhysicsList* physics = new  PhysicsList;

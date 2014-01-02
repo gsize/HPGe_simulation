@@ -6,3 +6,4 @@ build/
 build_mpi/
 *.root
 data/
+figure/

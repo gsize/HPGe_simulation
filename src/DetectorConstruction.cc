@@ -220,7 +220,7 @@ Shield_Air = nist->FindOrBuildMaterial("G4_AIR");
   Shield_Air_log->SetVisAttributes(Shield_Air_logVisAtt);
 
 //shield Al
-G4double move_len = 120. *mm;
+G4double move_len = 135 *mm;// 120. *mm;
 G4double Shield_Al_Tubs_rMax = 0.5 * 76. *mm;
 G4double Shield_Al_Tubs_dz = 0.5*110.*mm;
 G4Material* Shield_Al = nist->FindOrBuildMaterial("G4_Al");
@@ -258,7 +258,7 @@ G4Material* Shield_Galactic = nist->FindOrBuildMaterial("G4_Galactic");
 G4double HPGe_dead_layer_rMax = 0.5*63.0*mm;
 G4double HPGe_dead_layer_Tubs_dz = 0.5*44.10*mm;
 HPGe_detector_Ge = nist->FindOrBuildMaterial("G4_Ge");
-G4double HPGe_move = -30.45 *mm;
+G4double HPGe_move = -27.95 *mm;//-30.45 *mm;
 
     G4VSolid * HPGe_dead_layer_tubs
     = new G4Tubs("HPGe_dead_layer_tubs",Shield_Tubs_rmin,HPGe_dead_layer_rMax,HPGe_dead_layer_Tubs_dz,
