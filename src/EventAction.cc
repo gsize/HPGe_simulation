@@ -40,6 +40,7 @@
 #include "G4Trajectory.hh"
 #include "G4ios.hh"
 #include "G4UnitsTable.hh"
+#include "G4SystemOfUnits.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -103,6 +104,7 @@ void   EventAction::EndOfEventAction(const G4Event* event)
 
   // fill histograms
   //  
+  if(HPGeEdep > 1.*keV)
   analysisManager->FillH1(2, HPGeEdep);
   
   // fill ntuple
@@ -113,12 +115,12 @@ void   EventAction::EndOfEventAction(const G4Event* event)
   
   //print per event (modulo n)
   //
-  G4int eventID = event->GetEventID();
+  /*G4int eventID = event->GetEventID();
   G4int printModulo = G4RunManager::GetRunManager()->GetPrintProgress();
   if ( ( printModulo > 0 ) && ( eventID % printModulo == 0 ) ) {
     G4cout << "---> End of event: " << eventID << G4endl;     
     PrintEventStatistics(HPGeEdep);
-  }
+  }*/
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

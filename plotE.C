@@ -20,7 +20,7 @@ double eff_fun(double *x,double *par)
 	return (TMath::Exp(eff));
 }
 
-void plotE(TString file_name="HPGe_data")
+void plotE(TString file_name="HPGe_data_8cm")
 {
 	read_data(file_name);
 
@@ -57,17 +57,18 @@ int j=0;
 Int_t btmp=h_edep->FindBin(energy_0[i]);
 data_edep[i]=get_area(btmp,h_edep);
 	}
-	TF1 *fun_eff=  new TF1("fun_eff",eff_fun,0.051,1.6,6);
+	TF1 *fun_eff=  new TF1("fun_eff",eff_fun,0.039,1.6,6);
 	fun_eff->SetParameters(-0.552,-5.687, 0.434, -0.0404, 0.0013, -0.00003);
 	TF1 *fun_eff1=  new TF1("fun_eff_0",eff_fun,0.051,1.6,6);
 	fun_eff1->SetParameters(-0.552,-5.687, 0.434, -0.0404, 0.0013, -0.00003);
 	
-TGraph *g_eff = new TGraph(num);
+TGraphErrors *g_eff = new TGraphErrors(num);
 g_eff->SetTitle("data_eff");
 for(int i=0; i<num;i++)
 {
 	g_eff->SetPoint(i,energy_0[i],data_edep[i]/data_init[i]);
-	printf("%d\t%6.3lf\t%10.2lf\t%8.2lf\t%6.5lf\n",i,energy_0[i],data_init[i],data_edep[i],data_edep[i]/data_init[i]);
+	g_eff->SetPointError(i,0,TMath::Sqrt(1./data_edep[i]+1./data_init[i])*(data_edep[i]/data_init[i]));
+	printf("%d\t%6.3lf\t%8.lf\t%8.2lf\t%6.5lf\n",i,energy_0[i],data_init[i],data_edep[i],data_edep[i]/data_init[i]);
 }
 	TCanvas* c4 = new TCanvas("ce", "  ");
 	g_eff->Fit("fun_eff","R+");
@@ -80,7 +81,9 @@ for(int i=0; i<num;i++)
 	g_eff->Draw("AP");
 	fun_eff1->SetLineColor(kBlack);
 	fun_eff1->Draw("SAME");
-	gPad->SetLogy(1);
+	//gPad->SetLogy(1);
+	gPad->SetGridy(1);
+	gPad->SetGridx(1);
 	
 	TPaveText *pt = new TPaveText(0.6,0.7,0.98,0.98,"brNDC");
    pt->SetFillColor(18);
@@ -192,7 +195,7 @@ TString dir = gSystem->UnixPathName(gInterpreter->GetCurrentMacroName());
 	h1->Draw();
 */
 
-	TFile *f2= TFile::Open(Form("%sbuild/%s.root",dir.Data(),file_name.Data()));
+	TFile *f2= TFile::Open(Form("%sdata/%s.root",dir.Data(),file_name.Data()));
   f2->GetObject("1;1",h_init);
   f2->GetObject("2;1",h_edep);
 	TCanvas* c1 = new TCanvas("c1", "  ");

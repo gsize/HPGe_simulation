@@ -274,8 +274,8 @@ G4double HPGe_move = -27.95 *mm;//-30.45 *mm;
   
 
 //HPGe detector
-G4double HPGe_detector_rMax = 0.5*63.0*mm-0.7*mm;
-G4double HPGe_detector_Tubs_dz = 0.5*44.10*mm-0.7*mm;
+G4double HPGe_detector_rMax = 0.5*63.0*mm-0.70*mm;
+G4double HPGe_detector_Tubs_dz = 0.5*44.10*mm-0.70*mm;
 //HPGe_detector_Ge = nist->FindOrBuildMaterial("G4_Ge");
 //G4double HPGe_move = -30.45 *mm;
 

@@ -27,18 +27,18 @@
 /gps/hist/point 0.121781 28.668
 /gps/hist/point 0.244698  0.
 /gps/hist/point 0.2446981  7.61
-/gps/hist/point 0.29594 0.
-/gps/hist/point 0.295941 0.448
+/gps/hist/point 0.2959 0.
+/gps/hist/point 0.29591 0.448
 /gps/hist/point 0.34428 0.
 /gps/hist/point 0.344281 26.558
-/gps/hist/point 0.367789 0.
-/gps/hist/point 0.3677891 0.8618
-/gps/hist/point 0.411116  0.
-/gps/hist/point 0.4111161  2.2370
-/gps/hist/point 0.443965 0.
-/gps/hist/point 0.4439651 3.15760
-/gps/hist/point 0.56399 0
-/gps/hist/point 0.563991 0.491
+/gps/hist/point 0.36779 0.
+/gps/hist/point 0.367791 0.8618
+/gps/hist/point 0.41111  0.
+/gps/hist/point 0.411111  2.2370
+/gps/hist/point 0.44397 0.
+/gps/hist/point 0.443971 3.15760
+/gps/hist/point 0.5639 0
+/gps/hist/point 0.56391 0.491
 /gps/hist/point 0.68867 0.
 /gps/hist/point 0.688671 0.859
 /gps/hist/point 0.7889 0
@@ -66,4 +66,4 @@
 
 #/gps/hist/inter Log
 #/run/numberOfThreads 3
-/run/beamOn 100000001
+/run/beamOn 1000001
