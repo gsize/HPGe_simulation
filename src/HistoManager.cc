@@ -40,7 +40,7 @@
 
 HistoManager::HistoManager()
 {
-  fileName[0] = "data";
+  fileName[0] = "HPGe_data";
   factoryOn = false;
   
   // histograms
@@ -75,13 +75,13 @@ void HistoManager::book()
   fileName[1] = fileName[0] + "." + extension;
       
   // Create directories 
-  //analysisManager->SetHistoDirectoryName("histo");
-  //analysisManager->SetNtupleDirectoryName("ntuple");
+  analysisManager->SetHistoDirectoryName("hist");
+  analysisManager->SetNtupleDirectoryName("ntuple");
     
   // Open an output file
   //
   if ( analysisManager->IsActive() ) {
-  G4bool fileOpen = analysisManager->OpenFile(fileName[0]);
+  G4bool fileOpen = analysisManager->OpenFile(fileName[1]);
   if (!fileOpen) {
     G4cout << "\n---> HistoManager::book(): cannot open " << fileName[1] 
            << G4endl;
