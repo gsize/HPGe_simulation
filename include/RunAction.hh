@@ -46,7 +46,7 @@ class HistoManager;
 class   RunAction : public G4UserRunAction
 {
   public:
-      RunAction();
+      RunAction(HistoManager *);
    ~  RunAction();
 
   public:
@@ -55,7 +55,7 @@ class   RunAction : public G4UserRunAction
     //void SetSaveFileName(G4String &filename);
     
   private:
-   HistoManager* histoManager;
+   HistoManager* fHistoManager;
 
     RunMessenger *pMessenger;
 };

@@ -29,6 +29,7 @@
 /// \brief Implementation of the B4dActionInitialization class
 
 #include "ActionInitialization.hh"
+#include "HistoManager.hh"
 #include "PrimaryGeneratorAction.hh"
 #include "RunAction.hh"
 #include "EventAction.hh"
@@ -48,16 +49,20 @@ ActionInitialization::~ActionInitialization()
 
 void ActionInitialization::BuildForMaster() const
 {
-  SetUserAction(new RunAction);
+	// Histo manager
+ HistoManager* histo = new HistoManager();
+  SetUserAction(new RunAction(histo));
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void ActionInitialization::Build() const
 {
+	// Histo manager
+ HistoManager* histo = new HistoManager();
   SetUserAction(new PrimaryGeneratorAction);
-  SetUserAction(new RunAction);
-  SetUserAction(new EventAction);
+  SetUserAction(new RunAction(histo));
+  SetUserAction(new EventAction(histo));
 }  
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

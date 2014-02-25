@@ -20,8 +20,27 @@ double eff_fun(double *x,double *par)
 	return (TMath::Exp(eff));
 }
 
+void plot_eff()
+{
+	TF1 *fun_eff_0=  new TF1("fun_eff",eff_fun,0.039,1.6,6);
+	TF1 *fun_eff_1=  new TF1("fun_eff",eff_fun,0.039,1.6,6);
+	TF1 *fun_eff_2=  new TF1("fun_eff",eff_fun,0.039,1.6,6);
+	fun_eff_0->SetParameters(-0.552,-5.687, 0.434, -0.0404, 0.0013, -0.00003);
+ 	fun_eff_1->SetParameters(-0.452590,-5.901407, 0.539222 ,-0.059246, 0.002599 ,-0.000048);
+ 	fun_eff_2->SetParameters(-0.439793, -5.822942, 0.488969, -0.048183, 0.001682 ,-0.000024);
+
+	TCanvas* c_eff = new TCanvas("Canvas_eff", "Canvas_eff");
+	fun_eff_0->SetLineColor(kBlack);
+	fun_eff_0->Draw();
+	fun_eff_1->SetLineColor(kRed);
+	fun_eff_1->Draw("SAME");
+	fun_eff_2->SetLineColor(kBlue);
+	fun_eff_2->Draw("SAME");
+}
+
 void plotE(TString file_name="HPGe_data_8cm")
 {
+	plot_eff();
 	read_data(file_name);
 
 	int num = 23;

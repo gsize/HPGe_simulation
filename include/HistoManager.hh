@@ -43,8 +43,8 @@
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-const G4int MaxHisto = 5;
-const G4int MaxNtCol = 4;
+const G4int MaxHisto = 2;
+const G4int MaxNtCol = 2;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -61,7 +61,7 @@ class HistoManager
     void FillHisto(G4int id, G4double e, G4double weight = 1.0);
     void Normalize(G4int id, G4double fac);    
 
-    void FillNtuple(int ih ,G4double energy);
+    void FillNtuple(int ih ,int NtColID ,G4double energy);
     
     void PrintStatistic();        
 

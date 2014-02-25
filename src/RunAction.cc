@@ -35,20 +35,20 @@
 #include "G4Run.hh"
 #include "G4RunManager.hh"
 //#include "Analysis.hh"
-//#include "HistoManager.hh"
+#include "HistoManager.hh"
 #include "G4SystemOfUnits.hh"
 //#include "G4MPImanager.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-  RunAction::  RunAction()
-:histoManager(0)
+  RunAction::  RunAction(HistoManager *histo)
+:fHistoManager(histo)
 {
  //pMessenger = new RunMessenger(this);
    // set an HistoManager
   //
     // Create analysis manager
-   histoManager = new HistoManager();
+ //  histoManager = new HistoManager();
 
   // set printing event number per each event
   G4RunManager::GetRunManager()->SetPrintProgress(1);    
@@ -75,7 +75,6 @@
   analysisManager->CreateH1("2","Gamma result (MeV)",
                                               8192, 0., 2.0*MeV);
 
-
   // Creating ntuple
   //
   analysisManager->CreateNtuple("HPGe_detector", "Gamma spectrum ");
@@ -89,7 +88,7 @@
 
   RunAction::~  RunAction()
 {
-delete histoManager;
+//delete fHistoManager;
  // delete G4AnalysisManager::Instance();  
 }
 
@@ -99,7 +98,7 @@ void   RunAction::BeginOfRunAction(const G4Run* aRun)
 {
  // G4cout << "### Run " << aRun->GetRunID() << " start." << G4endl;
   
- histoManager->book();
+ fHistoManager->book();
 /*   // Get analysis manager
   G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
 
@@ -120,7 +119,7 @@ void   RunAction::EndOfRunAction(const G4Run* aRun)
   //save histograms
   //
   //histoManager->PrintStatistic();
-  histoManager->save();   
+  fHistoManager->save();   
 /*  
   G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
     // save histograms & ntuple
@@ -131,6 +130,4 @@ void   RunAction::EndOfRunAction(const G4Run* aRun)
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
-
 

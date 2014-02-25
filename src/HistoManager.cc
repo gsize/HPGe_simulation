@@ -81,7 +81,7 @@ void HistoManager::book()
   // Open an output file
   //
   if ( analysisManager->IsActive() ) {
-  G4bool fileOpen = analysisManager->OpenFile(fileName[1]);
+  G4bool fileOpen = analysisManager->OpenFile(fileName[0]);
   if (!fileOpen) {
     G4cout << "\n---> HistoManager::book(): cannot open " << fileName[1] 
            << G4endl;
@@ -92,28 +92,27 @@ void HistoManager::book()
   // create selected histograms
   //
   analysisManager->SetFirstHistoId(1);
-  fHistId[1] = analysisManager->CreateH1("1","Gamma source (MeV)",
+  fHistId[0] = analysisManager->CreateH1("1","Gamma source (MeV)",
                                               8192, 0., 2.0*MeV);
-  fHistPt[1] = analysisManager->GetH1(fHistId[1]);
+  fHistPt[0] = analysisManager->GetH1(fHistId[0]);
                                            
-  fHistId[2] = analysisManager->CreateH1("2","Gamma result (MeV)",
+  fHistId[1] = analysisManager->CreateH1("2","Gamma HPGe (MeV)",
                                               8192, 0., 2.0*MeV);
-  fHistPt[2] = analysisManager->GetH1(fHistId[2]);
+  fHistPt[1] = analysisManager->GetH1(fHistId[2]);
   
-  // Creating ntuple
+  // Creating ntuple ID=1
   //
-  analysisManager->CreateNtuple("HPGe_detector", "Gamma spectrum ");
-  analysisManager->CreateNtupleDColumn("Edep_init");
-  analysisManager->CreateNtupleDColumn("Edep");
-
-  //analysisManager->SetFirstNtupleColumnId(1);
-  //fNtColId[0] = analysisManager->CreateNtupleDColumn("energy_scr");
-  //fNtColId[1] = analysisManager->CreateNtupleDColumn("energy_dest");
-  //analysisManager->FinishNtuple();
+  analysisManager->SetFirstNtupleColumnId(1);
+  analysisManager->CreateNtuple("source", "Gamma spectrum of source");
+  fNtColId[0] = analysisManager->CreateNtupleDColumn("Edep_source");
+  analysisManager->FinishNtuple();
+  // Creating ntuple ID=2
+  analysisManager->CreateNtuple("HPGe_detector", "Gamma spectrum");
+  fNtColId[1] = analysisManager->CreateNtupleDColumn("Edep_HPGe");
+  analysisManager->FinishNtuple();
   
   factoryOn = true;       
   G4cout << "\n----> Histogram Tree is opened in " << fileName[1] << G4endl;
-  analysisManager->FinishNtuple();
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -147,16 +146,28 @@ void HistoManager::Normalize(G4int ih, G4double fac)
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void HistoManager::FillNtuple(int ih ,G4double energy)
+    void HistoManager::FillHisto(G4int ih, G4double e, G4double weight)
+{
+  if (ih > MaxHisto) {
+    G4cout << "---> warning from HistoManager::FillHisto() : histo " << ih
+           << "does note xist; xbin= " << e << " w= " << weight << G4endl;
+    return;
+  }
+
+  if (fHistPt[ih]) fHistPt[ih]->fill(e, weight);
+}
+
+
+void HistoManager::FillNtuple(int ih ,int NtColID,G4double energy)
 {                
-  if (ih >= MaxHisto) {
-    G4cout << "---> warning from HistoManager::Normalize() : histo " << ih
+  if (NtColID >= MaxHisto) {
+    G4cout << "---> warning from HistoManager::Normalize() : histo " << NtColID
            << G4endl;
     return;
   }
   G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
-  analysisManager->FillNtupleDColumn(fNtColId[ih], energy);
-  analysisManager->AddNtupleRow();  
+  analysisManager->FillNtupleDColumn(ih,fNtColId[NtColID], energy);
+  analysisManager->AddNtupleRow(ih);  
 }  
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

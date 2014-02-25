@@ -32,6 +32,7 @@
 
 #include "EventAction.hh"
 
+#include "HistoManager.hh"
 #include "G4Event.hh"
 #include "G4EventManager.hh"
 #include "G4SDManager.hh"
@@ -44,8 +45,8 @@
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-  EventAction::  EventAction()
-  :G4UserEventAction(),
+  EventAction::  EventAction(HistoManager *histo)
+  :G4UserEventAction(),fHistManager(histo),
    fHPGeEdepHCID(-1)
 {}
 
@@ -87,32 +88,36 @@ void   EventAction::EndOfEventAction(const G4Event* event)
   G4double primary_energy = event->GetPrimaryVertex()->GetPrimary()->GetTotalEnergy();
   if(event_id < 50 )
   G4cout << "PrimaryParticle Energy :" << primary_energy<<G4endl;
-  
+  fHistManager->FillHisto(0,primary_energy);
+fHistManager->FillNtuple(1,0,primary_energy);
+ /* 
   G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
 	analysisManager->FillH1(1, primary_energy);
   //analysisManager->FillNtupleDColumn(1, primary_energy);
   //analysisManager->AddNtupleRow();
-  
+  */
      // Get hist collections IDs
   if ( fHPGeEdepHCID == -1 ) {
     fHPGeEdepHCID 
       = G4SDManager::GetSDMpointer()->GetCollectionID("HPGe/Edep");
-  }
   // Get sum values from hits collections
   //
   G4double HPGeEdep = GetSum(GetHitsCollection(fHPGeEdepHCID, event));
 
   // fill histograms
   //  
-  if(HPGeEdep > 1.*keV)
-  analysisManager->FillH1(2, HPGeEdep);
-  
+  //if(HPGeEdep > 1.*keV)
+  //analysisManager->FillH1(2, HPGeEdep);
+  fHistManager->FillHisto(1,HPGeEdep);
+fHistManager->FillNtuple(2,1,HPGeEdep);
+  }
+ /* 
   // fill ntuple
   //
   analysisManager->FillNtupleDColumn(0, primary_energy);
   analysisManager->FillNtupleDColumn(1, HPGeEdep);
   analysisManager->AddNtupleRow();
-  
+ */ 
   //print per event (modulo n)
   //
   /*G4int eventID = event->GetEventID();
