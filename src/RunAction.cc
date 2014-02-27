@@ -52,36 +52,6 @@
 
   // set printing event number per each event
   G4RunManager::GetRunManager()->SetPrintProgress(1);    
-
-  /*
-   // Create analysis manager
-  // The choice of analysis technology is done via selectin of a namespace
-  // in B4Analysis.hh
-  G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
-  G4cout << "Using " << analysisManager->GetType() << G4endl;
-
-  // Create directories 
-  //analysisManager->SetHistoDirectoryName("histograms");
-  //analysisManager->SetNtupleDirectoryName("ntuple");
-  analysisManager->SetVerboseLevel(1);
-  analysisManager->SetFirstHistoId(1);
-
-  // Book histograms, ntuple
-  //
-  
-  // Creating histograms
-  analysisManager->CreateH1("1","Gamma source (MeV)",
-                                              8192, 0., 2.0*MeV);
-  analysisManager->CreateH1("2","Gamma result (MeV)",
-                                              8192, 0., 2.0*MeV);
-
-  // Creating ntuple
-  //
-  analysisManager->CreateNtuple("HPGe_detector", "Gamma spectrum ");
-  analysisManager->CreateNtupleDColumn("Edep_init");
-  analysisManager->CreateNtupleDColumn("Edep");
-  analysisManager->FinishNtuple();
-  */
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -89,24 +59,15 @@
   RunAction::~  RunAction()
 {
 //delete fHistoManager;
- // delete G4AnalysisManager::Instance();  
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void   RunAction::BeginOfRunAction(const G4Run* aRun)
 {
- // G4cout << "### Run " << aRun->GetRunID() << " start." << G4endl;
+  G4cout << "### Run " << aRun->GetRunID() << " start." << G4endl;
   
  fHistoManager->book();
-/*   // Get analysis manager
-  G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
-
-  // Open an output file
-  //
-  G4String fileName = "HPGe_data";
-  analysisManager->OpenFile(fileName);
-*/
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -120,13 +81,7 @@ void   RunAction::EndOfRunAction(const G4Run* aRun)
   //
   //histoManager->PrintStatistic();
   fHistoManager->save();   
-/*  
-  G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
-    // save histograms & ntuple
-  //
-  analysisManager->Write();
-  analysisManager->CloseFile();
-  */
+
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

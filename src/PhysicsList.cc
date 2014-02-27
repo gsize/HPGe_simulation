@@ -44,10 +44,9 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
   PhysicsList::  PhysicsList()
-: emPhysicsList(0)
+: G4VModularPhysicsList(), 
 //,  G4VUserPhysicsList()
-, G4VModularPhysicsList()
-
+emPhysicsList(0)
 {
   defaultCutValue = 0.001*mm;
    SetVerboseLevel(1);

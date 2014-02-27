@@ -203,8 +203,8 @@ Shield_Cu = nist->FindOrBuildMaterial("G4_Cu");
   Shield_Cu_log->SetVisAttributes(Shield_Cu_logVisAtt);
 
 //Shield Air
-G4double Shield_Air_Tubs_rMax = Shield_Sn_Tubs_rMax - Shield_Sn_Len;
-G4double Shield_Air_Tubs_dz = Shield_Sn_Tubs_dz - Shield_Sn_Len;
+G4double Shield_Air_Tubs_rMax = Shield_Cu_Tubs_rMax - Shield_Cu_Len;
+G4double Shield_Air_Tubs_dz = Shield_Cu_Tubs_dz - Shield_Cu_Len;
 Shield_Air = nist->FindOrBuildMaterial("G4_AIR");
 
     G4VSolid * Shield_Air_tubs

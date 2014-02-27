@@ -38,7 +38,7 @@ void plot_eff()
 	fun_eff_2->Draw("SAME");
 }
 
-void plotE(TString file_name="HPGe_data_8cm")
+void plotE(TString file_name="HPGe_data")
 {
 	plot_eff();
 	read_data(file_name);
@@ -214,7 +214,7 @@ TString dir = gSystem->UnixPathName(gInterpreter->GetCurrentMacroName());
 	h1->Draw();
 */
 
-	TFile *f2= TFile::Open(Form("%sdata/%s.root",dir.Data(),file_name.Data()));
+	TFile *f2= TFile::Open(Form("%sbuild/%s.root",dir.Data(),file_name.Data()));
   f2->GetObject("1;1",h_init);
   f2->GetObject("2;1",h_edep);
 	TCanvas* c1 = new TCanvas("c1", "  ");

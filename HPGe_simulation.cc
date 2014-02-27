@@ -83,8 +83,9 @@ int main(int argc,char** argv)
   // Construct the default run manager
   //
 #ifdef G4MULTITHREADED
+  G4int nThreads = 3;
   G4MTRunManager* runManager = new G4MTRunManager;
-  runManager->SetNumberOfThreads(3);
+  runManager->SetNumberOfThreads(nThreads);
 #else
   G4RunManager* runManager = new G4RunManager;
 #endif
@@ -96,27 +97,10 @@ int main(int argc,char** argv)
     
       G4VModularPhysicsList* physicsList = new /*QGSP_BERT_HP;//*/FTFP_BERT;
   runManager->SetUserInitialization(physicsList);
-/*    //
-    //G4VUserPhysicsList* physics = new  PhysicsList;
-    runManager->SetUserInitialization(new  PhysicsList());
 
-    // User Action classes
-    //
-    G4VUserPrimaryGeneratorAction* gen_action = new  PrimaryGeneratorAction(detector);
-    runManager->SetUserAction(gen_action);
-    //
-    G4UserRunAction* run_action = new  RunAction();
-    runManager->SetUserAction(run_action);
-    //
-    G4UserEventAction* event_action = new  EventAction;
-    runManager->SetUserAction(event_action);
-    */
     ActionInitialization* actionInitialization
      = new ActionInitialization();
   runManager->SetUserInitialization(actionInitialization);
-    //
- //   G4UserSteppingAction* stepping_action = new  SteppingAction;
- //  runManager->SetUserAction(stepping_action);
 
     // Initialize G4 kernel
     //

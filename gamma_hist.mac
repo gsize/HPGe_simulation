@@ -1,4 +1,10 @@
 ##Eu-152
+
+/control/verbose 2
+/run/verbose 2
+/event/verbose 0
+/tracking/verbose 0
+
 #gps set
 #/gps/energy 1.332 MeV
 /gps/particle gamma
@@ -66,4 +72,6 @@
 
 #/gps/hist/inter Log
 #/run/numberOfThreads 3
-/run/beamOn 1000001
+#/run/initialize
+
+/run/beamOn 1000000

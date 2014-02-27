@@ -58,9 +58,10 @@ class   EventAction : public G4UserEventAction
   G4double GetSum(G4THitsMap<G4double>* hitsMap) const;
   void PrintEventStatistics(G4double absoEdep) const;
   
+  private:
   // data members                   
-  G4int  fHPGeEdepHCID;
   HistoManager *fHistManager;
+  G4int  fHPGeEdepHCID;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

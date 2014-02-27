@@ -61,8 +61,12 @@ void ActionInitialization::Build() const
 	// Histo manager
  HistoManager* histo = new HistoManager();
   SetUserAction(new PrimaryGeneratorAction);
-  SetUserAction(new RunAction(histo));
-  SetUserAction(new EventAction(histo));
+  
+  RunAction* runAction =new RunAction(histo);
+  SetUserAction(runAction );
+
+  EventAction* eventAction =new EventAction(histo);
+  SetUserAction(eventAction);
 }  
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

@@ -83,27 +83,11 @@
 
 /gps/pos/type Point
 /gps/position 0. 0. 80. mm
+/gps/pos/type Point
+#/gps/position 0. 0. -15. mm
 /gps/ang/type iso
-/gps/ene/type User
-#/gps/ene/emspec 0
-/gps/hist/type energy
-#/gps/hist/point 0.0 0.
-/gps/hist/point 0.062 3.
-/gps/hist/point 0.078 4.
-/gps/hist/point 0.086 4.
-/gps/hist/point 0.098 4.
-/gps/hist/point 0.121 3
-/gps/hist/point 0.23  4
-/gps/hist/point 0.35 6
-/gps/hist/point 0.449 8
-/gps/hist/point 0.698 9
-/gps/hist/point 0.823  19
-/gps/hist/point 0.935 16
-/gps/hist/point 1.249 30
-/gps/hist/point 1.449 40
-/gps/hist/point 1.698 50
-/gps/hist/point 1.849 40
-/gps/hist/point 1.998 50
 
-#/run/numberOfThreads 4
-#/run/beamOn 5
+#/run/numberOfThreads 3
+#/run/initialize
+
+/run/beamOn 5
