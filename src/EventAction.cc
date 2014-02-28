@@ -96,13 +96,14 @@ void   EventAction::EndOfEventAction(const G4Event* event)
 	if ( fHPGeEdepHCID == -1 ) {
 		fHPGeEdepHCID 
 			= G4SDManager::GetSDMpointer()->GetCollectionID("HPGe/Edep");
+		}
 		// Get sum values from hits collections
 		//
 		G4double HPGeEdep = GetSum(GetHitsCollection(fHPGeEdepHCID, event));
 
 		// fill histograms
 		//  
-		//if(HPGeEdep > 1.*keV)
+		if(HPGeEdep > 1.*keV){
 		fHistManager->FillHisto(2,HPGeEdep);
 		fHistManager->FillNtuple(2,1,HPGeEdep);
 	}

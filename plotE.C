@@ -40,9 +40,10 @@ void plot_eff()
 
 void plotE(TString file_name="HPGe_data")
 {
-	plot_eff();
-	read_data(file_name);
-
+	//plot_eff();
+	if (read_data(file_name) == 0){
+	 return;
+}
 	int num = 23;
 	Double_t energy_0[]={
 	0.053, 0.06202  ,  0.08602 , 0.09802 , 
@@ -215,8 +216,16 @@ TString dir = gSystem->UnixPathName(gInterpreter->GetCurrentMacroName());
 */
 
 	TFile *f2= TFile::Open(Form("%sbuild/%s.root",dir.Data(),file_name.Data()));
-  f2->GetObject("1;1",h_init);
-  f2->GetObject("2;1",h_edep);
+	if(!(f2->IsOpen())){
+		cout<<"file: "<<file_name<<" isn't opened!"<<endl;
+	return 0;
+	}
+  //f2->GetObject("source;1",h_init);
+  //f2->GetObject("HPGe;1",h_edep);
+  
+  TDirectory* dire = f2->Get("histo");
+  h_init = (TH1D*)dire->Get("source"); 
+  h_edep = (TH1D*)dire->Get("HPGe"); 
 	TCanvas* c1 = new TCanvas("c1", "  ");
 	c1->Divide(1,2);
 	c1->cd(1);
@@ -239,6 +248,9 @@ TString dir = gSystem->UnixPathName(gInterpreter->GetCurrentMacroName());
 	gPad->SetLogy(1);
 	gPad->SetGridy(1);
 	gPad->SetGridx(1);
+	
+	return 1;
+	
 }
     
         
