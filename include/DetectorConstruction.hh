@@ -58,10 +58,15 @@ class   DetectorConstruction : public G4VUserDetectorConstruction
   public:
 
      G4VPhysicalVolume* Construct();
+
 	virtual void ConstructSDandField();
 
   private:
       void DefineMaterials();
+      G4VPhysicalVolume* ConstructWorld();
+     G4VPhysicalVolume* ConstructPbShield();
+     G4VPhysicalVolume* ConstructHPGeDetector();
+  private:
 // data members
     //
      G4Box*             solidWorld;    // pointer to the solid envelope
