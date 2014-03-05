@@ -5,6 +5,7 @@
 
 /gps/pos/type Point
 /gps/position 0. 0. 0. mm
-/gps/ang/type iso
+/gps/direction 0. 0. 1. 
+#/gps/ang/type iso
 
 /run/beamOn 100001
