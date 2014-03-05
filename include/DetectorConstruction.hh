@@ -63,9 +63,9 @@ class   DetectorConstruction : public G4VUserDetectorConstruction
 
   private:
       void DefineMaterials();
-      G4VPhysicalVolume* ConstructWorld();
-     G4VPhysicalVolume* ConstructPbShield();
-     G4VPhysicalVolume* ConstructHPGeDetector();
+      void ConstructWorld();
+     void ConstructPbShield();
+     void ConstructHPGeDetector();
   private:
 // data members
     //

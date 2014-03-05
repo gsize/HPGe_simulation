@@ -70,10 +70,11 @@ G4GlobalMagFieldMessenger* DetectorConstruction::fMagFieldMessenger = 0;
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 	DetectorConstruction::  DetectorConstruction()
-	:solidWorld(0)
+	:G4VUserDetectorConstruction()
+	,  solidWorld(0)
 	,  logicWorld(0)
 	,  physiWorld(0)
-	 ,   stepLimit(0)
+	,  stepLimit(0)
 {
 
 }
@@ -82,7 +83,7 @@ G4GlobalMagFieldMessenger* DetectorConstruction::fMagFieldMessenger = 0;
 
 DetectorConstruction::~  DetectorConstruction()
 {
-	delete stepLimit;
+//	delete stepLimit;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -101,6 +102,7 @@ G4VPhysicalVolume*   DetectorConstruction::Construct()
 
 	//--------- Material definition ---------
 	DefineMaterials();
+
 	ConstructWorld();
 	ConstructPbShield();
 	ConstructHPGeDetector();
@@ -108,7 +110,7 @@ G4VPhysicalVolume*   DetectorConstruction::Construct()
 	return physiWorld;
 }
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-G4VPhysicalVolume* DetectorConstruction::ConstructWorld()
+void DetectorConstruction::ConstructWorld()
 {
 	G4NistManager* nist = G4NistManager::Instance();
 	G4Material* Air = nist->FindOrBuildMaterial("G4_AIR");
@@ -137,11 +139,11 @@ G4VPhysicalVolume* DetectorConstruction::ConstructWorld()
 			0,               // its mother  volume
 			false,           // no boolean operations
 			0);              // copy number
-	return physiWorld;
+//	return physiWorld;
 }
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-G4VPhysicalVolume*   DetectorConstruction::ConstructPbShield()
+void   DetectorConstruction::ConstructPbShield()
 {
 	G4NistManager* nist = G4NistManager::Instance();
 
@@ -151,10 +153,10 @@ G4VPhysicalVolume*   DetectorConstruction::ConstructPbShield()
 	G4double  Shield_Tubs_sphi =   0.*deg;
 	G4double  Shield_Tubs_dphi = 360.*deg;
 
-	G4double Shield_Fe_Len = 9.5*mm;
-	G4double Shield_Pb_Len = 101.*mm;
-	G4double Shield_Cu_Len = 1.6 *mm;
-	G4double Shield_Sn_Len = 0.5*mm;
+	G4double Shield_Fe_Thickness = 9.5*mm;
+	G4double Shield_Pb_Thickness = 101.*mm;
+	G4double Shield_Cu_Thickness= 1.6 *mm;
+	G4double Shield_Sn_Thickness= 0.5*mm;
 
 	//Shield Fe
 	G4double Shield_Fe_Tubs_rMax = Shield_rMax;
@@ -162,12 +164,12 @@ G4VPhysicalVolume*   DetectorConstruction::ConstructPbShield()
 	Shield_Fe = nist->FindOrBuildMaterial("G4_Fe");
 
 	G4VSolid * Shield_Fe_tubs
-		= new G4Tubs("Shield_Fe_Tubs_tubs",Shield_Tubs_rmin,Shield_Fe_Tubs_rMax,Shield_Fe_Tubs_dz,
+		= new G4Tubs("Shield_Fe_tubs",Shield_Tubs_rmin,Shield_Fe_Tubs_rMax,Shield_Fe_Tubs_dz,
 				Shield_Tubs_sphi,Shield_Tubs_dphi);
 	G4LogicalVolume * Shield_Fe_log
 		= new G4LogicalVolume(Shield_Fe_tubs,Shield_Fe,"Shield_Fe_log",0,0,0);
 
-	G4VPhysicalVolume * physiWorldPbShield =
+//	G4VPhysicalVolume * physiWorldPbShield =
 		new G4PVPlacement(0,G4ThreeVector(),Shield_Fe_log,"Shield_Fe_phys",
 				logicWorld,false,0);
 	G4VisAttributes* Shield_Fe_logVisAtt
@@ -175,80 +177,84 @@ G4VPhysicalVolume*   DetectorConstruction::ConstructPbShield()
 	Shield_Fe_log->SetVisAttributes(Shield_Fe_logVisAtt);
 
 	//Shield Pb
-	G4double Shield_Pb_Tubs_rMax = Shield_Fe_Tubs_rMax - Shield_Fe_Len;
-	G4double Shield_Pb_Tubs_dz = Shield_Fe_Tubs_dz - Shield_Fe_Len;
+	G4double Shield_Pb_Tubs_rMax = Shield_Fe_Tubs_rMax - Shield_Fe_Thickness;
+	G4double Shield_Pb_Tubs_dz = Shield_Fe_Tubs_dz - Shield_Fe_Thickness;
 	Shield_Pb = nist->FindOrBuildMaterial("G4_Pb");
 
 	G4VSolid * Shield_Pb_tubs
-		= new G4Tubs("PbTubs_tubs",Shield_Tubs_rmin,Shield_Pb_Tubs_rMax,Shield_Pb_Tubs_dz,
+		= new G4Tubs("Shield_Pb_tubs",Shield_Tubs_rmin,Shield_Pb_Tubs_rMax,Shield_Pb_Tubs_dz,
 				Shield_Tubs_sphi,Shield_Tubs_dphi);
 	G4LogicalVolume * Shield_Pb_log
 		= new G4LogicalVolume(Shield_Pb_tubs,Shield_Pb,"Shield_Pb_log",0,0,0);
 	// G4VPhysicalVolume * tracker_phys =
-	new G4PVPlacement(0,G4ThreeVector(),Shield_Pb_log,"Shield Pb phys",
+	new G4PVPlacement(0,G4ThreeVector(),Shield_Pb_log,"Shield_Pb_phys",
 			Shield_Fe_log,false,0);
 	G4VisAttributes* Shield_Pb_logVisAtt
 		= new G4VisAttributes(G4Colour(1.0,0.0,0.50));
 	Shield_Pb_log->SetVisAttributes(Shield_Pb_logVisAtt);
+	Shield_Pb_log->SetVisAttributes(G4VisAttributes::Invisible);
 
 	//Shield Sn
-	G4double Shield_Sn_Tubs_rMax = Shield_Pb_Tubs_rMax - Shield_Pb_Len;
-	G4double Shield_Sn_Tubs_dz = Shield_Pb_Tubs_dz - Shield_Pb_Len;
+	G4double Shield_Sn_Tubs_rMax = Shield_Pb_Tubs_rMax - Shield_Pb_Thickness;
+	G4double Shield_Sn_Tubs_dz = Shield_Pb_Tubs_dz - Shield_Pb_Thickness;
 	Shield_Sn = nist->FindOrBuildMaterial("G4_Sn");
 
 	G4VSolid * Shield_Sn_tubs
-		= new G4Tubs("SnTubs_tubs",Shield_Tubs_rmin,Shield_Sn_Tubs_rMax,Shield_Sn_Tubs_dz,
+		= new G4Tubs("Shield_Sn_tubs",Shield_Tubs_rmin,Shield_Sn_Tubs_rMax,Shield_Sn_Tubs_dz,
 				Shield_Tubs_sphi,Shield_Tubs_dphi);
 	G4LogicalVolume * Shield_Sn_log
-		= new G4LogicalVolume(Shield_Sn_tubs,Shield_Sn,"Shield Sn",0,0,0);
+		= new G4LogicalVolume(Shield_Sn_tubs,Shield_Sn,"Shield_Sn_log",0,0,0);
 	// G4VPhysicalVolume * tracker_phys =
-	new G4PVPlacement(0,G4ThreeVector(),Shield_Sn_log,"Shield Sn phys",
-			Shield_Pb_log,false,0);
+	new G4PVPlacement(0,G4ThreeVector(),Shield_Sn_log,"Shield_Sn_phys",
+			Shield_Fe_log,false,0);
 	//  G4VisAttributes* Shield_Sn_logVisAtt
 	//    = new G4VisAttributes(G4Colour(1.0,0.0,0.30));
 	//  Shield_Sn_log->SetVisAttributes(Shield_Sn_logVisAtt);
+	Shield_Sn_log->SetVisAttributes(G4VisAttributes::Invisible);
 
 
 	//Shield Cu
-	G4double Shield_Cu_Tubs_rMax = Shield_Sn_Tubs_rMax - Shield_Sn_Len;
-	G4double Shield_Cu_Tubs_dz = Shield_Sn_Tubs_dz - Shield_Sn_Len;
+	G4double Shield_Cu_Tubs_rMax = Shield_Sn_Tubs_rMax - Shield_Sn_Thickness;
+	G4double Shield_Cu_Tubs_dz = Shield_Sn_Tubs_dz - Shield_Sn_Thickness;
 	Shield_Cu = nist->FindOrBuildMaterial("G4_Cu");
 
 	G4VSolid * Shield_Cu_tubs
-		= new G4Tubs("CuTubs_tubs",Shield_Tubs_rmin,Shield_Cu_Tubs_rMax,Shield_Cu_Tubs_dz,
+		= new G4Tubs("Shield_Cu_tubs",Shield_Tubs_rmin,Shield_Cu_Tubs_rMax,Shield_Cu_Tubs_dz,
 				Shield_Tubs_sphi,Shield_Tubs_dphi);
 	G4LogicalVolume * Shield_Cu_log
-		= new G4LogicalVolume(Shield_Cu_tubs,Shield_Cu,"Shield Cu",0,0,0);
+		= new G4LogicalVolume(Shield_Cu_tubs,Shield_Cu,"Shield_Cu_log",0,0,0);
 	// G4VPhysicalVolume * tracker_phys =
-	new G4PVPlacement(0,G4ThreeVector(),Shield_Cu_log,"Shield Cu phys",
-			Shield_Sn_log,false,0);
+	new G4PVPlacement(0,G4ThreeVector(),Shield_Cu_log,"Shield_Cu_phys",
+			Shield_Fe_log,false,0);
 	//  G4VisAttributes* Shield_Cu_logVisAtt
 	//    = new G4VisAttributes(G4Colour(1.0,0.50,0.60));
 	//  Shield_Cu_log->SetVisAttributes(Shield_Cu_logVisAtt);
+	Shield_Cu_log->SetVisAttributes(G4VisAttributes::Invisible);
 
 	//Shield Air
-	G4double Shield_Air_Tubs_rMax = Shield_Cu_Tubs_rMax - Shield_Cu_Len;
-	G4double Shield_Air_Tubs_dz = Shield_Cu_Tubs_dz - Shield_Cu_Len;
+	G4double Shield_Air_Tubs_rMax = Shield_Cu_Tubs_rMax - Shield_Cu_Thickness;
+	G4double Shield_Air_Tubs_dz = Shield_Cu_Tubs_dz - Shield_Cu_Thickness;
 	Shield_Air = nist->FindOrBuildMaterial("G4_AIR");
 
 	G4VSolid * Shield_Air_tubs
-		= new G4Tubs("AirTubs_tubs",Shield_Tubs_rmin,Shield_Air_Tubs_rMax,Shield_Air_Tubs_dz,
+		= new G4Tubs("Shield_Air_tubs",Shield_Tubs_rmin,Shield_Air_Tubs_rMax,Shield_Air_Tubs_dz,
 				Shield_Tubs_sphi,Shield_Tubs_dphi);
 	G4LogicalVolume * Shield_Air_log
-		= new G4LogicalVolume(Shield_Air_tubs,Shield_Air,"Shield Air",0,0,0);
+		= new G4LogicalVolume(Shield_Air_tubs,Shield_Air,"Shield_Air",0,0,0);
 	// G4VPhysicalVolume * tracker_phys =
-	new G4PVPlacement(0,G4ThreeVector(),Shield_Air_log,"Shield Air phys",
-			Shield_Cu_log,false,0);
+	new G4PVPlacement(0,G4ThreeVector(),Shield_Air_log,"Shield_Air_phys",
+			Shield_Fe_log,false,0);
 	G4VisAttributes* Shield_Air_logVisAtt
 		= new G4VisAttributes(G4Colour(1.0,0.3,1.0));
 	Shield_Air_log->SetVisAttributes(Shield_Air_logVisAtt);
+	Shield_Air_log->SetVisAttributes(G4VisAttributes::Invisible);
 
-	return physiWorldPbShield;
+//	return physiWorldPbShield;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-G4VPhysicalVolume*   DetectorConstruction::ConstructHPGeDetector()
+void   DetectorConstruction::ConstructHPGeDetector()
 {
 	G4NistManager* nist = G4NistManager::Instance();
 
@@ -256,19 +262,23 @@ G4VPhysicalVolume*   DetectorConstruction::ConstructHPGeDetector()
 	G4double  Tubs_sphi =   0.*deg;
 	G4double  Tubs_dphi = 360.*deg;
 
+	G4double detectorRadius = 0.5 * 76. *mm;
+	G4double detectorLength= 110. *mm;
+	G4double GeCrystalRadius = 0.5 * 63. *mm;
+	G4double GeCrystalLength = 44.1 *mm;
 	//shield Al
 	G4double detector_move_len = 135 *mm;// 120. *mm;
-	G4double Shell_Al_Tubs_rMax = 0.5 * 76. *mm;
-	G4double Shell_Al_Tubs_dz = 0.5*110.*mm;
+	G4double Shell_Al_Tubs_rMax =  detectorRadius;
+	G4double Shell_Al_Tubs_dz = 0.5 * detectorLength;
 	G4double Shell_Al_Tubs_Thickness = 1.*mm;
 	G4Material* Shell_Al = nist->FindOrBuildMaterial("G4_Al");
 
 	G4VSolid * Shell_Al_tubs
-		= new G4Tubs("Al_Tubs_tubs",Tubs_rmin,Shell_Al_Tubs_rMax,Shell_Al_Tubs_dz,
+		= new G4Tubs("Shell_Al_tubs",Tubs_rmin,Shell_Al_Tubs_rMax,Shell_Al_Tubs_dz,
 				Tubs_sphi,Tubs_dphi);
 	G4LogicalVolume * Shell_Al_log
-		= new G4LogicalVolume(Shell_Al_tubs,Shell_Al,"Shield Al",0,0,0);
-	G4VPhysicalVolume * physiWorldHPGe =
+		= new G4LogicalVolume(Shell_Al_tubs,Shell_Al,"Shell_Al_log",0,0,0);
+	//G4VPhysicalVolume * physiWorldHPGe =
 		new G4PVPlacement(0,G4ThreeVector(0.,0.,detector_move_len),Shell_Al_log,"Detector Shell Al phys",
 				logicWorld,false,0);
 	G4VisAttributes* Shell_Al_logVisAtt
@@ -278,13 +288,14 @@ G4VPhysicalVolume*   DetectorConstruction::ConstructHPGeDetector()
 	//shield Galactic
 	G4double Shell_Galactic_Tubs_rMax = Shell_Al_Tubs_rMax - Shell_Al_Tubs_Thickness;
 	G4double Shell_Galactic_Tubs_dz = Shell_Al_Tubs_dz - Shell_Al_Tubs_Thickness;
+	G4double GalacticThickness = 4. *mm;
 	G4Material* Shell_Galactic = nist->FindOrBuildMaterial("G4_Galactic");
 
 	G4VSolid * Shell_Galactic_tubs
-		= new G4Tubs("Galactic_Tubs_tubs",Tubs_rmin,Shell_Galactic_Tubs_rMax,Shell_Galactic_Tubs_dz,
+		= new G4Tubs("Galactic_tubs",Tubs_rmin,Shell_Galactic_Tubs_rMax,Shell_Galactic_Tubs_dz,
 				Tubs_sphi,Tubs_dphi);
 	G4LogicalVolume * Shell_Galactic_log
-		= new G4LogicalVolume(Shell_Galactic_tubs,Shell_Galactic,"Shell Galactic logic",0,0,0);
+		= new G4LogicalVolume(Shell_Galactic_tubs,Shell_Galactic,"Shell_Galactic_log",0,0,0);
 	// G4VPhysicalVolume * tracker_phys =
 	new G4PVPlacement(0,G4ThreeVector(0.,0.,0.),Shell_Galactic_log,"Shell Galactic phys",
 			Shell_Al_log,false,0);
@@ -292,49 +303,53 @@ G4VPhysicalVolume*   DetectorConstruction::ConstructHPGeDetector()
 	//    = new G4VisAttributes(G4Colour(0.3,0.7,1.0));
 	//  Shell_Galactic_log->SetVisAttributes(Shell_Galactic_logVisAtt);
 
-	//HPGe dead_layer
-	G4double HPGe_dead_layer_rMax = 0.5*63.0*mm;
-	G4double HPGe_dead_layer_Tubs_dz = 0.5*44.10*mm;
+	//HPGe dead_layer outer
+	G4double HPGe_dead_layer_rMax = GeCrystalRadius;
+	G4double HPGe_dead_layer_outer_dz = 0.5 * GeCrystalLength;
+	G4double HPGe_dead_layer_outer_Thickness = 0.70*mm;
+	G4double HPGe_move = -( Shell_Galactic_Tubs_dz- HPGe_dead_layer_outer_dz - GalacticThickness);//-27.95 *mm;
 	HPGe_detector_Ge = nist->FindOrBuildMaterial("G4_Ge");
-	G4double HPGe_move = -( Shell_Galactic_Tubs_dz- HPGe_dead_layer_Tubs_dz - 4.*mm);//-27.95 *mm;
-	G4double HPGe_dead_layer_Thickness = 0.70*mm;
-	G4VSolid * HPGe_dead_layer_tubs
-		= new G4Tubs("HPGe_dead_layer_tubs",Tubs_rmin,HPGe_dead_layer_rMax,HPGe_dead_layer_Tubs_dz,
+
+	G4VSolid * HPGe_dead_layer_outer
+		= new G4Tubs("HPGe_dead_layer_outer",Tubs_rmin,HPGe_dead_layer_rMax,HPGe_dead_layer_outer_dz,
 				Tubs_sphi,Tubs_dphi);
-	G4LogicalVolume * HPGe_dead_layer_log
-		= new G4LogicalVolume(HPGe_dead_layer_tubs,HPGe_detector_Ge,"HPGe_dead_layer",0,0,0);
+	G4LogicalVolume * HPGe_dead_layer_outer_log
+		= new G4LogicalVolume(HPGe_dead_layer_outer,HPGe_detector_Ge,"HPGe_dead_layer_log",0,0,0);
 	// G4VPhysicalVolume * tracker_phys =
-	new G4PVPlacement(0,G4ThreeVector(0. ,0. ,HPGe_move),HPGe_dead_layer_log,"HPGe_dead_layer_phys",
+	new G4PVPlacement(0,G4ThreeVector(0. ,0. ,HPGe_move),HPGe_dead_layer_outer_log,"HPGe_dead_layer_phys",
 			Shell_Galactic_log,false,0);
 	G4VisAttributes* HPGe_dead_layer_logVisAtt
 		= new G4VisAttributes(G4Colour(8.0,6.0,1.20));
-	HPGe_dead_layer_log->SetVisAttributes(HPGe_dead_layer_logVisAtt);
+	HPGe_dead_layer_outer_log->SetVisAttributes(HPGe_dead_layer_logVisAtt);
 
-	//HPGe detector
-	G4double HPGe_detector_rMax = HPGe_dead_layer_rMax - HPGe_dead_layer_Thickness;
-	G4double HPGe_detector_Tubs_dz = HPGe_dead_layer_Tubs_dz - HPGe_dead_layer_Thickness;
+	//Active HPGe Crystal
+	G4double HPGe_detector_rMax = HPGe_dead_layer_rMax - HPGe_dead_layer_outer_Thickness;
+	G4double HPGe_detector_Tubs_dz = HPGe_dead_layer_outer_dz- HPGe_dead_layer_outer_Thickness;
 	//HPGe_detector_Ge = nist->FindOrBuildMaterial("G4_Ge");
 	//G4double HPGe_move = -30.45 *mm;
 
-	G4VSolid * HPGe_detector_tubs
-		= new G4Tubs("HPGe_detector_tubs",Tubs_rmin,HPGe_detector_rMax,HPGe_detector_Tubs_dz,
+	G4VSolid *ActiveHPGeCrystal_tubs
+		= new G4Tubs("ActiveHPGeCrystal_tubs",Tubs_rmin,HPGe_detector_rMax,HPGe_detector_Tubs_dz,
 				Tubs_sphi,Tubs_dphi);
-	G4LogicalVolume * HPGe_detector_log
-		= new G4LogicalVolume(HPGe_detector_tubs,HPGe_detector_Ge,"HPGe_detector",0,0,0);
+	G4LogicalVolume *ActiveHPGeCrystal_log
+		= new G4LogicalVolume(ActiveHPGeCrystal_tubs,HPGe_detector_Ge,"HPGeDetector",0,0,0);
 	// G4VPhysicalVolume * tracker_phys =
-	new G4PVPlacement(0,G4ThreeVector(0. ,0. ,0.),HPGe_detector_log,"HPGe_detector_phys",
-			HPGe_dead_layer_log,false,0);
+	new G4PVPlacement(0,G4ThreeVector(0. ,0. ,0.),ActiveHPGeCrystal_log,"HPGe_detector_phys",
+			HPGe_dead_layer_outer_log,false,0);
 	G4VisAttributes* HPGe_detector_logVisAtt
 		= new G4VisAttributes(G4Colour(8.0,5.0,1.20));
 	HPGe_detector_logVisAtt->G4VisAttributes::SetForceSolid(true);
-	delete  HPGe_detector_log->GetVisAttributes();
-	HPGe_detector_log->SetVisAttributes(HPGe_detector_logVisAtt);
+	delete  ActiveHPGeCrystal_log->GetVisAttributes();
+	ActiveHPGeCrystal_log->SetVisAttributes(HPGe_detector_logVisAtt);
+	ActiveHPGeCrystal_log->SetVisAttributes(G4VisAttributes::Invisible);
 
 	//HPGe detector inner dead_layer
-	G4double HPGe_inner_dead_layer_thickness = 0.3*um;
-	G4double HPGe_inner_dead_layer_rMax = 0.5 * 10.8*mm + HPGe_inner_dead_layer_thickness;
-	G4double HPGe_inner_dead_layer_Tubs_dz = 0.5*27.80*mm + HPGe_inner_dead_layer_thickness;
-	G4double HPGe_inner_dead_layer_move = HPGe_dead_layer_Tubs_dz - HPGe_inner_dead_layer_Tubs_dz;
+	G4double GeDeadLayerInnerThickness = 0.3*um;
+	G4double GeDeadLayerInnerRadius= 0.5* 10.8 *mm;
+	G4double GeDeadLayerInnerDepth= 27.80 *mm;
+	G4double HPGe_inner_dead_layer_rMax = GeDeadLayerInnerRadius+ GeDeadLayerInnerThickness;
+	G4double HPGe_inner_dead_layer_Tubs_dz = 0.5* GeDeadLayerInnerDepth+ 0.5 * GeDeadLayerInnerThickness;
+	G4double HPGe_inner_dead_layer_move = HPGe_dead_layer_outer_dz - HPGe_inner_dead_layer_Tubs_dz;
 
 	G4VSolid * HPGe_inner_dead_layer_tubs
 		= new G4Tubs("HPGe_inner_dead_layer_tubs",Tubs_rmin,HPGe_inner_dead_layer_rMax,HPGe_inner_dead_layer_Tubs_dz,
@@ -343,15 +358,16 @@ G4VPhysicalVolume*   DetectorConstruction::ConstructHPGeDetector()
 		= new G4LogicalVolume(HPGe_inner_dead_layer_tubs,HPGe_detector_Ge,"HPGe_inner_dead_layer_log",0,0,0);
 	// G4VPhysicalVolume * tracker_phys =
 	new G4PVPlacement(0,G4ThreeVector(0. ,0. ,HPGe_inner_dead_layer_move),HPGe_inner_dead_layer_log,"HPGe_inner_dead_layer_phys",
-			HPGe_dead_layer_log,false,0);
+			HPGe_dead_layer_outer_log,false,0);
 	G4VisAttributes* HPGe_inner_dead_layer_logVisAtt
 		= new G4VisAttributes(G4Colour(3.0,6.0,1.20));
 	HPGe_inner_dead_layer_log->SetVisAttributes(HPGe_inner_dead_layer_logVisAtt);
+	HPGe_inner_dead_layer_log->SetVisAttributes(G4VisAttributes::Invisible);
 
 	//HPGe detector inner Cu
-	G4double HPGe_inner_tubs_Cu_rMax = HPGe_inner_dead_layer_rMax -  HPGe_inner_dead_layer_thickness;
-	G4double HPGe_inner_tubs_Cu_dz = HPGe_inner_dead_layer_Tubs_dz -  HPGe_inner_dead_layer_thickness;
-	G4double HPGe_inner_tubs_Cu_move = HPGe_dead_layer_Tubs_dz - HPGe_inner_dead_layer_Tubs_dz;
+	G4double HPGe_inner_tubs_Cu_rMax = GeDeadLayerInnerRadius;
+	G4double HPGe_inner_tubs_Cu_dz = 0.5 * GeDeadLayerInnerDepth;
+	G4double HPGe_inner_tubs_Cu_move = HPGe_dead_layer_outer_dz - HPGe_inner_tubs_Cu_dz;
 	G4Material* Mat_Cu = nist->FindOrBuildMaterial("G4_Cu");
 
 	G4VSolid * HPGe_inner_tubs_Cu
@@ -361,9 +377,9 @@ G4VPhysicalVolume*   DetectorConstruction::ConstructHPGeDetector()
 		= new G4LogicalVolume(HPGe_inner_tubs_Cu,Mat_Cu,"HPGe_inner_tubs_Cu_tubs_log",0,0,0);
 	// G4VPhysicalVolume * tracker_phys =
 	new G4PVPlacement(0,G4ThreeVector(0. ,0. ,HPGe_inner_tubs_Cu_move),HPGe_inner_tubs_Cu_log,"HPGe_inner_tubs_Cu_tubs_phys",
-			HPGe_dead_layer_log,false,0);
+			HPGe_dead_layer_outer_log,false,0);
 	G4VisAttributes* HPGe_inner_tubs_Cu_logVisAtt
-		= new G4VisAttributes(G4Colour(4.0,5.0,3.20));
+		= new G4VisAttributes(G4Colour(2.0,5.0,1.00));
 	HPGe_inner_tubs_Cu_logVisAtt->G4VisAttributes::SetForceSolid(true);
 	delete  HPGe_inner_tubs_Cu_log->GetVisAttributes();
 	HPGe_inner_tubs_Cu_log->SetVisAttributes(HPGe_inner_tubs_Cu_logVisAtt);
@@ -379,17 +395,18 @@ G4VPhysicalVolume*   DetectorConstruction::ConstructHPGeDetector()
 	//G4double maxStep = HPGe_detector_Tubs_dz;
 	//stepLimit = new G4UserLimits(maxStep);
 	//HPGe_detector_log->SetUserLimits(stepLimit);
+
 	// Set additional contraints on the track, with G4UserSpecialCuts
 	//
 	// G4double maxLength = 2*fTrackerLength, maxTime = 0.1*ns, minEkin = 10*MeV;
 	// logicTracker->SetUserLimits(new G4UserLimits(maxStep,maxLength,maxTime,
 	//                                               minEkin));
-	return physiWorldHPGe;
+//	return physiWorldHPGe;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void   DetectorConstruction::DefineMaterials()
+void  DetectorConstruction::DefineMaterials()
 {
 	// Lead material defined using NIST Manager
 	G4NistManager* nistManager = G4NistManager::Instance();
@@ -430,7 +447,7 @@ void DetectorConstruction::ConstructSDandField()
 	   primitive ->SetFilter(charged);
 	   absDetector->RegisterPrimitive(primitive);  
 	   */
-	SetSensitiveDetector("HPGe_detector",HPGeDetector);
+	SetSensitiveDetector("HPGeDetector",HPGeDetector);
 
 	// 
 	// Magnetic field

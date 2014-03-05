@@ -1,9 +1,9 @@
 ##Eu-152
 
-/control/verbose 1
-/run/verbose 1
-/event/verbose 0
-/tracking/verbose 0
+#/control/verbose 1
+#/run/verbose 1
+#/event/verbose 0
+#/tracking/verbose 0
 
 #gps set
 #/gps/energy 1.332 MeV
