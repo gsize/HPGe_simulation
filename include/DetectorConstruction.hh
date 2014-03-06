@@ -50,38 +50,38 @@ class G4UserLimits;
 
 class   DetectorConstruction : public G4VUserDetectorConstruction
 {
-  public:
+	public:
 
-       DetectorConstruction();
-    ~  DetectorConstruction();
+		DetectorConstruction();
+		~  DetectorConstruction();
 
-  public:
+	public:
 
-     G4VPhysicalVolume* Construct();
+		G4VPhysicalVolume* Construct();
 
-	virtual void ConstructSDandField();
+		virtual void ConstructSDandField();
 
-  private:
-      void DefineMaterials();
-      void ConstructWorld();
-     void ConstructPbShield();
-     void ConstructHPGeDetector();
-  private:
-// data members
-    //
-     G4Box*             solidWorld;    // pointer to the solid envelope
-     G4LogicalVolume*   logicWorld;    // pointer to the logical envelope
-     G4VPhysicalVolume* physiWorld;    // pointer to the physical envelope
-    G4UserLimits* stepLimit;             // pointer to user step limits
-     G4Material* Shield_Fe;
-     G4Material* Shield_Cu;
-     G4Material* Shield_Sn;
-     G4Material* Shield_Pb;
-     G4Material* Shield_Air;
-     G4Material* HPGe_detector_Ge;
+	private:
+		void DefineMaterials();
+		void ConstructWorld();
+		void ConstructPbShield();
+		void ConstructHPGeDetector();
+	private:
+		// data members
+		//
+		G4Box*             solidWorld;    // pointer to the solid envelope
+		G4LogicalVolume*   logicWorld;    // pointer to the logical envelope
+		G4VPhysicalVolume* physiWorld;    // pointer to the physical envelope
+		G4UserLimits* stepLimit;             // pointer to user step limits
+		G4Material* Shield_Fe;
+		G4Material* Shield_Cu;
+		G4Material* Shield_Sn;
+		G4Material* Shield_Pb;
+		G4Material* Shield_Air;
+		G4Material* HPGe_detector_Ge;
 
-    static G4ThreadLocal G4GlobalMagFieldMessenger*  fMagFieldMessenger; 
-                            // magnetic field messenger
+		static G4ThreadLocal G4GlobalMagFieldMessenger*  fMagFieldMessenger; 
+		// magnetic field messenger
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
