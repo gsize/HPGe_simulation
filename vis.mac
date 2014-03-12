@@ -82,7 +82,7 @@
 /gps/particle gamma
 
 /gps/pos/type Point
-/gps/position 0. 0. 80. mm
+/gps/position 0. 0. 0. mm
 /gps/pos/type Point
 #/gps/position 0. 0. -15. mm
 /gps/ang/type iso

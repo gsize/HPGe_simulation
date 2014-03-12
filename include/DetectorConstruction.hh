@@ -72,13 +72,15 @@ class   DetectorConstruction : public G4VUserDetectorConstruction
 		G4Box*             solidWorld;    // pointer to the solid envelope
 		G4LogicalVolume*   logicWorld;    // pointer to the logical envelope
 		G4VPhysicalVolume* physiWorld;    // pointer to the physical envelope
+		G4LogicalVolume*   logicDetector;    // pointer to the logical detector 
 		G4UserLimits* stepLimit;             // pointer to user step limits
+		
 		G4Material* Shield_Fe;
 		G4Material* Shield_Cu;
 		G4Material* Shield_Sn;
 		G4Material* Shield_Pb;
 		G4Material* Shield_Air;
-		G4Material* HPGe_detector_Ge;
+		G4Material* GeCrystal;
 
 		static G4ThreadLocal G4GlobalMagFieldMessenger*  fMagFieldMessenger; 
 		// magnetic field messenger
