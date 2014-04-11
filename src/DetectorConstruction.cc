@@ -75,6 +75,7 @@ G4GlobalMagFieldMessenger* DetectorConstruction::fMagFieldMessenger = 0;
 	,  logicWorld(0)
 	,  physiWorld(0)
 	,  stepLimit(0)
+	,fCheckOverlaps(true)
 {
 
 }
@@ -135,7 +136,8 @@ void DetectorConstruction::ConstructWorld()
 			"PhysiWorld",         // its name
 			0,               // its mother  volume
 			false,           // no boolean operations
-			0);              // copy number
+			0,              // copy number
+			fCheckOverlaps);
 //	return physiWorld;
 }
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -165,7 +167,7 @@ void   DetectorConstruction::ConstructPbShield()
 
 //	G4VPhysicalVolume * physiWorldPbShield =
 		new G4PVPlacement(0,G4ThreeVector(),Shield_Fe_log,"Shield_Fe_phys",
-				logicWorld,false,0);
+				logicWorld,false,0,fCheckOverlaps);
 	G4VisAttributes* Shield_Fe_logVisAtt
 		= new G4VisAttributes(G4Colour(1.0,0.0,1.0));
 	Shield_Fe_log->SetVisAttributes(Shield_Fe_logVisAtt);
@@ -181,7 +183,7 @@ void   DetectorConstruction::ConstructPbShield()
 		= new G4LogicalVolume(Shield_Pb_tubs,Shield_Pb,"Shield_Pb_log",0,0,0);
 	// G4VPhysicalVolume * tracker_phys =
 	new G4PVPlacement(0,G4ThreeVector(),Shield_Pb_log,"Shield_Pb_phys",
-			Shield_Fe_log,false,0);
+			Shield_Fe_log,false,0,fCheckOverlaps);
 	G4VisAttributes* Shield_Pb_logVisAtt
 		= new G4VisAttributes(G4Colour(1.0,0.0,0.50));
 	Shield_Pb_log->SetVisAttributes(Shield_Pb_logVisAtt);
@@ -198,7 +200,7 @@ void   DetectorConstruction::ConstructPbShield()
 		= new G4LogicalVolume(Shield_Sn_tubs,Shield_Sn,"Shield_Sn_log",0,0,0);
 	// G4VPhysicalVolume * tracker_phys =
 	new G4PVPlacement(0,G4ThreeVector(),Shield_Sn_log,"Shield_Sn_phys",
-			Shield_Fe_log,false,0);
+			Shield_Fe_log,false,0,fCheckOverlaps);
 	//  G4VisAttributes* Shield_Sn_logVisAtt
 	//    = new G4VisAttributes(G4Colour(1.0,0.0,0.30));
 	//  Shield_Sn_log->SetVisAttributes(Shield_Sn_logVisAtt);
@@ -215,7 +217,7 @@ void   DetectorConstruction::ConstructPbShield()
 		= new G4LogicalVolume(Shield_Cu_tubs,Shield_Cu,"Shield_Cu_log",0,0,0);
 	// G4VPhysicalVolume * tracker_phys =
 	new G4PVPlacement(0,G4ThreeVector(),Shield_Cu_log,"Shield_Cu_phys",
-			Shield_Fe_log,false,0);
+			Shield_Fe_log,false,0,fCheckOverlaps);
 	//  G4VisAttributes* Shield_Cu_logVisAtt
 	//    = new G4VisAttributes(G4Colour(1.0,0.50,0.60));
 	//  Shield_Cu_log->SetVisAttributes(Shield_Cu_logVisAtt);
@@ -232,7 +234,7 @@ void   DetectorConstruction::ConstructPbShield()
 		= new G4LogicalVolume(Shield_Air_tubs,Shield_Air,"Shield_Air",0,0,0);
 	// G4VPhysicalVolume * tracker_phys =
 	new G4PVPlacement(0,G4ThreeVector(),Shield_Air_log,"Shield_Air_phys",
-			Shield_Fe_log,false,0);
+			Shield_Fe_log,false,0,fCheckOverlaps);
 	G4VisAttributes* Shield_Air_logVisAtt
 		= new G4VisAttributes(G4Colour(1.0,0.3,1.0));
 	Shield_Air_log->SetVisAttributes(Shield_Air_logVisAtt);
@@ -270,7 +272,7 @@ void   DetectorConstruction::ConstructHPGeDetector()
 		= new G4LogicalVolume(Shell_Al_tubs,Shell_Al,"Shell_Al_log",0,0,0);
 	//G4VPhysicalVolume * physiWorldHPGe =
 		new G4PVPlacement(0,G4ThreeVector(0.,0.,detector_move_len),Shell_Al_log,"Detector Shell Al phys",
-				logicDetector/*logicWorld*/,false,0);
+				logicDetector/*logicWorld*/,false,0,fCheckOverlaps);
 	G4VisAttributes* Shell_Al_logVisAtt
 		= new G4VisAttributes(G4Colour(0.40,0.0,0.70));
 	Shell_Al_log->SetVisAttributes(Shell_Al_logVisAtt);
@@ -288,7 +290,7 @@ void   DetectorConstruction::ConstructHPGeDetector()
 		= new G4LogicalVolume(Shell_Galactic_tubs,Shell_Galactic,"Shell_Galactic_log",0,0,0);
 	// G4VPhysicalVolume * tracker_phys =
 	new G4PVPlacement(0,G4ThreeVector(0.,0.,0.),Shell_Galactic_log,"Shell Galactic phys",
-			Shell_Al_log,false,0);
+			Shell_Al_log,false,0,fCheckOverlaps);
 	//  G4VisAttributes* Shell_Galactic_logVisAtt
 	//    = new G4VisAttributes(G4Colour(0.3,0.7,1.0));
 	//  Shell_Galactic_log->SetVisAttributes(Shell_Galactic_logVisAtt);
@@ -306,7 +308,7 @@ void   DetectorConstruction::ConstructHPGeDetector()
 		= new G4LogicalVolume(HPGe_dead_layer_outer,GeCrystal,"HPGe_dead_layer_log",0,0,0);
 	// G4VPhysicalVolume * tracker_phys =
 	new G4PVPlacement(0,G4ThreeVector(0. ,0. ,HPGe_move),HPGe_dead_layer_outer_log,"HPGe_dead_layer_phys",
-			Shell_Galactic_log,false,0);
+			Shell_Galactic_log,false,0,fCheckOverlaps);
 	G4VisAttributes* HPGe_dead_layer_logVisAtt
 		= new G4VisAttributes(G4Colour(8.0,6.0,1.20));
 	HPGe_dead_layer_outer_log->SetVisAttributes(HPGe_dead_layer_logVisAtt);
@@ -324,7 +326,7 @@ void   DetectorConstruction::ConstructHPGeDetector()
 		= new G4LogicalVolume(ActiveHPGeCrystal_tubs,GeCrystal,"HPGeDetector",0,0,0);
 	// G4VPhysicalVolume * tracker_phys =
 	new G4PVPlacement(0,G4ThreeVector(0. ,0. ,0.),ActiveHPGeCrystal_log,"HPGe_detector_phys",
-			HPGe_dead_layer_outer_log,false,0);
+			HPGe_dead_layer_outer_log,false,0,fCheckOverlaps);
 	G4VisAttributes* HPGe_detector_logVisAtt
 		= new G4VisAttributes(G4Colour(8.0,5.0,1.20));
 	HPGe_detector_logVisAtt->G4VisAttributes::SetForceSolid(true);
@@ -347,7 +349,7 @@ void   DetectorConstruction::ConstructHPGeDetector()
 		= new G4LogicalVolume(HPGe_inner_dead_layer_tubs,GeCrystal,"HPGe_inner_dead_layer_log",0,0,0);
 	// G4VPhysicalVolume * tracker_phys =
 	new G4PVPlacement(0,G4ThreeVector(0. ,0. ,HPGe_inner_dead_layer_move),HPGe_inner_dead_layer_log,"HPGe_inner_dead_layer_phys",
-			HPGe_dead_layer_outer_log,false,0);
+			HPGe_dead_layer_outer_log,false,0,fCheckOverlaps);
 	G4VisAttributes* HPGe_inner_dead_layer_logVisAtt
 		= new G4VisAttributes(G4Colour(3.0,6.0,1.20));
 	HPGe_inner_dead_layer_log->SetVisAttributes(HPGe_inner_dead_layer_logVisAtt);
@@ -366,7 +368,7 @@ void   DetectorConstruction::ConstructHPGeDetector()
 		= new G4LogicalVolume(HPGe_inner_tubs_Cu,Mat_Cu,"HPGe_inner_tubs_Cu_tubs_log",0,0,0);
 	// G4VPhysicalVolume * tracker_phys =
 	new G4PVPlacement(0,G4ThreeVector(0. ,0. ,HPGe_inner_tubs_Cu_move),HPGe_inner_tubs_Cu_log,"HPGe_inner_tubs_Cu_tubs_phys",
-			HPGe_dead_layer_outer_log,false,0);
+			HPGe_dead_layer_outer_log,false,0,fCheckOverlaps);
 	G4VisAttributes* HPGe_inner_tubs_Cu_logVisAtt
 		= new G4VisAttributes(G4Colour(2.0,5.0,1.00));
 	HPGe_inner_tubs_Cu_logVisAtt->G4VisAttributes::SetForceSolid(true);

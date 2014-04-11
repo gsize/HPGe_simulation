@@ -50,29 +50,33 @@ const G4int MaxNtCol = 2;
 
 class HistoManager
 {
-  public:
+	public:
 
-    HistoManager();
-   ~HistoManager();
+		HistoManager();
+		~HistoManager();
 
-    void book();
-    void save();
+		void Book();
+		void Save();
 
-    void FillHisto(G4int id, G4double e, G4double weight = 1.0);
-    void Normalize(G4int id, G4double fac);    
+		void OpenFile();
+		void FillHisto(G4int id, G4double e, G4double weight = 1.0);
+		void FillNtuple(int ih ,int NtColID ,G4double energy);
 
-    void FillNtuple(int ih ,int NtColID ,G4double energy);
-    
-    void PrintStatistic();        
+		void FillSourceData(G4double energy);
+		void FillSDData(G4double energy);
 
-  private:
 
-    G4String      fileName[2];
-    G4bool        factoryOn;    
+		void Normalize(G4int id, G4double fac);    
+		void PrintStatistic();        
 
-    G4int         fHistId[MaxHisto];
-    G4AnaH1*      fHistPt[MaxHisto];
-    G4int         fNtColId[MaxNtCol];
+	private:
+
+		G4String      fileName;
+		G4bool        factoryOn;    
+
+		G4int         fHistId[MaxHisto];
+		G4AnaH1*      fHistPt[MaxHisto];
+		G4int         fNtColId[MaxNtCol];
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

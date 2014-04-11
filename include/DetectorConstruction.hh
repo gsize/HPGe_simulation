@@ -82,6 +82,8 @@ class   DetectorConstruction : public G4VUserDetectorConstruction
 		G4Material* Shield_Air;
 		G4Material* GeCrystal;
 
+		G4bool fCheckOverlaps;
+
 		static G4ThreadLocal G4GlobalMagFieldMessenger*  fMagFieldMessenger; 
 		// magnetic field messenger
 };

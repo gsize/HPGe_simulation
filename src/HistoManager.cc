@@ -39,10 +39,9 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 HistoManager::HistoManager()
+	:fileName("HPGe_data")
+	 ,factoryOn(false)
 {
-	fileName[0] = "HPGe_data";
-	factoryOn = false;
-
 	// histograms
 	for (G4int k=0; k<MaxHisto; k++) {
 		fHistId[k] = 0;
@@ -52,42 +51,34 @@ HistoManager::HistoManager()
 	for (G4int k=0; k<MaxNtCol; k++) {
 		fNtColId[k] = 0;
 	}  
+
+	Book();
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 HistoManager::~HistoManager()
 { 
-	//delete G4AnalysisManager::Instance();
+	delete G4AnalysisManager::Instance();
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void HistoManager::book()
+void HistoManager::Book()
 {
 	// Create or get analysis manager
 	// The choice of analysis technology is done via selection of a namespace
 	// in HistoManager.hh
 	G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
-	analysisManager->SetVerboseLevel(2);
+	analysisManager->SetVerboseLevel(1);
 	//analysisManager->SetActivation(true);   //enable inactivation of histograms
-	G4String extension = analysisManager->GetFileType();
-	fileName[1] = fileName[0] + "." + extension;
+	G4cout << "Using"<< analysisManager->GetFileType() << G4endl;
+	analysisManager->SetFileName(fileName);
 
 	// Create directories 
 	analysisManager->SetHistoDirectoryName("histo");
 	analysisManager->SetNtupleDirectoryName("ntuple");
 
-	// Open an output file
-	//
-//	if ( analysisManager->IsActive() ) {
-		G4bool fileOpen = analysisManager->OpenFile(fileName[0]);
-		if (!fileOpen) {
-			G4cout << "\n---> HistoManager::book(): cannot open " << fileName[1] 
-				<< G4endl;
-			return;
-		}
-//	}
 	// create selected histograms
 	//
 	analysisManager->SetFirstHistoId(1);
@@ -109,23 +100,45 @@ void HistoManager::book()
 	analysisManager->CreateNtuple("102", "HPGe");
 	fNtColId[1] = analysisManager->CreateNtupleDColumn("Edep_HPGe");
 	analysisManager->FinishNtuple();
-	
-	factoryOn = true;       
-	G4cout << "\n----> Histogram Tree is opened in " << fileName[1] << G4endl;
+
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void HistoManager::save()
+
+void HistoManager::OpenFile()
+{
+	// Create or get analysis manager
+	// The choice of analysis technology is done via selection of a namespace
+	// in HistoManager.hh
+	G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
+	fileName = 	analysisManager->GetFileName();
+	// Open an output file
+	//
+	//	if ( analysisManager->IsActive() ) {
+	G4bool fileOpen = analysisManager->OpenFile();
+	if (!fileOpen) {
+		G4cout << "\n---> HistoManager::OpenFile(): cannot open " << fileName 
+			<< G4endl;
+		return;
+	}
+	//	}
+
+	factoryOn = true;       
+	G4cout << "\n----> Histogram Tree is opened in " << fileName << G4endl;
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+void HistoManager::Save()
 {
 	if (factoryOn) {
 		G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
-	//	if ( analysisManager->IsActive() ) {    
-			analysisManager->Write();
-			analysisManager->CloseFile();  
-			G4cout << "\n----> Histogram Tree is saved in " << fileName[1] << G4endl;
-	//	}
-		delete G4AnalysisManager::Instance();
+		//	if ( analysisManager->IsActive() ) {    
+		analysisManager->Write();
+		analysisManager->CloseFile();  
+		G4cout << "\n----> Histogram Tree is saved in " << fileName << G4endl;
+		//	}
 		factoryOn = false;
 	}                    
 }
@@ -153,7 +166,7 @@ void HistoManager::FillHisto(G4int ih, G4double e, G4double weight)
 		return;
 	}
 
-//	G4cout<<ih<<" histo:"<<fHistId[ih]<<" engry:"<< e <<G4endl;
+	//	G4cout<<ih<<" histo:"<<fHistId[ih]<<" engry:"<< e <<G4endl;
 	G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
 	if (analysisManager) analysisManager->FillH1(ih, e, weight);
 }
@@ -162,12 +175,25 @@ void HistoManager::FillHisto(G4int ih, G4double e, G4double weight)
 
 void HistoManager::FillNtuple(int ih ,int NtColID,G4double energy)
 {                
-//	G4cout<<ih<<" Ntuple:"<<fNtColId[NtColID]<<G4endl;
+	//	G4cout<<ih<<" Ntuple:"<<fNtColId[NtColID]<<G4endl;
 	G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
 	analysisManager->FillNtupleDColumn(ih,fNtColId[NtColID], energy);
 	analysisManager->AddNtupleRow(ih);  
 }  
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
+void HistoManager::FillSourceData(G4double energy)
+{
+	this -> FillHisto(1,energy);
+	this -> FillNtuple(1,0,energy);
+}
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+void HistoManager::FillSDData(G4double energy)
+{
+	this -> FillHisto(2,energy);
+	this -> FillNtuple(2,1,energy);
+}
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void HistoManager::PrintStatistic()

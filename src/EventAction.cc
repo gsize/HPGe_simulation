@@ -89,8 +89,7 @@ void   EventAction::EndOfEventAction(const G4Event* event)
 	G4double primary_energy = event->GetPrimaryVertex()->GetPrimary()->GetTotalEnergy();
 //	if(event_id < 50 )
 //		G4cout << "PrimaryParticle Energy :" << primary_energy<<G4endl;
-	fHistManager->FillHisto(1,primary_energy);
-	fHistManager->FillNtuple(1,0,primary_energy);
+	fHistManager->FillSourceData(primary_energy);
 
 	// Get hist collections IDs
 	if ( fHPGeEdepHCID == -1 ) {
@@ -104,8 +103,7 @@ void   EventAction::EndOfEventAction(const G4Event* event)
 		// fill histograms
 		//
 		if(HPGeEdep > 1.*keV) {
-		fHistManager->FillHisto(2,HPGeEdep);
-		fHistManager->FillNtuple(2,1,HPGeEdep);
+		fHistManager->FillSDData(HPGeEdep);
 	}
 	//print per event (modulo n)
 	//

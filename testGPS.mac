@@ -8,4 +8,10 @@
 /gps/direction 0. 0. 1. 
 #/gps/ang/type iso
 
-/run/beamOn 100001
+/run/beamOn 10001
+
+
+/analysis/setFileName test_data
+
+/run/beamOn 3000
+

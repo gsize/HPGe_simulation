@@ -42,7 +42,8 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
   RunAction::  RunAction(HistoManager *histo)
-:fHistoManager(histo)
+:G4UserRunAction(),
+	fHistoManager(histo)
 {
  //pMessenger = new RunMessenger(this);
    // set an HistoManager
@@ -52,13 +53,14 @@
 
   // set printing event number per each event
   G4RunManager::GetRunManager()->SetPrintProgress(1);    
+ //fHistoManager->book();
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
   RunAction::~  RunAction()
 {
-//delete fHistoManager;
+	delete fHistoManager;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -67,7 +69,7 @@ void   RunAction::BeginOfRunAction(const G4Run* aRun)
 {
   G4cout << "### Run " << aRun->GetRunID() << " start." << G4endl;
   
- fHistoManager->book();
+ fHistoManager->OpenFile();
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -80,7 +82,7 @@ void   RunAction::EndOfRunAction(const G4Run* aRun)
   //save histograms
   //
   //histoManager->PrintStatistic();
-  fHistoManager->save();   
+  fHistoManager->Save();   
 
 }
 

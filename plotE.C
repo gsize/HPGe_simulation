@@ -248,7 +248,7 @@ Int_t read_data(TString file_name)
 	return 1;
 }
 
-void plotE(TString file_name="HPGe_data")
+void plotE(TString file_name="test_data")
 {
 	if(0)
 		plot_effi_std();
