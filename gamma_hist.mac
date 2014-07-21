@@ -74,4 +74,8 @@
 #/run/numberOfThreads 3
 #/run/initialize
 
-/run/beamOn 100000
+/analysis/setFileName output_point_00mm
+/run/beamOn 1000001
+
+
+#/control/execute testGPS.mac

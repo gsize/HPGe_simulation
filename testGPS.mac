@@ -1,17 +1,35 @@
 
-#gps set
-/gps/energy 1.332 MeV
-/gps/particle gamma
-
-/gps/pos/type Point
-/gps/position 0. 0. 0. mm
-/gps/direction 0. 0. 1. 
+######gps set
+#/gps/energy 1.332 MeV
+#/gps/particle gamma
+#/gps/pos/type Point
+#/gps/position 0. 0. 0. mm
+#/gps/direction 0. 0. 1. 
 #/gps/ang/type iso
 
-/run/beamOn 10001
+/gps/pos/type Plane
+/gps/pos/shape Circle
+/gps/pos/radius 5 mm
 
+/analysis/setFileName output_plane_circle_5mm
+/run/beamOn 1000001
+/gps/pos/radius 10 mm
 
-/analysis/setFileName test_data
+/analysis/setFileName output_plane_circle_10mm
+/run/beamOn 1000001
 
-/run/beamOn 3000
+/gps/pos/radius 15 mm
+/analysis/setFileName output_plane_circle_15mm
+/run/beamOn 1000001
 
+/gps/pos/radius 20 mm
+/analysis/setFileName output_plane_circle_20mm
+/run/beamOn 1000001
+
+/gps/pos/radius 30 mm
+/analysis/setFileName output_plane_circle_30mm
+/run/beamOn 1000001
+
+/gps/pos/radius 50 mm
+/analysis/setFileName output_plane_circle_50mm
+/run/beamOn 1000001
