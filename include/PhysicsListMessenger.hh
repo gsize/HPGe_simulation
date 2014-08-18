@@ -23,61 +23,55 @@
 // * acceptance of all terms of the Geant4 Software license.          *
 // ********************************************************************
 //
+/// \file hadronic/Hadr01/include/PhysicsListMessenger.hh
+/// \brief Definition of the PhysicsListMessenger class
 //
-// $Id:   PhysicsList.hh,v 1.12 2008-09-22 16:41:20 maire Exp $
-// GEANT4 tag $Name: not supported by cvs2svn $
 //
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+// $Id: PhysicsListMessenger.hh 68803 2013-04-05 13:59:55Z gcosmo $
+//
+//
+/////////////////////////////////////////////////////////////////////////
+//
+// PhysicsListMessenger
+//
+// Created: 31.01.2006 V.Ivanchenko
+//
+// Modified:
+// 04.06.2006 Adoptation of Hadr01 (V.Ivanchenko)
+//
+////////////////////////////////////////////////////////////////////////
+// 
 
-#ifndef   PhysicsList_h
-#define   PhysicsList_h 1
+#ifndef PhysicsListMessenger_h
+#define PhysicsListMessenger_h 1
 
-#include "G4VModularPhysicsList.hh"
 #include "globals.hh"
+#include "G4UImessenger.hh"
 
-class PhysicsListMessenger;
+class PhysicsList;
+class G4UIdirectory;
+class G4UIcmdWithAString;
+
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-class   PhysicsList: public G4VModularPhysicsList
+class PhysicsListMessenger: public G4UImessenger
 {
-	public:
-		PhysicsList();
-		~  PhysicsList();
-		
-		void SetPhysicsListName(const G4String& name);
-	protected:
-		// Construct particle and physics
-		void ConstructParticle();
-		void ConstructProcess();
-/*
-		// these methods Construct particles
-		void ConstructBosons();
-		void ConstructLeptons();
-		void ConstructMesons();
-		void ConstructBaryons();
-
-		// these methods Construct physics processes and register them
-		void ConstructGeneral();
-		void ConstructEM();
-		void AddStepMax();
-*/
-		void SetCuts();
-	void AddPackage(const G4String& name);
-	
-	protected:
-	/*
-		G4String fEmName;
-		G4VPhysicsConstructor*             emPhysicsList;
-		G4VPhysicsConstructor*             decPhysicsList;
-		*/
-		G4String fPhysicsListName;
-		PhysicsListMessenger* pMessenger;
+public:
+  
+  PhysicsListMessenger(PhysicsList* p = 0);
+  virtual ~PhysicsListMessenger();
+    
+  virtual void SetNewValue(G4UIcommand*, G4String);
+    
+private:
+  
+  PhysicsList* fPhysicsList;
+G4UIdirectory*             physDir;
+  G4UIcmdWithAString* packageListCmd; 
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 #endif
-
 

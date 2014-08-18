@@ -1,3 +1,4 @@
+##计算在80mm架位下，不同直径的面源的探测效率
 
 ######gps set
 #/gps/energy 1.332 MeV
@@ -7,14 +8,15 @@
 #/gps/direction 0. 0. 1. 
 #/gps/ang/type iso
 
+/gps/position 0. 0. 0. mm
 /gps/pos/type Plane
 /gps/pos/shape Circle
-/gps/pos/radius 5 mm
 
+gps/pos/radius 5 mm
 /analysis/setFileName output_plane_circle_5mm
 /run/beamOn 1000001
-/gps/pos/radius 10 mm
 
+/gps/pos/radius 10 mm
 /analysis/setFileName output_plane_circle_10mm
 /run/beamOn 1000001
 

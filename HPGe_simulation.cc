@@ -37,17 +37,12 @@
 #include "G4RunManager.hh"
 #endif
 
-#include "FTFP_BERT.hh"
-#include "QGSP_BERT_HP.hh"
+//#include "FTFP_BERT.hh"
+//#include "QGSP_BERT_HP.hh"
+#include "PhysicsList.hh"
+
 #include "DetectorConstruction.hh"
 #include "ActionInitialization.hh"
-//#include "PhysicsList.hh"
-//#include "PrimaryGeneratorAction.hh"
-//#include "RunAction.hh"
-//#include "EventAction.hh"
-//#include "SteppingAction.hh"
-//#include "SteppingVerbose.hh"
-//#include "HistoManager.hh"
 
 #include "G4UImanager.hh"
 
@@ -83,7 +78,14 @@ int main(int argc,char** argv)
 #ifdef G4MULTITHREADED
   G4int nThreads = 3;
   G4MTRunManager* runManager = new G4MTRunManager;
+  
+    // Number of threads can be defined via 3rd argument
+  if (argc==3) {
+    nThreads = G4UIcommand::ConvertToInt(argv[2]);
+  }
   runManager->SetNumberOfThreads(nThreads);
+  G4cout << "##### Application started for " << runManager->GetNumberOfThreads() 
+         << " threads" << " #####" << G4endl;
 #else
   G4RunManager* runManager = new G4RunManager;
 #endif
@@ -93,7 +95,7 @@ int main(int argc,char** argv)
      DetectorConstruction* detector = new  DetectorConstruction;
     runManager->SetUserInitialization(detector);
     
-      G4VModularPhysicsList* physicsList = new /*QGSP_BERT_HP;//*/FTFP_BERT;
+      G4VModularPhysicsList* physicsList = new PhysicsList();/*QGSP_BERT_HP;//FTFP_BERT;*/
   runManager->SetUserInitialization(physicsList);
 
     ActionInitialization* actionInitialization

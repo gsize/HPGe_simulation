@@ -1,0 +1,33 @@
+## 计算不同架位下点源的效率
+
+######gps set
+#/gps/energy 1.332 MeV
+#/gps/particle gamma
+/gps/pos/type Point
+#/gps/position 0. 0. 0. mm
+#/gps/direction 0. 0. 1. 
+/gps/ang/type iso
+
+/gps/position 0. 0. -80. mm
+/analysis/setFileName output_point_00mm
+/run/beamOn 1000001
+
+/gps/position 0. 0. -40. mm
+/analysis/setFileName output_point_40mm
+/run/beamOn 3000001
+
+/gps/position 0. 0. 0. mm
+/analysis/setFileName output_point_80mm
+/run/beamOn 6000001
+
+/gps/position 0. 0. 40. mm
+/analysis/setFileName output_point_120mm
+/run/beamOn 10000001
+
+/gps/position 0. 0. 80. mm
+/analysis/setFileName output_point_160mm
+/run/beamOn 12000001
+
+/gps/position 0. 0. 120. mm
+/analysis/setFileName output_point_200mm
+/run/beamOn 30000001

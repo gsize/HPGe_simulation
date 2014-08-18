@@ -23,61 +23,61 @@
 // * acceptance of all terms of the Geant4 Software license.          *
 // ********************************************************************
 //
+/// \file hadronic/Hadr01/src/PhysicsListMessenger.cc
+/// \brief Implementation of the PhysicsListMessenger class
 //
-// $Id:   PhysicsList.hh,v 1.12 2008-09-22 16:41:20 maire Exp $
-// GEANT4 tag $Name: not supported by cvs2svn $
 //
+// $Id: PhysicsListMessenger.cc 70761 2013-06-05 12:30:51Z gcosmo $
+//
+//
+/////////////////////////////////////////////////////////////////////////
+//
+// PhysicsListMessenger
+//
+// Created: 31.01.2006 V.Ivanchenko
+//
+// Modified:
+// 04.06.2006 Adoptation of Hadr01 (V.Ivanchenko)
+//
+////////////////////////////////////////////////////////////////////////
+//
+// 
+
+#include "PhysicsListMessenger.hh"
+
+#include "PhysicsList.hh"
+#include "G4UIdirectory.hh"
+#include "G4UIcmdWithAString.hh"
+
+
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+PhysicsListMessenger::PhysicsListMessenger(PhysicsList* pPhys)
+:G4UImessenger(), fPhysicsList(pPhys)
+{   
+physDir = new G4UIdirectory("/phyList/");
+  physDir->SetGuidance("Commands to activate physics models");
+   
+  packageListCmd = new G4UIcmdWithAString("/phyList/addPackage",this);
+  packageListCmd->SetGuidance("Add physics package.");
+  packageListCmd->SetParameterName("phyPackage",false);
+  packageListCmd->AvailableForStates(G4State_PreInit);
+}
+
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#ifndef   PhysicsList_h
-#define   PhysicsList_h 1
-
-#include "G4VModularPhysicsList.hh"
-#include "globals.hh"
-
-class PhysicsListMessenger;
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
-class   PhysicsList: public G4VModularPhysicsList
+PhysicsListMessenger::~PhysicsListMessenger()
 {
-	public:
-		PhysicsList();
-		~  PhysicsList();
-		
-		void SetPhysicsListName(const G4String& name);
-	protected:
-		// Construct particle and physics
-		void ConstructParticle();
-		void ConstructProcess();
-/*
-		// these methods Construct particles
-		void ConstructBosons();
-		void ConstructLeptons();
-		void ConstructMesons();
-		void ConstructBaryons();
-
-		// these methods Construct physics processes and register them
-		void ConstructGeneral();
-		void ConstructEM();
-		void AddStepMax();
-*/
-		void SetCuts();
-	void AddPackage(const G4String& name);
-	
-	protected:
-	/*
-		G4String fEmName;
-		G4VPhysicsConstructor*             emPhysicsList;
-		G4VPhysicsConstructor*             decPhysicsList;
-		*/
-		G4String fPhysicsListName;
-		PhysicsListMessenger* pMessenger;
-};
+  delete packageListCmd;
+  delete physDir;
+}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#endif
+void PhysicsListMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
+{
+if( command == packageListCmd )
+   { fPhysicsList->SetPhysicsListName(newValue);}
+}
 
-
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

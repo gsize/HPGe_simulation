@@ -100,16 +100,16 @@ double eff_fun(double *x,double *par)
 
 void plot_eff_std()
 {
-	TF1 *fun_eff_0=  new TF1("fun_eff",eff_fun,0.039,1.6,6);
-	TF1 *fun_eff_1=  new TF1("fun_eff",eff_fun,0.039,1.6,6);
-	TF1 *fun_eff_2=  new TF1("fun_eff",eff_fun,0.039,1.6,6);
+	TF1 *fun_eff_0=  new TF1("fun_eff_0",eff_fun,0.039,1.6,6);
+	TF1 *fun_eff_1=  new TF1("fun_eff_1",eff_fun,0.039,1.6,6);
+	TF1 *fun_eff_2=  new TF1("fun_eff_2",eff_fun,0.039,1.6,6);
 	fun_eff_0->SetParameters(-0.552,-5.687, 0.434, -0.0404, 0.0013, -0.00003);
 	fun_eff_1->SetParameters(-0.452590,-5.901407, 0.539222 ,-0.059246, 0.002599 ,-0.000048);
 	fun_eff_2->SetParameters(-0.439793, -5.822942, 0.488969, -0.048183, 0.001682 ,-0.000024);
 
-	TCanvas* c_eff = new TCanvas("Canvas_eff", "Canvas_eff");
+	//TCanvas* c_eff = new TCanvas("Canvas_eff", "Canvas_eff");
 	fun_eff_0->SetLineColor(kBlack);
-	fun_eff_0->Draw();
+	fun_eff_0->Draw("SAME");
 	fun_eff_1->SetLineColor(kRed);
 	fun_eff_1->Draw("SAME");
 	fun_eff_2->SetLineColor(kBlue);
@@ -262,7 +262,7 @@ void PlotEfficiency(const std::vector<TString> &fileList,TObjArray *sourceList, 
 	{
 		TH1D *s1 =(TH1D* )sourceList->At(i);
 		TH1D *s2 =(TH1D* )HPGeList->At(i);
-	//	PlotSpectra(fileList[i], s1, s2 );
+		//PlotSpectra(fileList[i], s1, s2 );
 		TGraphErrors *gr = 0;
 		gr = plotEFF_exp(fileList[i],s1,s2);
 		gr->SetMarkerStyle(20+i);
@@ -281,6 +281,9 @@ void PlotEfficiency(const std::vector<TString> &fileList,TObjArray *sourceList, 
 	TCanvas* c4 = new TCanvas("effGr", "  ");
 	mg->Draw("ALP");
 	//pt->Draw();
+	if(1)
+		plot_eff_std();
+	
 	leg->Draw();
 	gPad->SetLogy(1);
 	gPad->SetGridy(1);
@@ -293,12 +296,12 @@ int ReadFile(std::vector<TString> &fileList,TObjArray *sourceList, TObjArray *HP
 	TString dir = gSystem->UnixPathName(gInterpreter->GetCurrentMacroName());
 	dir.ReplaceAll("plotE.C","");
 	dir.ReplaceAll("/./","/");
-	for(int i=0;i<fileList.size();i++)
+	for(int i=0;i<1;i++)  //fileList.size()
 	{
 		TString fname;
 		fname = fileList[i];
-		cout<<fname;
-		TFile *f2= TFile::Open(Form("%sdata/entries10MH1/%s.root",dir.Data(),fname.Data()));
+		//TFile *f2= TFile::Open(Form("%sdata/entries10MH1/%s.root",dir.Data(),fname.Data()));
+		TFile *f2= TFile::Open(Form("%sbuild/%s.root",dir.Data(),fname.Data()));
 		if(!(f2->IsOpen())){
 			cout<<"file: "<<file_name<<" isn't opened!"<<endl;
 			return 0;
@@ -312,7 +315,7 @@ int ReadFile(std::vector<TString> &fileList,TObjArray *sourceList, TObjArray *HP
 		hHPGe->SetDirectory(0);
 		sourceList->Add(hSource);
 		HPGeList->Add(hHPGe);
-		cout<<"Read file success!"<<endl;
+		cout<<"Read file "<<fname<<" success!"<<endl;
 		f2->Close();
 	}
 }
@@ -340,9 +343,9 @@ void plotE()
 	fileList.push_back(fileName);
 
 	ReadFile(fileList,sourceList,HPGeList);
-PlotEfficiency(fileList,sourceList,HPGeList);
-	if(0)
-		plot_eff_std();
+	PlotEfficiency(fileList,sourceList,HPGeList);
+	
+	
 
 	if(0)
 		plot_FWHM();

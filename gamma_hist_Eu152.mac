@@ -10,7 +10,6 @@
 /gps/particle gamma
 
 /gps/pos/type Point
-#/gps/position 0. 0. -15. mm
 /gps/position 0. 0. 0. mm
 /gps/ang/type iso
 
@@ -74,8 +73,8 @@
 #/run/numberOfThreads 3
 #/run/initialize
 
-/analysis/setFileName output_point_00mm
-/run/beamOn 1000001
+#/analysis/setFileName output_point_00mm
+#/run/beamOn 1000001
 
 
-#/control/execute testGPS.mac
+#/control/execute batchSave.mac
