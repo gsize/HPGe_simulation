@@ -93,7 +93,7 @@
 #/run/numberOfThreads 3
 #/run/initialize
 
-/analysis/setFileName output_point_00m
+/analysis/setFileName output_point_00mm
 /run/beamOn 10000001
 
 /control/execute batchSave.mac

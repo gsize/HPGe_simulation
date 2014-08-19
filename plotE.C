@@ -262,7 +262,7 @@ void PlotEfficiency(const std::vector<TString> &fileList,TObjArray *sourceList, 
 	{
 		TH1D *s1 =(TH1D* )sourceList->At(i);
 		TH1D *s2 =(TH1D* )HPGeList->At(i);
-		//PlotSpectra(fileList[i], s1, s2 );
+		PlotSpectra(fileList[i], s1, s2 );
 		TGraphErrors *gr = 0;
 		gr = plotEFF_exp(fileList[i],s1,s2);
 		gr->SetMarkerStyle(20+i);
@@ -296,7 +296,7 @@ int ReadFile(std::vector<TString> &fileList,TObjArray *sourceList, TObjArray *HP
 	TString dir = gSystem->UnixPathName(gInterpreter->GetCurrentMacroName());
 	dir.ReplaceAll("plotE.C","");
 	dir.ReplaceAll("/./","/");
-	for(int i=0;i<1;i++)  //fileList.size()
+	for(int i=0;i<fileList.size();i++) 
 	{
 		TString fname;
 		fname = fileList[i];
@@ -327,9 +327,9 @@ void plotE()
 	TObjArray *HPGeList = new TObjArray();
 
 	TString fileName;
-	fileName = "output_point_00mm";
+	fileName = "output_point_80mm";
 	fileList.push_back(fileName);
-	fileName = "output_plane_circle_5mm";
+	/*fileName = "output_plane_circle_5mm";
 	fileList.push_back(fileName);
 	fileName = "output_plane_circle_10mm";
 	fileList.push_back(fileName);
@@ -341,7 +341,7 @@ void plotE()
 	fileList.push_back(fileName);
 	fileName = "output_plane_circle_50mm";
 	fileList.push_back(fileName);
-
+*/
 	ReadFile(fileList,sourceList,HPGeList);
 	PlotEfficiency(fileList,sourceList,HPGeList);
 	
