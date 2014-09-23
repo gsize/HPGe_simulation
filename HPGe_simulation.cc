@@ -104,7 +104,7 @@ int main(int argc,char** argv)
 
     // Initialize G4 kernel
     //
-    runManager->Initialize();
+    //runManager->Initialize();
 
 #ifdef G4VIS_USE
     G4VisManager* visManager = new G4VisExecutive;

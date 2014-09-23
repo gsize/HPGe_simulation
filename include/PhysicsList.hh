@@ -23,61 +23,60 @@
 // * acceptance of all terms of the Geant4 Software license.          *
 // ********************************************************************
 //
+/// \file electromagnetic/TestEm0/include/PhysicsList.hh
+/// \brief Definition of the PhysicsList class
 //
-// $Id:   PhysicsList.hh,v 1.12 2008-09-22 16:41:20 maire Exp $
-// GEANT4 tag $Name: not supported by cvs2svn $
+//
+// $Id: PhysicsList.hh 66241 2012-12-13 18:34:42Z gunter $
+//
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+//
+// 14.10.02 (V.Ivanchenko) provide modular list on base of old PhysicsList
 //
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#ifndef   PhysicsList_h
-#define   PhysicsList_h 1
+#ifndef PhysicsList_h
+#define PhysicsList_h 1
 
 #include "G4VModularPhysicsList.hh"
 #include "globals.hh"
 
 class PhysicsListMessenger;
+class G4VPhysicsConstructor;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-class   PhysicsList: public G4VModularPhysicsList
+class PhysicsList: public G4VModularPhysicsList
 {
-	public:
-		PhysicsList();
-		~  PhysicsList();
-		
-		void SetPhysicsListName(const G4String& name);
-	protected:
-		// Construct particle and physics
-		void ConstructParticle();
-		void ConstructProcess();
-/*
-		// these methods Construct particles
-		void ConstructBosons();
-		void ConstructLeptons();
-		void ConstructMesons();
-		void ConstructBaryons();
-
-		// these methods Construct physics processes and register them
-		void ConstructGeneral();
-		void ConstructEM();
-		void AddStepMax();
-*/
-		void SetCuts();
-	void AddPackage(const G4String& name);
-	
-	protected:
-	/*
-		G4String fEmName;
-		G4VPhysicsConstructor*             emPhysicsList;
-		G4VPhysicsConstructor*             decPhysicsList;
-		*/
-		G4String fPhysicsListName;
-		PhysicsListMessenger* pMessenger;
+  public:
+    PhysicsList();
+   ~PhysicsList();
+   
+    virtual void ConstructParticle();
+    virtual void ConstructProcess();
+    
+    void AddPhysicsList(const G4String& name);
+    
+    virtual void SetCuts();
+    
+    void SetCutForGamma(G4double);
+    void SetCutForElectron(G4double);
+    void SetCutForPositron(G4double);
+      
+  private:
+    G4double fCutForGamma;
+    G4double fCutForElectron;
+    G4double fCutForPositron;
+    G4double fCurrentDefaultCut;
+    
+    G4VPhysicsConstructor*  fEmPhysicsList;
+    G4String                fEmName;
+    
+    PhysicsListMessenger*   fMessenger;         
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 #endif
-
 

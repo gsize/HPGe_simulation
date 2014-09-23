@@ -301,7 +301,7 @@ int ReadFile(std::vector<TString> &fileList,TObjArray *sourceList, TObjArray *HP
 		TString fname;
 		fname = fileList[i];
 		//TFile *f2= TFile::Open(Form("%sdata/entries10MH1/%s.root",dir.Data(),fname.Data()));
-		TFile *f2= TFile::Open(Form("%sbuild/%s.root",dir.Data(),fname.Data()));
+		TFile *f2= TFile::Open(Form("%sdata/livemore/%s.root",dir.Data(),fname.Data()));
 		if(!(f2->IsOpen())){
 			cout<<"file: "<<file_name<<" isn't opened!"<<endl;
 			return 0;

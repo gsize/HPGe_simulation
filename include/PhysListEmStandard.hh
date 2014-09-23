@@ -23,51 +23,47 @@
 // * acceptance of all terms of the Geant4 Software license.          *
 // ********************************************************************
 //
-/// \file electromagnetic/TestEm0/include/PhysicsListMessenger.hh
-/// \brief Definition of the PhysicsListMessenger class
+/// \file electromagnetic/TestEm0/include/PhysListEmStandard.hh
+/// \brief Definition of the PhysListEmStandard class
 //
-// $Id: PhysicsListMessenger.hh 66241 2012-12-13 18:34:42Z gunter $
+//
+// $Id: PhysListEmStandard.hh 66241 2012-12-13 18:34:42Z gunter $
 //
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#ifndef PhysicsListMessenger_h
-#define PhysicsListMessenger_h 1
+#ifndef PhysListEmStandard_h
+#define PhysListEmStandard_h 1
 
-#include "G4UImessenger.hh"
+#include "G4VPhysicsConstructor.hh"
 #include "globals.hh"
 
-class PhysicsList;
-class G4UIdirectory;
-class G4UIcmdWithADoubleAndUnit;
-class G4UIcmdWithAString;
-
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-class PhysicsListMessenger: public G4UImessenger
+class PhysListEmStandard : public G4VPhysicsConstructor
 {
-  public:
-  
-    PhysicsListMessenger(PhysicsList* );
-   ~PhysicsListMessenger();
+  public: 
+    PhysListEmStandard(const G4String& name = "standard");
+   ~PhysListEmStandard();
 
-    virtual    
-    void SetNewValue(G4UIcommand*, G4String);
-    
-  private:
-  
-    PhysicsList*               fPhysicsList;
-    
-    G4UIdirectory*             fPhysDir;
-    G4UIcmdWithADoubleAndUnit* fGammaCutCmd;
-    G4UIcmdWithADoubleAndUnit* fElectCutCmd;
-    G4UIcmdWithADoubleAndUnit* fProtoCutCmd;    
-    G4UIcmdWithADoubleAndUnit* fAllCutCmd;
-    G4UIcmdWithAString*        fListCmd;
-    
+  public: 
+    // This method is dummy for physics
+    virtual void ConstructParticle() {};
+ 
+    // This method will be invoked in the Construct() method.
+    // each physics process will be instantiated and
+    // registered to the process manager of each particle type 
+    virtual void ConstructProcess();
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 #endif
+
+
+
+
+
+
+
 

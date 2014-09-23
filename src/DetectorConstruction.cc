@@ -267,7 +267,7 @@ void   DetectorConstruction::ConstructHPGeDetector()
 
 	G4double detectorRadius = 0.5 * 76. *mm;
 	G4double detectorLength= 120. *mm;
-	G4double GeCrystalRadius = 0.5 * 60. *mm;
+	G4double GeCrystalRadius = 0.5 * 63. *mm;
 	G4double GeCrystalLength = 44.1 *mm;
 	//shield Al
 	G4double detector_move_len = -140. *mm;// 120. *mm;

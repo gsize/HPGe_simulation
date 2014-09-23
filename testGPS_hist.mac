@@ -1,5 +1,10 @@
 
-/phyList/addPackage FTFP_BERT_PEN
+
+/HPGe_simulation/phys/addPhysics empenelope
+#
+/run/numberOfThreads 3
+/run/initialize
+
 #/gps/verbose 2
 #gps set
 #/gps/energy 1.332 MeV
