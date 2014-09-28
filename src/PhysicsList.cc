@@ -69,10 +69,6 @@ PhysicsList::PhysicsList()
   fEmName = G4String("local");
   fEmPhysicsList = new PhysListEmStandard(fEmName);
   
-  //add new units for cross sections
-  // 
-  new G4UnitDefinition( "mm2/g", "mm2/g","Surface/Mass", mm2/g);
-  new G4UnitDefinition( "um2/mg", "um2/mg","Surface/Mass", um*um/mg);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -80,6 +76,7 @@ PhysicsList::PhysicsList()
 PhysicsList::~PhysicsList()
 {
   delete fMessenger;
+    delete fEmPhysicsList;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -214,6 +211,23 @@ void PhysicsList::ConstructProcess()
      
   emOptions.SetVerbose(0);  
 }
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+#include "G4PhysListFactory.hh"
+void PhysicsList::AddPackage(const G4String& name)
+{
+  G4PhysListFactory factory;
+  G4VModularPhysicsList* phys =factory.GetReferencePhysList(name);
+  G4int i=0;
+  const G4VPhysicsConstructor* elem= phys->GetPhysics(i);
+  G4VPhysicsConstructor* tmp = const_cast<G4VPhysicsConstructor*> (elem);
+  while (elem !=0)
+	{
+	  RegisterPhysics(tmp);
+	  elem= phys->GetPhysics(++i) ;
+	  tmp = const_cast<G4VPhysicsConstructor*> (elem);
+	}
+}
+
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
