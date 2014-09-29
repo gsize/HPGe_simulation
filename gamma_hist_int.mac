@@ -95,7 +95,7 @@
 
 #/gps/hist/inter Log
 
-/analysis/setFileName output_point_00mm
+/analysis/setFileName output_point_80mm
 /run/beamOn 10000001
 
-/control/execute batchSave.mac
+#/control/execute batchSave_point.mac
