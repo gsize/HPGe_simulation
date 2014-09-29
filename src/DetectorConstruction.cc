@@ -273,7 +273,7 @@ void   DetectorConstruction::ConstructHPGeDetector()
 	G4double detector_move_len = -140. *mm;// 120. *mm;
 	G4double Shell_Al_Tubs_rMax =  detectorRadius;
 	G4double Shell_Al_Tubs_dz = 0.5 * detectorLength;
-	G4double Shell_Al_Tubs_Thickness = 1. *mm;
+	G4double Shell_Al_Tubs_Thickness = 1.0 *mm;
 	G4Material* Shell_Al = nist->FindOrBuildMaterial("G4_Al");
 
 	G4VSolid * Shell_Al_tubs
@@ -345,8 +345,8 @@ G4VSolid * CUP_Galactic
 	//HPGe dead_layer outer
 	G4double HPGe_dead_layer_rMax = GeCrystalRadius;
 	G4double HPGe_dead_layer_outer_dz = 0.5 * GeCrystalLength;
-	G4double HPGe_dead_layer_outer_Thickness = 0.7*mm;
-	G4double HPGe_move = CUP_Galactic_Length_dz - HPGe_dead_layer_outer_dz;//-27.95 *mm;
+	G4double HPGe_dead_layer_outer_Thickness = 0.7*mm; //3.4,2.5,0.7mm;
+	G4double HPGe_move = CUP_Galactic_Length_dz - HPGe_dead_layer_outer_dz;
 
 	G4VSolid * HPGe_dead_layer_outer
 		= new G4Tubs("HPGe_dead_layer_outer",Tubs_rmin,HPGe_dead_layer_rMax,HPGe_dead_layer_outer_dz,
