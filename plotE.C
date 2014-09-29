@@ -98,7 +98,12 @@ double eff_fun(double *x,double *par)
 	return (TMath::Exp(eff));
 }
 
-void plot_eff_std()
+void ReadMacfile(TString &macFile)
+{
+
+}
+
+void PlotEffExperiment()
 {
 	TF1 *fun_eff_0=  new TF1("fun_eff_0",eff_fun,0.039,1.6,6);
 	TF1 *fun_eff_1=  new TF1("fun_eff_1",eff_fun,0.039,1.6,6);
@@ -115,11 +120,6 @@ void plot_eff_std()
 		1.085871 , 1.08971  , 1.1120691, 1.2129481,
 		1.299141 , 1.4081   , 1.52811   
 	};
-	for(int i=0;i<23;i++)
-	{
-		double ef = fun_eff_0->Eval(energy_0[i]);
-		printf("%d\t%6.3lf\t%lf\n",i,energy_0[i],ef);
-	}	
 	
 	//TCanvas* c_eff = new TCanvas("Canvas_eff", "Canvas_eff");
 	fun_eff_0->SetLineColor(kBlack);
@@ -130,32 +130,7 @@ void plot_eff_std()
 	fun_eff_2->Draw("SAME");
 }
 
-void reb(TF1 *fun1,TF1 *fun2,int bins, double xMin, double xMax)
-{
-	TCanvas *c1 = new TCanvas("reb","c1",800,1000);
-	c1->Divide(1,2);
-	c1->cd(1);
-
-	fun1->Draw();
-	fun2->Draw("same");
-
-	TH1F *hfun1 = new TH1F("hfun1","fun1",bins,xMin,xMax);
-	TH1F *hfun2 = new TH1F("hfun2","fun2",bins,xMin,xMax);
-	hfun1->Eval(fun1);
-	hfun2->Eval(fun2);
-
-	c1->cd(2);
-	hfun1->DrawCopy();
-	hfun2->Draw("same");
-	//to bypass the warning
-	//hfun2->GetXaxis()->SetLimits(0,5);
-	hfun1->Add(hfun2, -1);
-	//hfun2->GetXaxis()->SetLimits(0,3);
-	hfun1->SetLineColor(kBlue);
-	hfun1->Draw("same");
-}
-
-double get_area(int bin, TH1D *h)
+double GetArea(int bin, TH1D *h)
 {
 	double sum=0;
 	Int_t dn=10;
@@ -174,8 +149,35 @@ double get_area(int bin, TH1D *h)
 	return (sum-(1.*dn*bg/k));
 }
 
+void AnalyzeSpectra(TH1D *h)
+{
+	std::vector<double> peakAddr;
+	std::vector<double> peakArea;
 
-TGraphErrors * plotEFF_exp(const TString &fname,TH1D *hSource,TH1D *hHPGe)
+	TSpectrum *sp = new TSpectrum;
+	Int_t nfound = sp->Search(h,2);
+	Bool_t *fixPos= new Bool_t[nfound];
+	Bool_t *fixAmp= new Bool_t[nfound];
+	Float_t *px = new Float_t[nfound];
+	Float_t *py = new Float_t[nfound];
+
+	printf("Found %d peaks to fit\n",nfound);
+	for(int i=0;i<nfound;i++)
+	{
+		fixPos[i] = kFALSE;
+		fixAmp[i] = kFALSE;
+		px[i] = h->FindBin((sp->GetPositionX())[i]);
+		py[i] = (sp->GetPositionY())[i];
+		printf("%d\t%6.3lf\t%8.3lf\n",i,(sp->GetPositionX())[i],(sp->GetPositionY())[i]);
+	}
+	TSpectrumFit *sFit = new TSpectrumFit(nfound);
+	sFit->SetFitParameters(h->GetMinimumBin(),h->GetMaximumBin()-1,1000,0.1,sFit->kFitOptimChiCounts,sFit->kFitAlphaHalving,sFit->kFitPower2,sFit->kFitTaylorOrderFirst);
+	sFit->SetPeakParameters(2,kFalse,px,fixPos,py,fixAmp );
+	sFit->FitAwmi(h->);
+
+}
+
+TGraphErrors *PlotEffMC(const TString &fname,TH1D *hSource,TH1D *hHPGe)
 {
 	int num = 23;
 	Double_t energy_0[]={
@@ -208,8 +210,8 @@ TGraphErrors * plotEFF_exp(const TString &fname,TH1D *hSource,TH1D *hHPGe)
 		}
 	}
 	for(int i=0;i<num;i++){
-		Int_t btmp=hHPGe->FindBin(energy_0[i]);
-		data_edep[i]=get_area(btmp,hHPGe);
+		Int_t btmp = hHPGe->FindBin(energy_0[i]);
+		data_edep[i] = GetArea(btmp,hHPGe);
 	}
 	TF1 *fun_eff=  new TF1("fun_eff",eff_fun,0.039,1.6,6);
 	fun_eff->SetParameters(-0.552,-5.687, 0.434, -0.0404, 0.0013, -0.00003);
@@ -220,7 +222,8 @@ TGraphErrors * plotEFF_exp(const TString &fname,TH1D *hSource,TH1D *hHPGe)
 	{
 		g_eff->SetPoint(i,energy_0[i],data_edep[i]/data_init[i]);
 		g_eff->SetPointError(i,0,TMath::Sqrt(1./data_edep[i]+1./data_init[i])*(data_edep[i]/data_init[i]));
-		printf("%d\t%6.3lf\t%8.lf\t%8.2lf\t%6.5lf\n",i,energy_0[i],data_init[i],data_edep[i],data_edep[i]/data_init[i]);
+		double k=( (g_eff->GetY())[i] - fun_eff->Eval(energy_0[i]) )/fun_eff->Eval(energy_0[i]) ;
+		printf("%d\t%6.3lf\t%8.lf\t%8.2lf\t%6.5lf\t%8.2lf\n",i,energy_0[i],data_init[i],data_edep[i],(g_eff->GetY())[i], 100*k);
 	}
 	g_eff->Fit("fun_eff","R+");
 	//g_eff->SetMarkerStyle(20);
@@ -263,6 +266,8 @@ void PlotSpectra(const TString &fileName,TH1D *hSource,TH1D *hHPGe)
 	gPad->SetGridy(1);
 	gPad->SetGridx(1);
 
+AnalyzeSpectra(hHPGe);
+
 	return ;
 }
 
@@ -276,7 +281,7 @@ void PlotEfficiency(const std::vector<TString> &fileList,TObjArray *sourceList, 
 		TH1D *s2 =(TH1D* )HPGeList->At(i);
 		PlotSpectra(fileList[i], s1, s2 );
 		TGraphErrors *gr = 0;
-		gr = plotEFF_exp(fileList[i],s1,s2);
+		gr = PlotEffMC(fileList[i],s1,s2);
 		gr->SetMarkerStyle(20+i);
 		gr->SetLineColor(2+i);
 		mg->Add(gr);
@@ -293,7 +298,7 @@ void PlotEfficiency(const std::vector<TString> &fileList,TObjArray *sourceList, 
 	mg->Draw("ALP");
 	//pt->Draw();
 	if(1)
-		plot_eff_std();
+		PlotEffExperiment();
 	
 	leg->Draw();
 	gPad->SetLogy(1);
@@ -312,7 +317,7 @@ int ReadFile(std::vector<TString> &fileList,TObjArray *sourceList, TObjArray *HP
 		TString fname;
 		fname = fileList[i];
 
-		TFile *f2= TFile::Open(Form("%sbuild/%s.root",dir.Data(),fname.Data()));
+		TFile *f2= TFile::Open(Form("%sdata/livemore/%s",dir.Data(),fname.Data()));
 		if(!(f2->IsOpen())){
 			cout<<"file: "<<file_name<<" isn't opened!"<<endl;
 			return 0;
@@ -345,7 +350,7 @@ void plotE()
 	fileList.push_back(fileName);
 	fileName = "deadlayer2.5mm_point_80mm";
 	fileList.push_back(fileName);
-	*/fileName = "emlm_deadlayer2.5mm_point_80mm";
+	*/fileName = "output_point_80mm.root";
 	fileList.push_back(fileName);
 /*	fileName = "ar60_emlm_deadlayer1.5mm_point_80mm";
 	fileList.push_back(fileName);
