@@ -107,6 +107,20 @@ void plot_eff_std()
 	fun_eff_1->SetParameters(-0.452590,-5.901407, 0.539222 ,-0.059246, 0.002599 ,-0.000048);
 	fun_eff_2->SetParameters(-0.439793, -5.822942, 0.488969, -0.048183, 0.001682 ,-0.000024);
 
+	Double_t energy_0[]={
+		0.053, 0.06202  ,  0.08602 , 0.09802 , 
+		0.121781 ,0.2446981, 0.295941 , 0.344281 ,
+		0.3677891, 0.4111161, 0.4439651, 0.563991 ,
+		0.688671 , 0.78891  , 0.867371 , 0.9640791,
+		1.085871 , 1.08971  , 1.1120691, 1.2129481,
+		1.299141 , 1.4081   , 1.52811   
+	};
+	for(int i=0;i<23;i++)
+	{
+		double ef = fun_eff_0->Eval(energy_0[i]);
+		printf("%d\t%6.3lf\t%lf\n",i,energy_0[i],ef);
+	}	
+	
 	//TCanvas* c_eff = new TCanvas("Canvas_eff", "Canvas_eff");
 	fun_eff_0->SetLineColor(kBlack);
 	fun_eff_0->Draw("SAME");
@@ -141,6 +155,26 @@ void reb(TF1 *fun1,TF1 *fun2,int bins, double xMin, double xMax)
 	hfun1->Draw("same");
 }
 
+double get_area(int bin, TH1D *h)
+{
+	double sum=0;
+	Int_t dn=10;
+	Int_t dbg=5;
+	double bg=0;
+	Int_t k=0;
+	for(int i=-dn;i<dn;i++)
+	{
+		sum += h->GetBinContent(bin+i);
+		if(i>dbg ||i<-dbg)
+		{
+			bg += h->GetBinContent(bin+i);
+			k++;
+		}
+	}
+	return (sum-(1.*dn*bg/k));
+}
+
+
 TGraphErrors * plotEFF_exp(const TString &fname,TH1D *hSource,TH1D *hHPGe)
 {
 	int num = 23;
@@ -159,7 +193,7 @@ TGraphErrors * plotEFF_exp(const TString &fname,TH1D *hSource,TH1D *hHPGe)
 		10.238  , 1.729   ,13.69   ,1.426   , 
 		1.625   , 21.069  , 0.28 };
 	int num1 = hSource->GetNbinsX();
-	//cout<<num1<<endl;
+
 	std::vector<double> xList;
 	double *data_init= new double[num];
 	double *data_edep= new double[num];
@@ -179,8 +213,6 @@ TGraphErrors * plotEFF_exp(const TString &fname,TH1D *hSource,TH1D *hHPGe)
 	}
 	TF1 *fun_eff=  new TF1("fun_eff",eff_fun,0.039,1.6,6);
 	fun_eff->SetParameters(-0.552,-5.687, 0.434, -0.0404, 0.0013, -0.00003);
-	//TF1 *fun_eff1=  new TF1("fun_eff_0",eff_fun,0.051,1.6,6);
-	//fun_eff1->SetParameters(-0.552,-5.687, 0.434, -0.0404, 0.0013, -0.00003);
 
 	TGraphErrors *g_eff = new TGraphErrors(num);
 	g_eff->SetTitle(fname.Data());
@@ -190,7 +222,6 @@ TGraphErrors * plotEFF_exp(const TString &fname,TH1D *hSource,TH1D *hHPGe)
 		g_eff->SetPointError(i,0,TMath::Sqrt(1./data_edep[i]+1./data_init[i])*(data_edep[i]/data_init[i]));
 		printf("%d\t%6.3lf\t%8.lf\t%8.2lf\t%6.5lf\n",i,energy_0[i],data_init[i],data_edep[i],data_edep[i]/data_init[i]);
 	}
-	//TCanvas* c4 = new TCanvas("ce", "  ");
 	g_eff->Fit("fun_eff","R+");
 	//g_eff->SetMarkerStyle(20);
 	g_eff->SetTitle(" ");
@@ -204,25 +235,6 @@ TGraphErrors * plotEFF_exp(const TString &fname,TH1D *hSource,TH1D *hHPGe)
 	   */
 	//	reb(g_eff->GetFunction("fun_eff"),fun_eff1, 819, 0.051,1.6 );
 	return g_eff;
-}
-
-double get_area(int bin, TH1D *h)
-{
-	double sum=0;
-	Int_t dn=10;
-	Int_t dbg=5;
-	double bg=0;
-	Int_t k=0;
-	for(int i=-dn;i<dn;i++)
-	{
-		sum += h->GetBinContent(bin+i);
-		if(i>dbg ||i<-dbg)
-		{
-			bg += h->GetBinContent(bin+i);
-			k++;
-		}
-	}
-	return (sum-(1.*dn*bg/k));
 }
 
 void PlotSpectra(const TString &fileName,TH1D *hSource,TH1D *hHPGe)
@@ -267,7 +279,6 @@ void PlotEfficiency(const std::vector<TString> &fileList,TObjArray *sourceList, 
 		gr = plotEFF_exp(fileList[i],s1,s2);
 		gr->SetMarkerStyle(20+i);
 		gr->SetLineColor(2+i);
-		//gr->Set(20+i);
 		mg->Add(gr);
 		leg->AddEntry(gr,fileList[i].Data(),"lep");
 	}
@@ -300,14 +311,13 @@ int ReadFile(std::vector<TString> &fileList,TObjArray *sourceList, TObjArray *HP
 	{
 		TString fname;
 		fname = fileList[i];
-		//TFile *f2= TFile::Open(Form("%sdata/entries10MH1/%s.root",dir.Data(),fname.Data()));
-		TFile *f2= TFile::Open(Form("%sdata/livemore/%s.root",dir.Data(),fname.Data()));
+
+		TFile *f2= TFile::Open(Form("%sbuild/%s.root",dir.Data(),fname.Data()));
 		if(!(f2->IsOpen())){
 			cout<<"file: "<<file_name<<" isn't opened!"<<endl;
 			return 0;
 		}
-		//f2->GetObject("source;1",h_init);
-		//f2->GetObject("HPGe;1",h_edep);
+
 		TDirectory* dire = (TDirectory*)f2->Get("histo");
 		TH1D *hSource = (TH1D*)dire->Get("source"); 
 		hSource->SetDirectory(0);
@@ -327,9 +337,24 @@ void plotE()
 	TObjArray *HPGeList = new TObjArray();
 
 	TString fileName;
-	fileName = "output_point_80mm";
+/*	fileName = "output_point_80mm";
 	fileList.push_back(fileName);
-	/*fileName = "output_plane_circle_5mm";
+	fileName = "deadlayer1.7mm_point_80mm";
+	fileList.push_back(fileName);
+	fileName = "deadlayer3.4mm_point_80mm";
+	fileList.push_back(fileName);
+	fileName = "deadlayer2.5mm_point_80mm";
+	fileList.push_back(fileName);
+	*/fileName = "emlm_deadlayer2.5mm_point_80mm";
+	fileList.push_back(fileName);
+/*	fileName = "ar60_emlm_deadlayer1.5mm_point_80mm";
+	fileList.push_back(fileName);
+	fileName = "ar50_emlm_deadlayer1.5mm_point_80mm";
+	fileList.push_back(fileName);
+	fileName = "al1.5ar50_emlm_deadlayer0.7mm_point_80mm";
+	fileList.push_back(fileName);
+
+	fileName = "output_plane_circle_5mm";
 	fileList.push_back(fileName);
 	fileName = "output_plane_circle_10mm";
 	fileList.push_back(fileName);
@@ -342,11 +367,23 @@ void plotE()
 	fileName = "output_plane_circle_50mm";
 	fileList.push_back(fileName);
 */
+	/*fileName = "output_point_00mm";
+	fileList.push_back(fileName);
+	fileName = "output_point_40mm";
+	fileList.push_back(fileName);
+	fileName = "output_point_80mm";
+	fileList.push_back(fileName);
+	fileName = "output_point_120mm";
+	fileList.push_back(fileName);
+	fileName = "output_point_160mm";
+	fileList.push_back(fileName);
+	fileName = "output_point_200mm";
+	fileList.push_back(fileName);
+*/
 	ReadFile(fileList,sourceList,HPGeList);
 	PlotEfficiency(fileList,sourceList,HPGeList);
 	
 	
-
 	if(0)
 		plot_FWHM();
 }
