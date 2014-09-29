@@ -57,7 +57,7 @@ class PhysicsList: public G4VModularPhysicsList
     virtual void ConstructProcess();
     
     void AddPhysicsList(const G4String& name);
-    
+    void AddPackage(const G4String& name);
     virtual void SetCuts();
     
     void SetCutForGamma(G4double);
