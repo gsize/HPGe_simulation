@@ -120,7 +120,7 @@ void PlotEffExperiment()
 		1.085871 , 1.08971  , 1.1120691, 1.2129481,
 		1.299141 , 1.4081   , 1.52811   
 	};
-	
+
 	//TCanvas* c_eff = new TCanvas("Canvas_eff", "Canvas_eff");
 	fun_eff_0->SetLineColor(kBlack);
 	fun_eff_0->Draw("SAME");
@@ -149,32 +149,41 @@ double GetArea(int bin, TH1D *h)
 	return (sum-(1.*dn*bg/k));
 }
 
-void AnalyzeSpectra(TH1D *h)
+void AnalyzeSpectra(TH1D *h,std::vector<double> peakAddr,std::vector<double> peakArea)
 {
-	std::vector<double> peakAddr;
-	std::vector<double> peakArea;
 
 	TSpectrum *sp = new TSpectrum;
 	Int_t nfound = sp->Search(h,2);
 	Bool_t *fixPos= new Bool_t[nfound];
 	Bool_t *fixAmp= new Bool_t[nfound];
 	Float_t *px = new Float_t[nfound];
+	Float_t *spx = new Float_t[nfound];
 	Float_t *py = new Float_t[nfound];
+	Int_t bins = h->GetNbinsX();
+	Float_t *source = new Float_t[bins];
 
+	for(int i=0; i<bins ;i++) source[i] = (float)( h->GetBinContent(i));
 	printf("Found %d peaks to fit\n",nfound);
 	for(int i=0;i<nfound;i++)
 	{
 		fixPos[i] = kFALSE;
 		fixAmp[i] = kFALSE;
+		spx[i] = (sp->GetPositionX())[i];
 		px[i] = h->FindBin((sp->GetPositionX())[i]);
 		py[i] = (sp->GetPositionY())[i];
-		printf("%d\t%6.3lf\t%8.3lf\n",i,(sp->GetPositionX())[i],(sp->GetPositionY())[i]);
 	}
 	TSpectrumFit *sFit = new TSpectrumFit(nfound);
-	sFit->SetFitParameters(h->GetMinimumBin(),h->GetMaximumBin()-1,1000,0.1,sFit->kFitOptimChiCounts,sFit->kFitAlphaHalving,sFit->kFitPower2,sFit->kFitTaylorOrderFirst);
-	sFit->SetPeakParameters(2,kFalse,px,fixPos,py,fixAmp );
-	sFit->FitAwmi(h->);
+	sFit->SetFitParameters(h->GetMinimumBin(),h->GetNbinsX()-1,1000,0.1,sFit->kFitOptimChiCounts,sFit->kFitAlphaHalving,sFit->kFitPower2,sFit->kFitTaylorOrderFirst);
+	sFit->SetPeakParameters(2,kFALSE,px,fixPos,py,fixAmp );
+	sFit->FitAwmi(source);
 
+	for(int i=0;i<nfound;i++)
+	{
+		peakAddr.push_back((sFit->GetPositions())[i]);
+		peakArea.push_back((sFit->GetAreas())[i]);
+		printf("%d\t%6.3lf%12.3lf%12.3lf",i,spx[i],px[i],py[i]);
+		printf("%12.3lf%12.3lf\n",peakAddr[i],peakArea[i]);
+	}
 }
 
 TGraphErrors *PlotEffMC(const TString &fname,TH1D *hSource,TH1D *hHPGe)
@@ -246,7 +255,7 @@ void PlotSpectra(const TString &fileName,TH1D *hSource,TH1D *hHPGe)
 	TCanvas* c1 = new TCanvas(fileName.Data(), fileName.Data());
 	c1->Divide(1,2);
 	c1->cd(1);
-	hSource->SetTitle("Source of gamma spectrum");
+	hSource->SetTitle("gamma Source");
 	hSource->GetXaxis()->SetTitle("Energy/MeV");
 	hSource->GetXaxis()->CenterTitle();
 	hSource->GetYaxis()->SetTitle("Count");
@@ -266,8 +275,6 @@ void PlotSpectra(const TString &fileName,TH1D *hSource,TH1D *hHPGe)
 	gPad->SetGridy(1);
 	gPad->SetGridx(1);
 
-AnalyzeSpectra(hHPGe);
-
 	return ;
 }
 
@@ -280,6 +287,11 @@ void PlotEfficiency(const std::vector<TString> &fileList,TObjArray *sourceList, 
 		TH1D *s1 =(TH1D* )sourceList->At(i);
 		TH1D *s2 =(TH1D* )HPGeList->At(i);
 		PlotSpectra(fileList[i], s1, s2 );
+
+	std::vector<double> peakAddr;
+	std::vector<double> peakArea;
+	AnalyzeSpectra(s2,peakAddr,peakArea);
+
 		TGraphErrors *gr = 0;
 		gr = PlotEffMC(fileList[i],s1,s2);
 		gr->SetMarkerStyle(20+i);
@@ -299,7 +311,7 @@ void PlotEfficiency(const std::vector<TString> &fileList,TObjArray *sourceList, 
 	//pt->Draw();
 	if(1)
 		PlotEffExperiment();
-	
+
 	leg->Draw();
 	gPad->SetLogy(1);
 	gPad->SetGridy(1);
@@ -342,53 +354,53 @@ void plotE()
 	TObjArray *HPGeList = new TObjArray();
 
 	TString fileName;
-/*	fileName = "output_point_80mm";
+	/*	fileName = "output_point_80mm";
+		fileList.push_back(fileName);
+		fileName = "deadlayer1.7mm_point_80mm";
+		fileList.push_back(fileName);
+		fileName = "deadlayer3.4mm_point_80mm";
+		fileList.push_back(fileName);
+		fileName = "deadlayer2.5mm_point_80mm";
+		fileList.push_back(fileName);
+		*/fileName = "output_point_80mm.root";
 	fileList.push_back(fileName);
-	fileName = "deadlayer1.7mm_point_80mm";
-	fileList.push_back(fileName);
-	fileName = "deadlayer3.4mm_point_80mm";
-	fileList.push_back(fileName);
-	fileName = "deadlayer2.5mm_point_80mm";
-	fileList.push_back(fileName);
-	*/fileName = "output_point_80mm.root";
-	fileList.push_back(fileName);
-/*	fileName = "ar60_emlm_deadlayer1.5mm_point_80mm";
-	fileList.push_back(fileName);
-	fileName = "ar50_emlm_deadlayer1.5mm_point_80mm";
-	fileList.push_back(fileName);
-	fileName = "al1.5ar50_emlm_deadlayer0.7mm_point_80mm";
-	fileList.push_back(fileName);
+	/*	fileName = "ar60_emlm_deadlayer1.5mm_point_80mm";
+		fileList.push_back(fileName);
+		fileName = "ar50_emlm_deadlayer1.5mm_point_80mm";
+		fileList.push_back(fileName);
+		fileName = "al1.5ar50_emlm_deadlayer0.7mm_point_80mm";
+		fileList.push_back(fileName);
 
-	fileName = "output_plane_circle_5mm";
-	fileList.push_back(fileName);
-	fileName = "output_plane_circle_10mm";
-	fileList.push_back(fileName);
-	fileName = "output_plane_circle_15mm";
-	fileList.push_back(fileName);
-	fileName = "output_plane_circle_20mm";
-	fileList.push_back(fileName);
-	fileName = "output_plane_circle_30mm";
-	fileList.push_back(fileName);
-	fileName = "output_plane_circle_50mm";
-	fileList.push_back(fileName);
-*/
+		fileName = "output_plane_circle_5mm";
+		fileList.push_back(fileName);
+		fileName = "output_plane_circle_10mm";
+		fileList.push_back(fileName);
+		fileName = "output_plane_circle_15mm";
+		fileList.push_back(fileName);
+		fileName = "output_plane_circle_20mm";
+		fileList.push_back(fileName);
+		fileName = "output_plane_circle_30mm";
+		fileList.push_back(fileName);
+		fileName = "output_plane_circle_50mm";
+		fileList.push_back(fileName);
+		*/
 	/*fileName = "output_point_00mm";
-	fileList.push_back(fileName);
-	fileName = "output_point_40mm";
-	fileList.push_back(fileName);
-	fileName = "output_point_80mm";
-	fileList.push_back(fileName);
-	fileName = "output_point_120mm";
-	fileList.push_back(fileName);
-	fileName = "output_point_160mm";
-	fileList.push_back(fileName);
-	fileName = "output_point_200mm";
-	fileList.push_back(fileName);
-*/
+	  fileList.push_back(fileName);
+	  fileName = "output_point_40mm";
+	  fileList.push_back(fileName);
+	  fileName = "output_point_80mm";
+	  fileList.push_back(fileName);
+	  fileName = "output_point_120mm";
+	  fileList.push_back(fileName);
+	  fileName = "output_point_160mm";
+	  fileList.push_back(fileName);
+	  fileName = "output_point_200mm";
+	  fileList.push_back(fileName);
+	  */
 	ReadFile(fileList,sourceList,HPGeList);
 	PlotEfficiency(fileList,sourceList,HPGeList);
-	
-	
+
+
 	if(0)
 		plot_FWHM();
 }
