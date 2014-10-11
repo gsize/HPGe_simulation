@@ -9,6 +9,17 @@
 #include "TString.h"
 #include "TF1.h"
 
+Double_t fun_unfold_gause(Double_t energy);
+void plot_FWHM();
+Double_t fun_FWHM( Double_t *energy,Double_t *par);
+double GetRateOfPeakComputom(TH1D *hist);
+double eff_fun(double *x,double *par);
+void ReadMacfile(TString &macFile);
+void PlotEffExperiment();
+double GetArea(int bin, TH1D *h);
+void AnalyzeSpectra(TH1D *h,std::vector<double> peakAddr,std::vector<double> peakArea);
+TGraphErrors *PlotEffMC(const TString &fname,TH1D *hSource,TH1D *hHPGe);
+
 Double_t fun_unfold_gause(Double_t energy)
 {
 	Double_t par[3];
@@ -156,13 +167,13 @@ void AnalyzeSpectra(TH1D *h,std::vector<double> peakAddr,std::vector<double> pea
 	Int_t nfound = sp->Search(h,2);
 	Bool_t *fixPos= new Bool_t[nfound];
 	Bool_t *fixAmp= new Bool_t[nfound];
-	Float_t *px = new Float_t[nfound];
-	Float_t *spx = new Float_t[nfound];
-	Float_t *py = new Float_t[nfound];
+	Double_t *px = new Double_t[nfound];
+	Double_t *spx = new Double_t[nfound];
+	Double_t *py = new Double_t[nfound];
 	Int_t bins = h->GetNbinsX();
-	Float_t *source = new Float_t[bins];
+	Double_t *source = new Double_t[bins];
 
-	for(int i=0; i<bins ;i++) source[i] = (float)( h->GetBinContent(i));
+	for(int i=0; i<bins ;i++) source[i] = h->GetBinContent(i);
 	printf("Found %d peaks to fit\n",nfound);
 	for(int i=0;i<nfound;i++)
 	{
@@ -172,6 +183,7 @@ void AnalyzeSpectra(TH1D *h,std::vector<double> peakAddr,std::vector<double> pea
 		px[i] = h->FindBin((sp->GetPositionX())[i]);
 		py[i] = (sp->GetPositionY())[i];
 	}
+	/*
 	TSpectrumFit *sFit = new TSpectrumFit(nfound);
 	sFit->SetFitParameters(h->GetMinimumBin(),h->GetNbinsX()-1,1000,0.1,sFit->kFitOptimChiCounts,sFit->kFitAlphaHalving,sFit->kFitPower2,sFit->kFitTaylorOrderFirst);
 	sFit->SetPeakParameters(2,kFALSE,px,fixPos,py,fixAmp );
@@ -184,6 +196,7 @@ void AnalyzeSpectra(TH1D *h,std::vector<double> peakAddr,std::vector<double> pea
 		printf("%d\t%6.3lf%12.3lf%12.3lf",i,spx[i],px[i],py[i]);
 		printf("%12.3lf%12.3lf\n",peakAddr[i],peakArea[i]);
 	}
+	*/
 }
 
 TGraphErrors *PlotEffMC(const TString &fname,TH1D *hSource,TH1D *hHPGe)
@@ -319,7 +332,7 @@ void PlotEfficiency(const std::vector<TString> &fileList,TObjArray *sourceList, 
 
 }
 
-int ReadFile(std::vector<TString> &fileList,TObjArray *sourceList, TObjArray *HPGeList)
+int  ReadFile(std::vector<TString> &fileList,TObjArray *sourceList, TObjArray *HPGeList)
 {
 	TString dir = gSystem->UnixPathName(gInterpreter->GetCurrentMacroName());
 	dir.ReplaceAll("plotE.C","");
@@ -331,10 +344,9 @@ int ReadFile(std::vector<TString> &fileList,TObjArray *sourceList, TObjArray *HP
 
 		TFile *f2= TFile::Open(Form("%sdata/livemore/%s",dir.Data(),fname.Data()));
 		if(!(f2->IsOpen())){
-			cout<<"file: "<<file_name<<" isn't opened!"<<endl;
+			cout<<"file: "<<fname<<" isn't opened!"<<endl;
 			return 0;
 		}
-
 		TDirectory* dire = (TDirectory*)f2->Get("histo");
 		TH1D *hSource = (TH1D*)dire->Get("source"); 
 		hSource->SetDirectory(0);
@@ -345,6 +357,7 @@ int ReadFile(std::vector<TString> &fileList,TObjArray *sourceList, TObjArray *HP
 		cout<<"Read file "<<fname<<" success!"<<endl;
 		f2->Close();
 	}
+	return 1;
 }
 
 void plotE()
@@ -362,7 +375,8 @@ void plotE()
 		fileList.push_back(fileName);
 		fileName = "deadlayer2.5mm_point_80mm";
 		fileList.push_back(fileName);
-		*/fileName = "output_point_80mm.root";
+		*/
+	fileName = "output_point_80mm.root";
 	fileList.push_back(fileName);
 	/*	fileName = "ar60_emlm_deadlayer1.5mm_point_80mm";
 		fileList.push_back(fileName);
@@ -399,7 +413,6 @@ void plotE()
 	  */
 	ReadFile(fileList,sourceList,HPGeList);
 	PlotEfficiency(fileList,sourceList,HPGeList);
-
 
 	if(0)
 		plot_FWHM();
