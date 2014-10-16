@@ -62,6 +62,7 @@
 
 #include "G4ios.hh"
 
+#include "DetectorMessenger.hh"
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 G4ThreadLocal 
@@ -77,7 +78,9 @@ G4GlobalMagFieldMessenger* DetectorConstruction::fMagFieldMessenger = 0;
 	,  stepLimit(0)
 	,fCheckOverlaps(true)
 {
-
+outDeadLayerThickness = 0.7 *mm;
+	 shellAlThickness = 1.0 *mm;
+	 detectorMessenger = new DetectorMessenger(this);	
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -85,6 +88,7 @@ G4GlobalMagFieldMessenger* DetectorConstruction::fMagFieldMessenger = 0;
 DetectorConstruction::~  DetectorConstruction()
 {
 	delete stepLimit;
+	delete detectorMessenger;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -270,10 +274,9 @@ void   DetectorConstruction::ConstructHPGeDetector()
 	G4double GeCrystalRadius = 0.5 * 63. *mm;
 	G4double GeCrystalLength = 44.1 *mm;
 	//shield Al
-	G4double detector_move_len = -140. *mm;// 120. *mm;
+	G4double detector_move_len = -140. *mm;
 	G4double Shell_Al_Tubs_rMax =  detectorRadius;
 	G4double Shell_Al_Tubs_dz = 0.5 * detectorLength;
-	G4double Shell_Al_Tubs_Thickness = 1.0 *mm;
 	G4Material* Shell_Al = nist->FindOrBuildMaterial("G4_Al");
 
 	G4VSolid * Shell_Al_tubs
@@ -288,9 +291,9 @@ void   DetectorConstruction::ConstructHPGeDetector()
 		= new G4VisAttributes(G4Colour(0.40,0.0,0.70));
 	Shell_Al_log->SetVisAttributes(Shell_Al_logVisAtt);
 
-	//shield Galactic
-	G4double Shell_Galactic_Tubs_rMax = Shell_Al_Tubs_rMax - Shell_Al_Tubs_Thickness;
-	G4double Shell_Galactic_Tubs_dz = Shell_Al_Tubs_dz - Shell_Al_Tubs_Thickness;
+	//shell Galactic
+	G4double Shell_Galactic_Tubs_rMax = Shell_Al_Tubs_rMax - shellAlThickness;
+	G4double Shell_Galactic_Tubs_dz = Shell_Al_Tubs_dz - shellAlThickness;
 	G4double GalacticTopThickness = 4. *mm;
 	G4Material* Shell_Galactic = nist->FindOrBuildMaterial("G4_Galactic");
 
@@ -308,7 +311,7 @@ void   DetectorConstruction::ConstructHPGeDetector()
 
 //CUP Al
 G4double CUPThickness =0.8 *mm; 
-G4double CUPRadius = Shell_Galactic_Tubs_rMax - GalacticTopThickness ;
+G4double CUPRadius = GeCrystalRadius + CUPThickness;
 G4double CUPLength =105. *mm;
 G4double CUPLength_dz =0.5 *CUPLength;
 G4double CUP_move_len = Shell_Galactic_Tubs_dz - (CUPLength_dz + GalacticTopThickness);
@@ -319,7 +322,7 @@ G4VSolid * CUP_Al
 		= new G4LogicalVolume(CUP_Al,Shell_Al,"CUP_Al_log",0,0,0);
 	//G4VPhysicalVolume * physiWorldHPGe =
 		new G4PVPlacement(0,G4ThreeVector(0.,0.,CUP_move_len),CUP_Al_log,"Detector CUP Al phys",
-				Shell_Galactic_log/*logicWorld*/,false,0,fCheckOverlaps);
+				Shell_Galactic_log,false,0,fCheckOverlaps);
 	G4VisAttributes* CUP_Al_logVisAtt
 		= new G4VisAttributes(G4Colour(0.20,0.0,0.70));
 		CUP_Al_logVisAtt ->G4VisAttributes::SetForceSolid(true);
@@ -345,7 +348,6 @@ G4VSolid * CUP_Galactic
 	//HPGe dead_layer outer
 	G4double HPGe_dead_layer_rMax = GeCrystalRadius;
 	G4double HPGe_dead_layer_outer_dz = 0.5 * GeCrystalLength;
-	G4double HPGe_dead_layer_outer_Thickness = 0.7*mm; //3.4,2.5,0.7mm;
 	G4double HPGe_move = CUP_Galactic_Length_dz - HPGe_dead_layer_outer_dz;
 
 	G4VSolid * HPGe_dead_layer_outer
@@ -362,8 +364,8 @@ G4VSolid * CUP_Galactic
 	HPGe_dead_layer_outer_log->SetVisAttributes(HPGe_dead_layer_logVisAtt);
 
 	//Active HPGe Crystal
-	G4double HPGe_detector_rMax = HPGe_dead_layer_rMax - HPGe_dead_layer_outer_Thickness;
-	G4double HPGe_detector_Tubs_dz = HPGe_dead_layer_outer_dz- HPGe_dead_layer_outer_Thickness;
+	G4double HPGe_detector_rMax = HPGe_dead_layer_rMax - outDeadLayerThickness;
+	G4double HPGe_detector_Tubs_dz = HPGe_dead_layer_outer_dz - outDeadLayerThickness;
 	//HPGe_detector_Ge = nist->FindOrBuildMaterial("G4_Ge");
 	//G4double HPGe_move = -30.45 *mm;
 
@@ -380,7 +382,6 @@ G4VSolid * CUP_Galactic
 	HPGe_detector_logVisAtt->G4VisAttributes::SetForceSolid(true);
 	delete  ActiveHPGeCrystal_log->GetVisAttributes();
 	ActiveHPGeCrystal_log->SetVisAttributes(HPGe_detector_logVisAtt);
-
 
 	//HPGe detector inner dead_layer
 	G4double GeDeadLayerInnerThickness = 0.3*um;
@@ -402,25 +403,25 @@ G4VSolid * CUP_Galactic
 		= new G4VisAttributes(G4Colour(3.0,6.0,1.20));
 	HPGe_inner_dead_layer_log->SetVisAttributes(HPGe_inner_dead_layer_logVisAtt);
 
-	//HPGe detector inner Cu
-	G4double HPGe_inner_tubs_Cu_rMax = GeDeadLayerInnerRadius;
-	G4double HPGe_inner_tubs_Cu_dz = 0.5 * GeDeadLayerInnerDepth;
-	G4double HPGe_inner_tubs_Cu_move = -HPGe_inner_dead_layer_Tubs_dz + HPGe_inner_tubs_Cu_dz ;
-	G4Material* Mat_Cu = nist->FindOrBuildMaterial("G4_Cu");
+	//HPGe detector inner hole 
+	G4double HPGe_inner_hole_rMax = GeDeadLayerInnerRadius;
+	G4double HPGe_inner_hole_dz = 0.5 * GeDeadLayerInnerDepth;
+	G4double HPGe_inner_hole_move = -HPGe_inner_dead_layer_Tubs_dz + HPGe_inner_hole_dz ;
+	//G4Material* Mat_Cu = nist->FindOrBuildMaterial("G4_Cu");
 
-	G4VSolid * HPGe_inner_tubs_Cu
-		= new G4Tubs("HPGe_inner_tubs_Cu_tubs",Tubs_rmin,HPGe_inner_tubs_Cu_rMax,HPGe_inner_tubs_Cu_dz,
+	G4VSolid * HPGe_inner_hole
+		= new G4Tubs("HPGe_inner_hole",Tubs_rmin,HPGe_inner_hole_rMax,HPGe_inner_hole_dz,
 				Tubs_sphi,Tubs_dphi);
-	G4LogicalVolume * HPGe_inner_tubs_Cu_log
-		= new G4LogicalVolume(HPGe_inner_tubs_Cu,Mat_Cu,"HPGe_inner_tubs_Cu_tubs_log",0,0,0);
+	G4LogicalVolume * HPGe_inner_hole_log
+		= new G4LogicalVolume(HPGe_inner_hole,Shell_Galactic,"HPGe_inner_hole_log",0,0,0);
 	// G4VPhysicalVolume * tracker_phys =
-	new G4PVPlacement(0,G4ThreeVector(0. ,0. ,HPGe_inner_tubs_Cu_move),HPGe_inner_tubs_Cu_log,"HPGe_inner_tubs_Cu_tubs_phys",
+	new G4PVPlacement(0,G4ThreeVector(0. ,0. ,HPGe_inner_hole_move),HPGe_inner_hole_log,"HPGe_inner_hole_phys",
 			HPGe_inner_dead_layer_log,false,0,fCheckOverlaps);
-	G4VisAttributes* HPGe_inner_tubs_Cu_logVisAtt
+	G4VisAttributes* HPGe_inner_hole_logVisAtt
 		= new G4VisAttributes(G4Colour(2.0,5.0,1.00));
-	//HPGe_inner_tubs_Cu_logVisAtt->G4VisAttributes::SetForceSolid(true);
-	delete  HPGe_inner_tubs_Cu_log->GetVisAttributes();
-	HPGe_inner_tubs_Cu_log->SetVisAttributes(HPGe_inner_tubs_Cu_logVisAtt);
+	//HPGe_inner_hole_logVisAtt->G4VisAttributes::SetForceSolid(true);
+	delete  HPGe_inner_hole_log->GetVisAttributes();
+	HPGe_inner_hole_log->SetVisAttributes(HPGe_inner_hole_logVisAtt);
 
 G4bool detectorInvisible =1;
 	
@@ -515,6 +516,9 @@ void DetectorConstruction::ConstructSDandField()
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
+void DetectorConstruction::SetOutDeadLayerThickness(G4double value)
+{
+	outDeadLayerThickness = value;
+}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

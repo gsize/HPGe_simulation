@@ -23,75 +23,58 @@
 // * acceptance of all terms of the Geant4 Software license.          *
 // ********************************************************************
 //
+/// \file hadronic/Hadr03/src/DetectorMessenger.cc
+/// \brief Implementation of the DetectorMessenger class
 //
-// $Id:   DetectorConstruction.hh,v 1.10 2008-09-22 16:41:20 maire Exp $
-// GEANT4 tag $Name: not supported by cvs2svn $
+// $Id: DetectorMessenger.cc 70755 2013-06-05 12:17:48Z ihrivnac $
 //
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#ifndef   DetectorConstruction_h
-#define   DetectorConstruction_h 1
+#include "DetectorMessenger.hh"
 
-#include "globals.hh"
-#include "G4VUserDetectorConstruction.hh"
-
-class DetectorMessenger;
-class G4GlobalMagFieldMessenger;
-
-class G4Box;
-class G4LogicalVolume;
-class G4VPhysicalVolume;
-class G4Material;
-class G4VPVParameterisation;
-class G4UserLimits;
-
+#include "DetectorConstruction.hh"
+#include "G4UIdirectory.hh"
+#include "G4UIcommand.hh"
+#include "G4UIparameter.hh"
+#include "G4UIcmdWithADoubleAndUnit.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-class   DetectorConstruction : public G4VUserDetectorConstruction
+DetectorMessenger::DetectorMessenger(DetectorConstruction * Det)
+:G4UImessenger(), 
+ fDetector(Det), fDetDir(0), fOutDeadLayerThicknessCmd(0)
+{ 
+  
+  G4bool broadcast = false;
+  fDetDir = new G4UIdirectory("/HPGe_simulation/det/",broadcast);
+  fDetDir->SetGuidance("detector construction commands");
+        
+  fOutDeadLayerThicknessCmd = new G4UIcmdWithADoubleAndUnit("/HPGe_simulation/det/setOutDeadLayerThickness",this);
+  fOutDeadLayerThicknessCmd->SetGuidance("Set out dead layer thickness of HPGe .");
+  fOutDeadLayerThicknessCmd->SetParameterName("outDeadLayerThickness",false);
+  fOutDeadLayerThicknessCmd->SetDefaultUnit("mm");
+  fOutDeadLayerThicknessCmd->SetUnitCategory("Length");
+  fOutDeadLayerThicknessCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+ 
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+DetectorMessenger::~DetectorMessenger()
 {
-	public:
-
-		DetectorConstruction();
-		~  DetectorConstruction();
-
-	public:
-
-		G4VPhysicalVolume* Construct();
-
-		virtual void ConstructSDandField();
-void SetOutDeadLayerThickness(double value);
-
-	private:
-		void DefineMaterials();
-		void ConstructWorld();
-		void ConstructPbShield();
-		void ConstructHPGeDetector();
-	private:
-		// data members
-		//
-		G4Box*             solidWorld;    // pointer to the solid envelope
-		G4LogicalVolume*   logicWorld;    // pointer to the logical envelope
-		G4VPhysicalVolume* physiWorld;    // pointer to the physical envelope
-		G4LogicalVolume*   logicDetector;    // pointer to the logical detector 
-		G4UserLimits* stepLimit;             // pointer to user step limits
-	DetectorMessenger* detectorMessenger;	
-		G4Material* Shield_Fe;
-		G4Material* Shield_Cu;
-		G4Material* Shield_Sn;
-		G4Material* Shield_Pb;
-		G4Material* Shield_Air;
-		G4Material* GeCrystal;
-
-		G4bool fCheckOverlaps;
-		G4double outDeadLayerThickness;
-	G4double shellAlThickness;
-
-		static G4ThreadLocal G4GlobalMagFieldMessenger*  fMagFieldMessenger; 
-		// magnetic field messenger
-};
+  delete fOutDeadLayerThicknessCmd;
+  delete fDetDir;
+}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#endif
+void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
+{ 
+   
+  if( command == fOutDeadLayerThicknessCmd )
+   { fDetector->SetOutDeadLayerThickness(fOutDeadLayerThicknessCmd->GetNewDoubleValue(newValue));}
+    
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

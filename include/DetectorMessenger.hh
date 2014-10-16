@@ -23,75 +23,45 @@
 // * acceptance of all terms of the Geant4 Software license.          *
 // ********************************************************************
 //
+/// \file hadronic/Hadr03/include/DetectorMessenger.hh
+/// \brief Definition of the DetectorMessenger class
 //
-// $Id:   DetectorConstruction.hh,v 1.10 2008-09-22 16:41:20 maire Exp $
-// GEANT4 tag $Name: not supported by cvs2svn $
+// $Id: DetectorMessenger.hh 67103 2013-01-31 18:18:03Z maire $
 //
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#ifndef   DetectorConstruction_h
-#define   DetectorConstruction_h 1
+#ifndef DetectorMessenger_h
+#define DetectorMessenger_h 1
 
+#include "G4UImessenger.hh"
 #include "globals.hh"
-#include "G4VUserDetectorConstruction.hh"
 
-class DetectorMessenger;
-class G4GlobalMagFieldMessenger;
-
-class G4Box;
-class G4LogicalVolume;
-class G4VPhysicalVolume;
-class G4Material;
-class G4VPVParameterisation;
-class G4UserLimits;
-
+class DetectorConstruction;
+class G4UIdirectory;
+class G4UIcommand;
+class G4UIcmdWithADoubleAndUnit;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-class   DetectorConstruction : public G4VUserDetectorConstruction
+class DetectorMessenger: public G4UImessenger
 {
-	public:
-
-		DetectorConstruction();
-		~  DetectorConstruction();
-
-	public:
-
-		G4VPhysicalVolume* Construct();
-
-		virtual void ConstructSDandField();
-void SetOutDeadLayerThickness(double value);
-
-	private:
-		void DefineMaterials();
-		void ConstructWorld();
-		void ConstructPbShield();
-		void ConstructHPGeDetector();
-	private:
-		// data members
-		//
-		G4Box*             solidWorld;    // pointer to the solid envelope
-		G4LogicalVolume*   logicWorld;    // pointer to the logical envelope
-		G4VPhysicalVolume* physiWorld;    // pointer to the physical envelope
-		G4LogicalVolume*   logicDetector;    // pointer to the logical detector 
-		G4UserLimits* stepLimit;             // pointer to user step limits
-	DetectorMessenger* detectorMessenger;	
-		G4Material* Shield_Fe;
-		G4Material* Shield_Cu;
-		G4Material* Shield_Sn;
-		G4Material* Shield_Pb;
-		G4Material* Shield_Air;
-		G4Material* GeCrystal;
-
-		G4bool fCheckOverlaps;
-		G4double outDeadLayerThickness;
-	G4double shellAlThickness;
-
-		static G4ThreadLocal G4GlobalMagFieldMessenger*  fMagFieldMessenger; 
-		// magnetic field messenger
+  public:
+  
+    DetectorMessenger(DetectorConstruction* );
+   ~DetectorMessenger();
+    
+    virtual void SetNewValue(G4UIcommand*, G4String);
+    
+  private:
+  
+    DetectorConstruction*      fDetector;
+    
+    G4UIdirectory*             fDetDir;
+    G4UIcmdWithADoubleAndUnit* fOutDeadLayerThicknessCmd;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 #endif
+
