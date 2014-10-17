@@ -62,19 +62,17 @@ class   DetectorConstruction : public G4VUserDetectorConstruction
 
 		virtual void ConstructSDandField();
 void SetOutDeadLayerThickness(double value);
+void SetPbShield(G4bool value);
 
 	private:
 		void DefineMaterials();
-		void ConstructWorld();
-		void ConstructPbShield();
-		void ConstructHPGeDetector();
+		G4VPhysicalVolume* ConstructWorld();
+		G4VPhysicalVolume* ConstructPbShield(G4LogicalVolume* );
+		void ConstructHPGeDetector(G4LogicalVolume* );
 	private:
 		// data members
 		//
-		G4Box*             solidWorld;    // pointer to the solid envelope
-		G4LogicalVolume*   logicWorld;    // pointer to the logical envelope
 		G4VPhysicalVolume* physiWorld;    // pointer to the physical envelope
-		G4LogicalVolume*   logicDetector;    // pointer to the logical detector 
 		G4UserLimits* stepLimit;             // pointer to user step limits
 	DetectorMessenger* detectorMessenger;	
 		G4Material* Shield_Fe;
@@ -85,6 +83,7 @@ void SetOutDeadLayerThickness(double value);
 		G4Material* GeCrystal;
 
 		G4bool fCheckOverlaps;
+		G4bool flagPbShield;
 		G4double outDeadLayerThickness;
 	G4double shellAlThickness;
 

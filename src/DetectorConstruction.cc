@@ -72,15 +72,14 @@ G4GlobalMagFieldMessenger* DetectorConstruction::fMagFieldMessenger = 0;
 
 	DetectorConstruction::  DetectorConstruction()
 	:G4VUserDetectorConstruction()
-	,  solidWorld(0)
-	,  logicWorld(0)
 	,  physiWorld(0)
 	,  stepLimit(0)
 	,fCheckOverlaps(true)
+	 ,flagPbShield(true)
 {
-outDeadLayerThickness = 0.7 *mm;
-	 shellAlThickness = 1.0 *mm;
-	 detectorMessenger = new DetectorMessenger(this);	
+	outDeadLayerThickness = 0.7 *mm;
+	shellAlThickness = 1.0 *mm;
+	detectorMessenger = new DetectorMessenger(this);	
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -97,7 +96,7 @@ DetectorConstruction::~  DetectorConstruction()
 #include "G4LogicalVolumeStore.hh"
 #include "G4SolidStore.hh"
 
-G4VPhysicalVolume*   DetectorConstruction::Construct()
+G4VPhysicalVolume* DetectorConstruction::Construct()
 {
 	// Clean old geometry, if any
 	G4GeometryManager::GetInstance()->OpenGeometry();
@@ -107,15 +106,20 @@ G4VPhysicalVolume*   DetectorConstruction::Construct()
 
 	//--------- Material definition ---------
 	DefineMaterials();
+	G4LogicalVolume* pLV = 0;
+	physiWorld = ConstructWorld();
 
-	ConstructWorld();
-	ConstructPbShield();
-	ConstructHPGeDetector();
-
+	pLV = physiWorld->GetLogicalVolume();
+	if(flagPbShield == true)
+	{
+		G4VPhysicalVolume* PVShieldDauther = ConstructPbShield(pLV);
+		pLV = PVShieldDauther->GetLogicalVolume();
+	}
+	ConstructHPGeDetector(pLV);
 	return physiWorld;
 }
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-void DetectorConstruction::ConstructWorld()
+G4VPhysicalVolume*  DetectorConstruction::ConstructWorld()
 {
 	//--------- Definitions of Solids, Logical Volumes, Physical Volumes ---------
 	//------------------------------
@@ -129,12 +133,12 @@ void DetectorConstruction::ConstructWorld()
 		<< G4GeometryTolerance::GetInstance()->GetSurfaceTolerance()/mm
 		<< " mm" << G4endl;
 
-	solidWorld= new G4Box("world",HalfWorldLength,HalfWorldLength,HalfWorldLength);
-	logicWorld= new G4LogicalVolume( solidWorld, Shield_Air, "LogicWorld", 0, 0, 0);
+	G4VSolid* solidWorld= new G4Box("world",HalfWorldLength,HalfWorldLength,HalfWorldLength);
+	G4LogicalVolume* logicWorld= new G4LogicalVolume( solidWorld, Shield_Air, "LogicWorld", 0, 0, 0);
 
 	//  Must place the World Physical volume unrotated at (0,0,0).
 	//
-	physiWorld = new G4PVPlacement(0,               // no rotation
+	G4VPhysicalVolume* phyWorld = new G4PVPlacement(0,               // no rotation
 			G4ThreeVector(), // at (0,0,0)
 			logicWorld,      // its logical volume
 			"PhysiWorld",         // its name
@@ -142,11 +146,11 @@ void DetectorConstruction::ConstructWorld()
 			false,           // no boolean operations
 			0,              // copy number
 			fCheckOverlaps);
-//	return physiWorld;
+	return phyWorld;
 }
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void   DetectorConstruction::ConstructPbShield()
+G4VPhysicalVolume* DetectorConstruction::ConstructPbShield(G4LogicalVolume* motherLogicalVolume)
 {
 	G4double Shield_Tubs_rmin = 0.*mm;
 	G4double Shield_Length = 630.*mm;
@@ -169,9 +173,9 @@ void   DetectorConstruction::ConstructPbShield()
 	G4LogicalVolume * Shield_Fe_log
 		= new G4LogicalVolume(Shield_Fe_tubs,Shield_Fe,"Shield_Fe_log",0,0,0);
 
-//	G4VPhysicalVolume * physiWorldPbShield =
-		new G4PVPlacement(0,G4ThreeVector(),Shield_Fe_log,"Shield_Fe_phys",
-				logicWorld,false,0,fCheckOverlaps);
+	//	G4VPhysicalVolume * physiWorldPbShield =
+	new G4PVPlacement(0,G4ThreeVector(),Shield_Fe_log,"Shield_Fe_phys",
+			motherLogicalVolume,false,0,fCheckOverlaps);
 
 	G4VisAttributes* Shield_Fe_logVisAtt
 		= new G4VisAttributes(G4Colour(1.0,0.0,1.0));
@@ -206,10 +210,10 @@ void   DetectorConstruction::ConstructPbShield()
 	// G4VPhysicalVolume * tracker_phys =
 	new G4PVPlacement(0,G4ThreeVector(),Shield_Sn_log,"Shield_Sn_phys",
 			Shield_Pb_log,false,0,fCheckOverlaps);
-	  G4VisAttributes* Shield_Sn_logVisAtt
-	    = new G4VisAttributes(G4Colour(1.0,0.0,0.30));
-	  Shield_Sn_log->SetVisAttributes(Shield_Sn_logVisAtt);
-	
+	G4VisAttributes* Shield_Sn_logVisAtt
+		= new G4VisAttributes(G4Colour(1.0,0.0,0.30));
+	Shield_Sn_log->SetVisAttributes(Shield_Sn_logVisAtt);
+
 
 	//Shield Cu
 	G4double Shield_Cu_Tubs_rMax = Shield_Sn_Tubs_rMax - Shield_Sn_Thickness;
@@ -223,10 +227,10 @@ void   DetectorConstruction::ConstructPbShield()
 	// G4VPhysicalVolume * tracker_phys =
 	new G4PVPlacement(0,G4ThreeVector(),Shield_Cu_log,"Shield_Cu_phys",
 			Shield_Sn_log,false,0,fCheckOverlaps);
-	  G4VisAttributes* Shield_Cu_logVisAtt
-	    = new G4VisAttributes(G4Colour(1.0,0.50,0.60));
-	  Shield_Cu_log->SetVisAttributes(Shield_Cu_logVisAtt);
-	
+	G4VisAttributes* Shield_Cu_logVisAtt
+		= new G4VisAttributes(G4Colour(1.0,0.50,0.60));
+	Shield_Cu_log->SetVisAttributes(Shield_Cu_logVisAtt);
+
 
 	//Shield Air
 	G4double Shield_Air_Tubs_rMax = Shield_Cu_Tubs_rMax - Shield_Cu_Thickness;
@@ -237,31 +241,30 @@ void   DetectorConstruction::ConstructPbShield()
 				Shield_Tubs_sphi,Shield_Tubs_dphi);
 	G4LogicalVolume * Shield_Air_log
 		= new G4LogicalVolume(Shield_Air_tubs,Shield_Air,"Shield_Air",0,0,0);
-	// G4VPhysicalVolume * tracker_phys =
-	new G4PVPlacement(0,G4ThreeVector(),Shield_Air_log,"Shield_Air_phys",
-			Shield_Cu_log,false,0,fCheckOverlaps);
+	G4VPhysicalVolume *PVShieldAir =
+		new G4PVPlacement(0,G4ThreeVector(),Shield_Air_log,"Shield_Air_phys",
+				Shield_Cu_log,false,0,fCheckOverlaps);
 	G4VisAttributes* Shield_Air_logVisAtt
 		= new G4VisAttributes(G4Colour(1.0,0.3,1.0));
 	Shield_Air_log->SetVisAttributes(Shield_Air_logVisAtt);
-	
+
 	G4bool shieldInvisible =1;
-		
+
 	if (shieldInvisible)
 	{
-	//Shield_Fe_log->SetVisAttributes(G4VisAttributes::Invisible);
-	Shield_Pb_log->SetVisAttributes(G4VisAttributes::Invisible);
-	Shield_Sn_log->SetVisAttributes(G4VisAttributes::Invisible);
-	Shield_Cu_log->SetVisAttributes(G4VisAttributes::Invisible);
-	//Shield_Air_log->SetVisAttributes(G4VisAttributes::Invisible);
+		//Shield_Fe_log->SetVisAttributes(G4VisAttributes::Invisible);
+		Shield_Pb_log->SetVisAttributes(G4VisAttributes::Invisible);
+		Shield_Sn_log->SetVisAttributes(G4VisAttributes::Invisible);
+		Shield_Cu_log->SetVisAttributes(G4VisAttributes::Invisible);
+		//Shield_Air_log->SetVisAttributes(G4VisAttributes::Invisible);
 	}
-	
-	logicDetector =  Shield_Air_log;
-//	return physiWorldPbShield;
+
+	return PVShieldAir;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void   DetectorConstruction::ConstructHPGeDetector()
+void   DetectorConstruction::ConstructHPGeDetector(G4LogicalVolume* matherLogicalVolume)
 {
 	G4NistManager* nist = G4NistManager::Instance();
 
@@ -285,8 +288,8 @@ void   DetectorConstruction::ConstructHPGeDetector()
 	G4LogicalVolume * Shell_Al_log
 		= new G4LogicalVolume(Shell_Al_tubs,Shell_Al,"Shell_Al_log",0,0,0);
 	//G4VPhysicalVolume * physiWorldHPGe =
-		new G4PVPlacement(0,G4ThreeVector(0.,0.,detector_move_len),Shell_Al_log,"Detector Shell Al phys",
-				logicDetector/*logicWorld*/,false,0,fCheckOverlaps);
+	new G4PVPlacement(0,G4ThreeVector(0.,0.,detector_move_len),Shell_Al_log,"Detector Shell Al phys",
+			matherLogicalVolume,false,0,fCheckOverlaps);
 	G4VisAttributes* Shell_Al_logVisAtt
 		= new G4VisAttributes(G4Colour(0.40,0.0,0.70));
 	Shell_Al_log->SetVisAttributes(Shell_Al_logVisAtt);
@@ -309,38 +312,38 @@ void   DetectorConstruction::ConstructHPGeDetector()
 	//    = new G4VisAttributes(G4Colour(0.3,0.7,1.0));
 	//  Shell_Galactic_log->SetVisAttributes(Shell_Galactic_logVisAtt);
 
-//CUP Al
-G4double CUPThickness =0.8 *mm; 
-G4double CUPRadius = GeCrystalRadius + CUPThickness;
-G4double CUPLength =105. *mm;
-G4double CUPLength_dz =0.5 *CUPLength;
-G4double CUP_move_len = Shell_Galactic_Tubs_dz - (CUPLength_dz + GalacticTopThickness);
-G4VSolid * CUP_Al
+	//CUP Al
+	G4double CUPThickness =0.8 *mm; 
+	G4double CUPRadius = GeCrystalRadius + CUPThickness;
+	G4double CUPLength =105. *mm;
+	G4double CUPLength_dz =0.5 *CUPLength;
+	G4double CUP_move_len = Shell_Galactic_Tubs_dz - (CUPLength_dz + GalacticTopThickness);
+	G4VSolid * CUP_Al
 		= new G4Tubs("CUP_Al",Tubs_rmin,CUPRadius,CUPLength_dz,
 				Tubs_sphi,Tubs_dphi);
 	G4LogicalVolume * CUP_Al_log
 		= new G4LogicalVolume(CUP_Al,Shell_Al,"CUP_Al_log",0,0,0);
 	//G4VPhysicalVolume * physiWorldHPGe =
-		new G4PVPlacement(0,G4ThreeVector(0.,0.,CUP_move_len),CUP_Al_log,"Detector CUP Al phys",
-				Shell_Galactic_log,false,0,fCheckOverlaps);
+	new G4PVPlacement(0,G4ThreeVector(0.,0.,CUP_move_len),CUP_Al_log,"Detector CUP Al phys",
+			Shell_Galactic_log,false,0,fCheckOverlaps);
 	G4VisAttributes* CUP_Al_logVisAtt
 		= new G4VisAttributes(G4Colour(0.20,0.0,0.70));
-		CUP_Al_logVisAtt ->G4VisAttributes::SetForceSolid(true);
+	CUP_Al_logVisAtt ->G4VisAttributes::SetForceSolid(true);
 	CUP_Al_log->SetVisAttributes(CUP_Al_logVisAtt);
 
-//CUP Galactic
-G4double CUP_Galactic_Radius = CUPRadius - CUPThickness ;
-G4double CUP_Galactic_Length = CUPLength  - 3.*mm -0.03*mm;
-G4double CUP_Galactic_Length_dz =0.5 * CUP_Galactic_Length;
-G4double CUP_Galactic_move_len = CUPLength_dz - (CUP_Galactic_Length_dz + 0.03*mm);
-G4VSolid * CUP_Galactic
+	//CUP Galactic
+	G4double CUP_Galactic_Radius = CUPRadius - CUPThickness ;
+	G4double CUP_Galactic_Length = CUPLength  - 3.*mm -0.03*mm;
+	G4double CUP_Galactic_Length_dz =0.5 * CUP_Galactic_Length;
+	G4double CUP_Galactic_move_len = CUPLength_dz - (CUP_Galactic_Length_dz + 0.03*mm);
+	G4VSolid * CUP_Galactic
 		= new G4Tubs("CUP_Galactic",Tubs_rmin,CUP_Galactic_Radius ,CUP_Galactic_Length_dz,
 				Tubs_sphi,Tubs_dphi);
 	G4LogicalVolume * CUP_Galactic_log
 		= new G4LogicalVolume(CUP_Galactic,Shell_Galactic,"CUP_Al_log",0,0,0);
 	//G4VPhysicalVolume * physiWorldHPGe =
-		new G4PVPlacement(0,G4ThreeVector(0.,0.,CUP_Galactic_move_len),CUP_Galactic_log,"Detector CUP_Galactic phys",
-				CUP_Al_log/*logicWorld*/,false,0,fCheckOverlaps);
+	new G4PVPlacement(0,G4ThreeVector(0.,0.,CUP_Galactic_move_len),CUP_Galactic_log,"Detector CUP_Galactic phys",
+			CUP_Al_log/*logicWorld*/,false,0,fCheckOverlaps);
 	G4VisAttributes* CUP_Galactic_logVisAtt
 		= new G4VisAttributes(G4Colour(0.40,0.0,0.70));
 	CUP_Galactic_log->SetVisAttributes(CUP_Galactic_logVisAtt);
@@ -360,7 +363,7 @@ G4VSolid * CUP_Galactic
 			CUP_Galactic_log,false,0,fCheckOverlaps);
 	G4VisAttributes* HPGe_dead_layer_logVisAtt
 		= new G4VisAttributes(G4Colour(8.0,6.0,1.20));
-		HPGe_dead_layer_logVisAtt->G4VisAttributes::SetForceSolid(true);
+	HPGe_dead_layer_logVisAtt->G4VisAttributes::SetForceSolid(true);
 	HPGe_dead_layer_outer_log->SetVisAttributes(HPGe_dead_layer_logVisAtt);
 
 	//Active HPGe Crystal
@@ -423,18 +426,18 @@ G4VSolid * CUP_Galactic
 	delete  HPGe_inner_hole_log->GetVisAttributes();
 	HPGe_inner_hole_log->SetVisAttributes(HPGe_inner_hole_logVisAtt);
 
-G4bool detectorInvisible =1;
-	
+	G4bool detectorInvisible =1;
+
 	if (detectorInvisible)
 	{
-	//Shell_Al_log -> SetVisAttributes(G4VisAttributes::Invisible);
-	Shell_Galactic_log -> SetVisAttributes(G4VisAttributes::Invisible);
-	CUP_Al_log -> SetVisAttributes(G4VisAttributes::Invisible);
-	CUP_Galactic_log -> SetVisAttributes(G4VisAttributes::Invisible);
-	HPGe_dead_layer_outer_log -> SetVisAttributes(G4VisAttributes::Invisible);
-	//ActiveHPGeCrystal_log->SetVisAttributes(G4VisAttributes::Invisible);
-	HPGe_inner_dead_layer_log -> SetVisAttributes(G4VisAttributes::Invisible);
-	//HPGe_inner_tubs_Cu_log -> SetVisAttributes(G4VisAttributes::Invisible);
+		//Shell_Al_log -> SetVisAttributes(G4VisAttributes::Invisible);
+		Shell_Galactic_log -> SetVisAttributes(G4VisAttributes::Invisible);
+		CUP_Al_log -> SetVisAttributes(G4VisAttributes::Invisible);
+		CUP_Galactic_log -> SetVisAttributes(G4VisAttributes::Invisible);
+		HPGe_dead_layer_outer_log -> SetVisAttributes(G4VisAttributes::Invisible);
+		//ActiveHPGeCrystal_log->SetVisAttributes(G4VisAttributes::Invisible);
+		HPGe_inner_dead_layer_log -> SetVisAttributes(G4VisAttributes::Invisible);
+		//HPGe_inner_tubs_Cu_log -> SetVisAttributes(G4VisAttributes::Invisible);
 	}
 	//--------- example of User Limits -------------------------------
 
@@ -453,7 +456,7 @@ G4bool detectorInvisible =1;
 	// G4double maxLength = 2*fTrackerLength, maxTime = 0.1*ns, minEkin = 10*MeV;
 	// logicTracker->SetUserLimits(new G4UserLimits(maxStep,maxLength,maxTime,
 	//                                               minEkin));
-//	return physiWorldHPGe;
+	//	return physiWorldHPGe;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -500,19 +503,6 @@ void DetectorConstruction::ConstructSDandField()
 	   absDetector->RegisterPrimitive(primitive);  
 	   */
 	SetSensitiveDetector("HPGeDetector",HPGeDetector);
-
-	// 
-	// Magnetic field
-	//
-	// Create global magnetic field messenger.
-	// Uniform magnetic field is then created automatically if
-	// the field value is not zero.
-	G4ThreeVector fieldValue = G4ThreeVector();
-	fMagFieldMessenger = new G4GlobalMagFieldMessenger(fieldValue);
-	fMagFieldMessenger->SetVerboseLevel(1);
-
-	// Register the field messenger for deleting
-	G4AutoDelete::Register(fMagFieldMessenger);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -521,4 +511,9 @@ void DetectorConstruction::SetOutDeadLayerThickness(G4double value)
 	outDeadLayerThickness = value;
 }
 
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+void DetectorConstruction::SetPbShield(G4bool value)
+{
+flagPbShield = value;
+}
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

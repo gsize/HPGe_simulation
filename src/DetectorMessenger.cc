@@ -38,12 +38,13 @@
 #include "G4UIcommand.hh"
 #include "G4UIparameter.hh"
 #include "G4UIcmdWithADoubleAndUnit.hh"
-
+#include "G4UIcmdWithABool.hh"
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 DetectorMessenger::DetectorMessenger(DetectorConstruction * Det)
 :G4UImessenger(), 
  fDetector(Det), fDetDir(0), fOutDeadLayerThicknessCmd(0)
+	,fFlagPbShieldCmd(0)
 { 
   
   G4bool broadcast = false;
@@ -57,6 +58,10 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction * Det)
   fOutDeadLayerThicknessCmd->SetUnitCategory("Length");
   fOutDeadLayerThicknessCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
  
+  fFlagPbShieldCmd = new G4UIcmdWithABool("/HPGe_simulation/det/setPbShield",this);
+  fFlagPbShieldCmd->SetGuidance("add Pb Shield .");
+  fFlagPbShieldCmd->SetParameterName("flagPbShield",false);
+  fFlagPbShieldCmd->AvailableForStates(G4State_Idle);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -65,6 +70,7 @@ DetectorMessenger::~DetectorMessenger()
 {
   delete fOutDeadLayerThicknessCmd;
   delete fDetDir;
+  delete fFlagPbShieldCmd;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -74,7 +80,10 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
    
   if( command == fOutDeadLayerThicknessCmd )
    { fDetector->SetOutDeadLayerThickness(fOutDeadLayerThicknessCmd->GetNewDoubleValue(newValue));}
-    
+   if(command == fFlagPbShieldCmd) 
+   {
+	   fDetector->SetPbShield(fFlagPbShieldCmd->GetNewBoolValue(newValue));
+   }
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
