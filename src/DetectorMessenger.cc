@@ -61,7 +61,7 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction * Det)
   fFlagPbShieldCmd = new G4UIcmdWithABool("/HPGe_simulation/det/setPbShield",this);
   fFlagPbShieldCmd->SetGuidance("add Pb Shield .");
   fFlagPbShieldCmd->SetParameterName("flagPbShield",false);
-  fFlagPbShieldCmd->AvailableForStates(G4State_Idle);
+  fFlagPbShieldCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
