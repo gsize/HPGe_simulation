@@ -72,27 +72,13 @@ void   EventAction::BeginOfEventAction(const G4Event* /*event*/)
 void   EventAction::EndOfEventAction(const G4Event* event)
 {
 	G4int event_id = event->GetEventID();
-
-	// get number of stored trajectories
-	//
-		G4TrajectoryContainer* trajectoryContainer = event->GetTrajectoryContainer();
-		G4int n_trajectories = 0;
-		if (trajectoryContainer) n_trajectories = trajectoryContainer->entries();
-		
-	// periodic printing
-/*	if (event_id < 10 || event_id%100000 == 0) {
-	  G4cout << ">>> Event " << evt->GetEventID() << G4endl;
-	  G4cout << "    " << n_trajectories
-	  << " trajectories stored in this event." << G4endl;
-	  }
-*/
+// Get the energy of primary particle 
 	G4double primary_energy = event->GetPrimaryVertex()->GetPrimary()->GetTotalEnergy();
-//	if(event_id < 50 )
-//		G4cout << "PrimaryParticle Energy :" << primary_energy<<G4endl;
-	fHistManager->FillSourceData(primary_energy);
+	fHistManager->FillSourceData(primary_energy /MeV);
 
 	// Get hist collections IDs
-	if ( fHPGeEdepHCID == -1 ) {
+	G4double energyShield = 1. *keV;
+	if ( fHPGeEdepHCID < 0  ) {
 		fHPGeEdepHCID 
 			= G4SDManager::GetSDMpointer()->GetCollectionID("HPGe/Edep");
 		}
@@ -102,17 +88,9 @@ void   EventAction::EndOfEventAction(const G4Event* event)
 
 		// fill histograms
 		//
-		if(HPGeEdep > 1.*keV) {
-		fHistManager->FillSDData(HPGeEdep);
+		if(HPGeEdep > energyShield) {
+		fHistManager->FillSDData(HPGeEdep/ MeV);
 	}
-	//print per event (modulo n)
-	//
-	/*G4int eventID = event->GetEventID();
-	  G4int printModulo = G4RunManager::GetRunManager()->GetPrintProgress();
-	  if ( ( printModulo > 0 ) && ( eventID % printModulo == 0 ) ) {
-	  G4cout << "---> End of event: " << eventID << G4endl;     
-	  PrintEventStatistics(HPGeEdep);
-	  }*/
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
