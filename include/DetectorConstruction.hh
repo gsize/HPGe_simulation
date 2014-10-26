@@ -84,8 +84,8 @@ void SetPbShield(G4bool value);
 
 		G4bool fCheckOverlaps;
 		G4bool flagPbShield;
-		G4double outDeadLayerThickness;
-	G4double shellAlThickness;
+		G4double outerDeadLayerThick;
+	G4double shellAlThick;
 
 		static G4ThreadLocal G4GlobalMagFieldMessenger*  fMagFieldMessenger; 
 		// magnetic field messenger
