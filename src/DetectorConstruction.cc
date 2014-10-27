@@ -386,10 +386,10 @@ void   DetectorConstruction::ConstructHPGeDetector(G4LogicalVolume* matherLogica
 	G4VSolid *innerDead3 = new G4UnionSolid("innerDead3",
 			innerDead1,innerDead2,0 ,  G4ThreeVector(0., 0.,0.5*(holeDepth- holeRadius) ) );
 	G4VSolid *innerDeadLayer = new G4SubtractionSolid("innerDeadLayer",
-			innerDead3,hole,0,G4ThreeVector(0., 0.,-0.5*innerDeadLayerThick ));
+			innerDead3,hole,0,G4ThreeVector(0., 0.,0.));
 	//Making final detector shape
 	G4VSolid * activeCrystal = new G4SubtractionSolid("activeCrystal",
-			activeCrystal4 ,innerDead3,0,G4ThreeVector(0., 0.,-activeHalfLength+ 0.5*(holeDepth+innerDeadLayerThick) ) );
+			activeCrystal4 ,innerDead3,0,G4ThreeVector(0., 0.,-activeHalfLength+ 0.5*(holeDepth - holeRadius) ) );
 
 	G4LogicalVolume * logOuterDeadLayer
 		= new G4LogicalVolume(outerDeadLayer,GeCrystal,"logOuterDeadLayer",0,0,0);
@@ -448,18 +448,25 @@ void   DetectorConstruction::ConstructHPGeDetector(G4LogicalVolume* matherLogica
 			logActiveCrystal,"physiActiveCrystal",
 			logHPGe,false,0,fCheckOverlaps);
 	new G4PVPlacement(0,
-			G4ThreeVector(0., 0.,0.5*(shellLength - holeDepth-innerDeadLayerThick)-shellThick-endGap -CUPTopThick -(2.*crystalHalfLength -holeDepth-innerDeadLayerThick)),
+			G4ThreeVector(0., 0.,0.5*(shellLength - holeDepth+holeRadius)-shellThick-endGap -CUPTopThick -(2.*crystalHalfLength -holeDepth+holeRadius)),
 			logInnerDeadLayer,"physiInnerDeadLayer",
 			logHPGe,false,0,fCheckOverlaps);
 
 	//Detector Visualization Attributes
+	G4VisAttributes* HPGeVisAtt
+		= new G4VisAttributes(G4Colour(1.0,1.0,0.00));
+	logHPGe->SetVisAttributes(HPGeVisAtt);
+
 	G4VisAttributes* shellVisAtt
 		= new G4VisAttributes(G4Colour(1.0,1.0,0.00));
-	//HPGe_dead_layer_logVisAtt->G4VisAttributes::SetForceSolid(true);
 	logShell->SetVisAttributes(shellVisAtt);
+	
+	G4VisAttributes* CUPVisAtt
+		= new G4VisAttributes(G4Colour(0.2,1.0,0.00));
+	logCUP->SetVisAttributes(CUPVisAtt);
 
 	G4VisAttributes* outerDeadLayerVisAtt
-		= new G4VisAttributes(G4Colour(0.5,1.0,0.0,0.80));
+		= new G4VisAttributes(G4Colour(0.9,1.0,0.0,0.80));
 	outerDeadLayerVisAtt->G4VisAttributes::SetForceSolid(true);
 	logOuterDeadLayer->SetVisAttributes(outerDeadLayerVisAtt);
 
@@ -469,17 +476,23 @@ void   DetectorConstruction::ConstructHPGeDetector(G4LogicalVolume* matherLogica
 	logActiveCrystal->SetVisAttributes(activeCrystalVisAtt);
 
 	G4VisAttributes* innerDeadLayerVisAtt
-		= new G4VisAttributes(G4Colour(0.0,0.6,0.5,0.30));
+		= new G4VisAttributes(G4Colour(0.0,0.6,0.9,0.30));
 	innerDeadLayerVisAtt->G4VisAttributes::SetForceSolid(true);
 	logInnerDeadLayer->SetVisAttributes(innerDeadLayerVisAtt);
 
 	G4bool detectorInvisible =0;
 	if (detectorInvisible)
 	{
-		logShell-> SetVisAttributes(G4VisAttributes::Invisible);
-		logActiveCrystal->SetVisAttributes(G4VisAttributes::Invisible);
 		logOuterDeadLayer-> SetVisAttributes(G4VisAttributes::Invisible);
+		logActiveCrystal->SetVisAttributes(G4VisAttributes::Invisible);
 		logInnerDeadLayer-> SetVisAttributes(G4VisAttributes::Invisible);
+	}
+G4bool shellInvisible= 1;
+	if(shellInvisible)
+	{
+		logHPGe-> SetVisAttributes(G4VisAttributes::Invisible);
+		logShell-> SetVisAttributes(G4VisAttributes::Invisible);
+		logCUP-> SetVisAttributes(G4VisAttributes::Invisible);
 	}
 	//--------- example of User Limits -------------------------------
 
