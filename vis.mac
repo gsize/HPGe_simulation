@@ -7,6 +7,7 @@
 /control/verbose 2
 /run/verbose 2
 
+/HPGe_simulation/det/setPbShield false
 ##
 /run/numberOfThreads 3
 /run/initialize
@@ -37,16 +38,16 @@
 /vis/drawVolume
 #
 # Specify view angle:
-/vis/viewer/set/viewpointThetaPhi -80. -90.
+/vis/viewer/set/viewpointThetaPhi  45. -90.
 #
 # Specify zoom value:
-/vis/viewer/zoom 1.4
+/vis/viewer/zoom 2.35
 #
 # Specify style (surface or wireframe):
 #/vis/viewer/set/style wireframe
 #
 # Draw coordinate axes:
-/vis/scene/add/axes 0 0 0 0.35 m
+#/vis/scene/add/axes 0 0 0 0.35 m
 #
 # Draw smooth trajectories at end of event, showing trajectory points
 # as markers 2 pixels wide:
@@ -88,10 +89,11 @@
 /gps/particle gamma
 
 /gps/pos/type Point
-/gps/position 0. 0. 0. mm
+/gps/position 0. 0. 80. mm
 /gps/pos/type Point
 #/gps/position 0. 0. -15. mm
 /gps/ang/type iso
-
+/gps/ang/mintheta 150 deg
+/gps/ang/rot1 -1 0 0
 ###
-/run/beamOn 5
+#/run/beamOn 5
