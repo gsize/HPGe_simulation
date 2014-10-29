@@ -272,16 +272,19 @@ void   DetectorConstruction::ConstructHPGeDetector(G4LogicalVolume* matherLogica
 	G4NistManager* nist = G4NistManager::Instance();
 	G4Material* shellAl = nist->FindOrBuildMaterial("G4_Al");
 	G4Material* vacuum = nist->FindOrBuildMaterial("G4_Galactic");
+	G4Material* plexiglass= nist->FindOrBuildMaterial("G4_PLEXIGLASS");
 
 	//G4double Tubs_rmin = 0.*mm;
 	G4double  sphi =   0.*deg;
 	G4double  dphi = 360.*deg;
+	//cover
+	G4double coverThick = 3.0 *mm;
 	//detector shell
 	G4double shellRadius = 0.5 * 76. *mm;
 	G4double shellLength= 120. *mm;
 	G4double shellThick =1. *mm;
 	G4double endGap =4.0 *mm;
-	G4double detectorMove =-140.0 *mm;
+	G4double detectorMove = -60.0 *mm;
 	//CUP
 	G4double CUPLength =105.*mm;
 	G4double CUPThick =0.8 *mm;
@@ -296,6 +299,19 @@ void   DetectorConstruction::ConstructHPGeDetector(G4LogicalVolume* matherLogica
 	G4double holeRadius =0.5* 10.8 *mm;
 	//G4double outerDeadLayerThick = 0.7 *mm;
 	G4double innerDeadLayerThick = 0.3 *um;
+
+	//Cover
+	G4VSolid *cover = new G4Tubs("cover",
+			0. *mm,
+			shellRadius ,
+		0.5* coverThick ,	
+			sphi,
+			dphi);
+	G4LogicalVolume * logCover
+		= new G4LogicalVolume(cover, plexiglass,"logCover",0,0,0);
+	new G4PVPlacement(0,G4ThreeVector(0. ,0. ,detectorMove + 0.5 *shellLength+ 0.5* coverThick),logCover,"physiCover",
+			matherLogicalVolume,false,0,fCheckOverlaps);
+
 
 	//detector
 	G4VSolid *HPGe = new G4Tubs("HPGe",

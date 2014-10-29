@@ -185,14 +185,14 @@ void HistoManager::FillNtuple(int ih ,int NtColID,G4double energy)
 void HistoManager::FillSourceData(G4double energy)
 {
 	this -> FillHisto(1,energy);
-	this -> FillNtuple(1,0,energy);
+	//this -> FillNtuple(1,0,energy);
 }
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void HistoManager::FillSDData(G4double energy)
 {
 	this -> FillHisto(2,energy);
-	this -> FillNtuple(2,1,energy);
+	//this -> FillNtuple(2,1,energy);
 }
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
