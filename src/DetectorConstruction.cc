@@ -284,7 +284,7 @@ void   DetectorConstruction::ConstructHPGeDetector(G4LogicalVolume* matherLogica
 	G4double shellLength= 120. *mm;
 	G4double shellThick =1. *mm;
 	G4double endGap =4.0 *mm;
-	G4double detectorMove = -140.0 *mm;
+	G4double detectorMove = -60.0 *mm;
 	//CUP
 	G4double CUPLength =105.*mm;
 	G4double CUPThick =0.8 *mm;
