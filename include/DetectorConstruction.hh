@@ -61,8 +61,8 @@ class   DetectorConstruction : public G4VUserDetectorConstruction
 		G4VPhysicalVolume* Construct();
 
 		virtual void ConstructSDandField();
-void SetOutDeadLayerThickness(double value);
-void SetPbShield(G4bool value);
+		void SetOutDeadLayerThickness(double value);
+		void SetPbShield(G4bool value);
 
 	private:
 		void DefineMaterials();
@@ -74,18 +74,42 @@ void SetPbShield(G4bool value);
 		//
 		G4VPhysicalVolume* physiWorld;    // pointer to the physical envelope
 		G4UserLimits* stepLimit;             // pointer to user step limits
-	DetectorMessenger* detectorMessenger;	
+		DetectorMessenger* detectorMessenger;	
 		G4Material* Shield_Fe;
 		G4Material* Shield_Cu;
 		G4Material* Shield_Sn;
 		G4Material* Shield_Pb;
 		G4Material* Shield_Air;
 		G4Material* GeCrystal;
+		
+		//cover
+		G4double coverThick;
+
+		//HPGe parameter
+		//detector shell
+		G4double shellRadius;
+		G4double shellLength;
+		G4double shellThick ;
+		G4double endGap;
+		G4double detectorMove;
+		//CUP
+		G4double CUPLength;
+		G4double CUPThick ;
+		G4double CUPTopThick ;
+		G4double CUPBottomThick ;
+		G4double mylarThick;
+
+		//Ge crystal
+		G4double crystalRadius;
+		G4double crystalHalfLength;
+		G4double crystalEndRadius;
+		G4double holeDepth;
+		G4double holeRadius;
+		G4double outerDeadLayerThick;
+		G4double innerDeadLayerThick ;
 
 		G4bool fCheckOverlaps;
 		G4bool flagPbShield;
-		G4double outerDeadLayerThick;
-	G4double shellAlThick;
 
 		static G4ThreadLocal G4GlobalMagFieldMessenger*  fMagFieldMessenger; 
 		// magnetic field messenger

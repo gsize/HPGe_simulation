@@ -80,8 +80,29 @@ G4GlobalMagFieldMessenger* DetectorConstruction::fMagFieldMessenger = 0;
 	,fCheckOverlaps(true)
 	 ,flagPbShield(true)
 {
+	//cover
+	coverThick = 3.0 *mm;
+	//detector shell
+	shellRadius = 0.5 * 76. *mm;
+	shellLength= 120. *mm;
+	shellThick =1. *mm;
+	endGap =4.0 *mm;
+	detectorMove = -60.0 *mm;
+	//CUP
+	CUPLength =105.*mm;
+	CUPThick =0.8 *mm;
+	CUPTopThick =0.03 *mm;
+	CUPBottomThick =3. *mm;
+	mylarThick =0.03 *mm;
+	//Ge crystal
+	crystalRadius = 0.5 * 63. *mm;
+	crystalHalfLength =0.5* 44.1 *mm;
+	crystalEndRadius = 8. *mm;
+	holeDepth = 27.8 *mm;
+	holeRadius =0.5* 10.8 *mm;
 	outerDeadLayerThick = 0.7 *mm;
-	shellAlThick = 1.0 *mm;
+	innerDeadLayerThick = 0.3 *um;
+	
 	detectorMessenger = new DetectorMessenger(this);	
 }
 
@@ -275,32 +296,8 @@ void   DetectorConstruction::ConstructHPGeDetector(G4LogicalVolume* matherLogica
 	G4Material* plexiglass= nist->FindOrBuildMaterial("G4_PLEXIGLASS");
 	G4Material* mylar= nist->FindOrBuildMaterial("G4_MYLAR");
 
-	//G4double Tubs_rmin = 0.*mm;
 	G4double  sphi =   0.*deg;
 	G4double  dphi = 360.*deg;
-	//cover
-	G4double coverThick = 3.0 *mm;
-	//detector shell
-	G4double shellRadius = 0.5 * 76. *mm;
-	G4double shellLength= 120. *mm;
-	G4double shellThick =1. *mm;
-	G4double endGap =4.0 *mm;
-	G4double detectorMove = -60.0 *mm;
-	//CUP
-	G4double CUPLength =105.*mm;
-	G4double CUPThick =0.8 *mm;
-	G4double CUPTopThick =0.03 *mm;
-	G4double CUPBottomThick =3. *mm;
-	G4double mylarThick =0.03 *mm;
-
-	//Ge crystal
-	G4double crystalRadius = 0.5 * 63. *mm;
-	G4double crystalHalfLength =0.5* 44.1 *mm;
-	G4double crystalEndRadius = 8. *mm;
-	G4double holeDepth = 27.8 *mm;
-	G4double holeRadius =0.5* 10.8 *mm;
-	//G4double outerDeadLayerThick = 0.7 *mm;
-	G4double innerDeadLayerThick = 0.3 *um;
 
 	//Cover
 	G4VSolid *cover = new G4Tubs("cover",
