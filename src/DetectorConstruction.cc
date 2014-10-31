@@ -273,6 +273,7 @@ void   DetectorConstruction::ConstructHPGeDetector(G4LogicalVolume* matherLogica
 	G4Material* shellAl = nist->FindOrBuildMaterial("G4_Al");
 	G4Material* vacuum = nist->FindOrBuildMaterial("G4_Galactic");
 	G4Material* plexiglass= nist->FindOrBuildMaterial("G4_PLEXIGLASS");
+	G4Material* mylar= nist->FindOrBuildMaterial("G4_MYLAR");
 
 	//G4double Tubs_rmin = 0.*mm;
 	G4double  sphi =   0.*deg;
@@ -290,6 +291,7 @@ void   DetectorConstruction::ConstructHPGeDetector(G4LogicalVolume* matherLogica
 	G4double CUPThick =0.8 *mm;
 	G4double CUPTopThick =0.03 *mm;
 	G4double CUPBottomThick =3. *mm;
+	G4double mylarThick =0.03 *mm;
 
 	//Ge crystal
 	G4double crystalRadius = 0.5 * 63. *mm;
@@ -413,6 +415,16 @@ void   DetectorConstruction::ConstructHPGeDetector(G4LogicalVolume* matherLogica
 		= new G4LogicalVolume(innerDeadLayer,GeCrystal,"logInnerDeadLayer",0,0,0);
 	G4LogicalVolume * logActiveCrystal
 		= new G4LogicalVolume(activeCrystal,GeCrystal,"logActiveCrystal",0,0,0);
+
+	//mylar
+	G4VSolid *mylarLayer = new G4Tubs("mylarLayer",
+			0.*mm,
+			CUPThick+ crystalRadius ,
+			0.5*mylarThick,
+			sphi,
+			dphi);
+	G4LogicalVolume * logMylar
+		= new G4LogicalVolume(mylarLayer,mylar ,"logMylar",0,0,0);
 	//CUP
 	G4VSolid *CUP1 = new G4Tubs("CUP1",
 			0.*mm,
@@ -451,6 +463,10 @@ void   DetectorConstruction::ConstructHPGeDetector(G4LogicalVolume* matherLogica
 	new G4PVPlacement(0,G4ThreeVector(),logShell,"physiShell",
 			logHPGe,false,0,fCheckOverlaps);
 
+	new G4PVPlacement(0,
+			G4ThreeVector(0., 0.,0.5*(shellLength + mylarThick)-shellThick-endGap),
+			logMylar,"physiMylarLayer",
+			logHPGe,false,0,fCheckOverlaps);
 	new G4PVPlacement(0,
 			G4ThreeVector(0., 0.,0.5*(shellLength - CUPLength)-shellThick-endGap),
 			logCUP,"physiCUP",
