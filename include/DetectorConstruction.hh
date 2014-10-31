@@ -61,14 +61,34 @@ class   DetectorConstruction : public G4VUserDetectorConstruction
 		G4VPhysicalVolume* Construct();
 
 		virtual void ConstructSDandField();
-		void SetOutDeadLayerThickness(double value);
 		void SetPbShield(G4bool value);
+
+		void SetOutDeadLayerThickness(double value);
+		void SetCoverThick(G4double value);
+		void SetShellRadius(G4double value);
+		void SetShellLength(G4double value);
+		void SetShellThick(G4double value);
+		void SetEndGap(G4double value);
+		void SetCUPLength(G4double value);
+		void SetCUPThick(G4double value);
+		void SetCUPTopThick(G4double value);
+		void SetCUPBottomThick(G4double value);
+		void SetMylarThick (G4double value);
+		void SetCrystalRadius (G4double value);
+		void SetCrystalHalfLength (G4double value);
+		void SetCrystalEndRadius (G4double value);
+		void SetHoleDepth(G4double value);
+		void SetHoleRadius(G4double value);
+		void SetOuterDeadLayerThick(G4double value);
+		void SetInnerDeadLayerThick(G4double value);
+		void UpdateGeometry();
 
 	private:
 		void DefineMaterials();
 		G4VPhysicalVolume* ConstructWorld();
 		G4VPhysicalVolume* ConstructPbShield(G4LogicalVolume* );
 		void ConstructHPGeDetector(G4LogicalVolume* );
+
 	private:
 		// data members
 		//
@@ -81,7 +101,7 @@ class   DetectorConstruction : public G4VUserDetectorConstruction
 		G4Material* Shield_Pb;
 		G4Material* Shield_Air;
 		G4Material* GeCrystal;
-		
+
 		//cover
 		G4double coverThick;
 

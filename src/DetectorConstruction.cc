@@ -103,6 +103,8 @@ G4GlobalMagFieldMessenger* DetectorConstruction::fMagFieldMessenger = 0;
 	outerDeadLayerThick = 0.7 *mm;
 	innerDeadLayerThick = 0.3 *um;
 	
+	DefineMaterials();
+
 	detectorMessenger = new DetectorMessenger(this);	
 }
 
@@ -129,7 +131,6 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 	G4SolidStore::GetInstance()->Clean();
 
 	//--------- Material definition ---------
-	DefineMaterials();
 	G4LogicalVolume* pLV = 0;
 	physiWorld = ConstructWorld();
 
@@ -590,14 +591,106 @@ void DetectorConstruction::ConstructSDandField()
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+void DetectorConstruction::SetPbShield(G4bool value)
+{
+	flagPbShield = value;
+}
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 void DetectorConstruction::SetOutDeadLayerThickness(G4double value)
 {
 	outerDeadLayerThick= value;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-void DetectorConstruction::SetPbShield(G4bool value)
+void DetectorConstruction::SetCoverThick(G4double value)
 {
-	flagPbShield = value;
+	coverThick = value;
+}
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+void DetectorConstruction::SetShellRadius(G4double value)
+{
+	shellRadius= value;
+}
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+void DetectorConstruction::SetShellLength(G4double value)
+{
+	shellLength= value;
+}
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+void DetectorConstruction::SetShellThick(G4double value)
+{
+	shellThick = value;
+}
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+void DetectorConstruction::SetEndGap(G4double value)
+{
+	endGap = value;
+}
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+void DetectorConstruction::SetCUPLength(G4double value)
+{
+	CUPLength = value;
+}
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+void DetectorConstruction::SetCUPThick(G4double value)
+{
+	CUPThick = value;
+}
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+void DetectorConstruction::SetCUPTopThick(G4double value)
+{
+	CUPTopThick = value;
+}
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+void DetectorConstruction::SetCUPBottomThick(G4double value)
+{
+	CUPBottomThick = value;
+}
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+void DetectorConstruction::SetMylarThick (G4double value)
+{
+	mylarThick = value;
+}
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+void DetectorConstruction::SetCrystalRadius (G4double value)
+{
+	crystalRadius = value;
+}
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+void DetectorConstruction::SetCrystalHalfLength (G4double value)
+{
+	crystalHalfLength = value;
+}
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+void DetectorConstruction::SetCrystalEndRadius (G4double value)
+{
+	crystalEndRadius = value;
+}
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+void DetectorConstruction::SetHoleDepth(G4double value)
+{
+	holeDepth = value;
+}
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+void DetectorConstruction::SetHoleRadius(G4double value)
+{
+	holeRadius= value;
+}
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+void DetectorConstruction::SetOuterDeadLayerThick(G4double value)
+{
+	outerDeadLayerThick = value;
+}
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+void DetectorConstruction::SetInnerDeadLayerThick(G4double value)
+{
+	innerDeadLayerThick = value;
+}
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+#include "G4RunManager.hh"
+void DetectorConstruction::UpdateGeometry()
+{
+	G4RunManager::GetRunManager()->DefineWorldVolume(this->Construct());
 }
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
