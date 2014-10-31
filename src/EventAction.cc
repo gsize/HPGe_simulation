@@ -71,7 +71,7 @@ void   EventAction::BeginOfEventAction(const G4Event* /*event*/)
 
 void   EventAction::EndOfEventAction(const G4Event* event)
 {
-	G4int event_id = event->GetEventID();
+//	G4int event_id = event->GetEventID();
 // Get the energy of primary particle 
 	G4double primary_energy = event->GetPrimaryVertex()->GetPrimary()->GetTotalEnergy();
 	fHistManager->FillSourceData(primary_energy /MeV);
