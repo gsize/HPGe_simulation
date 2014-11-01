@@ -80,8 +80,31 @@ G4GlobalMagFieldMessenger* DetectorConstruction::fMagFieldMessenger = 0;
 	,fCheckOverlaps(true)
 	 ,flagPbShield(true)
 {
+	//cover
+	coverThick = 3.0 *mm;
+	//detector shell
+	shellRadius = 0.5 * 76. *mm;
+	shellLength= 120. *mm;
+	shellThick =1. *mm;
+	endGap =4.0 *mm;
+	detectorMove = -60.0 *mm;
+	//CUP
+	CUPLength =105.*mm;
+	CUPThick =0.8 *mm;
+	CUPTopThick =0.03 *mm;
+	CUPBottomThick =3. *mm;
+	mylarThick =0.03 *mm;
+	//Ge crystal
+	crystalRadius = 0.5 * 63. *mm;
+	crystalHalfLength =0.5* 44.1 *mm;
+	crystalEndRadius = 8. *mm;
+	holeDepth = 27.8 *mm;
+	holeRadius =0.5* 10.8 *mm;
 	outerDeadLayerThick = 0.7 *mm;
-	shellAlThick = 1.0 *mm;
+	innerDeadLayerThick = 0.3 *um;
+	
+	DefineMaterials();
+
 	detectorMessenger = new DetectorMessenger(this);	
 }
 
@@ -108,7 +131,6 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 	G4SolidStore::GetInstance()->Clean();
 
 	//--------- Material definition ---------
-	DefineMaterials();
 	G4LogicalVolume* pLV = 0;
 	physiWorld = ConstructWorld();
 
@@ -273,32 +295,10 @@ void   DetectorConstruction::ConstructHPGeDetector(G4LogicalVolume* matherLogica
 	G4Material* shellAl = nist->FindOrBuildMaterial("G4_Al");
 	G4Material* vacuum = nist->FindOrBuildMaterial("G4_Galactic");
 	G4Material* plexiglass= nist->FindOrBuildMaterial("G4_PLEXIGLASS");
+	G4Material* mylar= nist->FindOrBuildMaterial("G4_MYLAR");
 
-	//G4double Tubs_rmin = 0.*mm;
 	G4double  sphi =   0.*deg;
 	G4double  dphi = 360.*deg;
-	//cover
-	G4double coverThick = 3.0 *mm;
-	//detector shell
-	G4double shellRadius = 0.5 * 76. *mm;
-	G4double shellLength= 120. *mm;
-	G4double shellThick =1. *mm;
-	G4double endGap =4.0 *mm;
-	G4double detectorMove = -60.0 *mm;
-	//CUP
-	G4double CUPLength =105.*mm;
-	G4double CUPThick =0.8 *mm;
-	G4double CUPTopThick =0.03 *mm;
-	G4double CUPBottomThick =3. *mm;
-
-	//Ge crystal
-	G4double crystalRadius = 0.5 * 63. *mm;
-	G4double crystalHalfLength =0.5* 44.1 *mm;
-	G4double crystalEndRadius = 8. *mm;
-	G4double holeDepth = 27.8 *mm;
-	G4double holeRadius =0.5* 10.8 *mm;
-	//G4double outerDeadLayerThick = 0.7 *mm;
-	G4double innerDeadLayerThick = 0.3 *um;
 
 	//Cover
 	G4VSolid *cover = new G4Tubs("cover",
@@ -413,6 +413,16 @@ void   DetectorConstruction::ConstructHPGeDetector(G4LogicalVolume* matherLogica
 		= new G4LogicalVolume(innerDeadLayer,GeCrystal,"logInnerDeadLayer",0,0,0);
 	G4LogicalVolume * logActiveCrystal
 		= new G4LogicalVolume(activeCrystal,GeCrystal,"logActiveCrystal",0,0,0);
+
+	//mylar
+	G4VSolid *mylarLayer = new G4Tubs("mylarLayer",
+			0.*mm,
+			CUPThick+ crystalRadius ,
+			0.5*mylarThick,
+			sphi,
+			dphi);
+	G4LogicalVolume * logMylar
+		= new G4LogicalVolume(mylarLayer,mylar ,"logMylar",0,0,0);
 	//CUP
 	G4VSolid *CUP1 = new G4Tubs("CUP1",
 			0.*mm,
@@ -451,6 +461,10 @@ void   DetectorConstruction::ConstructHPGeDetector(G4LogicalVolume* matherLogica
 	new G4PVPlacement(0,G4ThreeVector(),logShell,"physiShell",
 			logHPGe,false,0,fCheckOverlaps);
 
+	new G4PVPlacement(0,
+			G4ThreeVector(0., 0.,0.5*(shellLength + mylarThick)-shellThick-endGap),
+			logMylar,"physiMylarLayer",
+			logHPGe,false,0,fCheckOverlaps);
 	new G4PVPlacement(0,
 			G4ThreeVector(0., 0.,0.5*(shellLength - CUPLength)-shellThick-endGap),
 			logCUP,"physiCUP",
@@ -577,14 +591,106 @@ void DetectorConstruction::ConstructSDandField()
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+void DetectorConstruction::SetPbShield(G4bool value)
+{
+	flagPbShield = value;
+}
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 void DetectorConstruction::SetOutDeadLayerThickness(G4double value)
 {
 	outerDeadLayerThick= value;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-void DetectorConstruction::SetPbShield(G4bool value)
+void DetectorConstruction::SetCoverThick(G4double value)
 {
-	flagPbShield = value;
+	coverThick = value;
+}
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+void DetectorConstruction::SetShellRadius(G4double value)
+{
+	shellRadius= value;
+}
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+void DetectorConstruction::SetShellLength(G4double value)
+{
+	shellLength= value;
+}
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+void DetectorConstruction::SetShellThick(G4double value)
+{
+	shellThick = value;
+}
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+void DetectorConstruction::SetEndGap(G4double value)
+{
+	endGap = value;
+}
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+void DetectorConstruction::SetCUPLength(G4double value)
+{
+	CUPLength = value;
+}
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+void DetectorConstruction::SetCUPThick(G4double value)
+{
+	CUPThick = value;
+}
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+void DetectorConstruction::SetCUPTopThick(G4double value)
+{
+	CUPTopThick = value;
+}
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+void DetectorConstruction::SetCUPBottomThick(G4double value)
+{
+	CUPBottomThick = value;
+}
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+void DetectorConstruction::SetMylarThick (G4double value)
+{
+	mylarThick = value;
+}
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+void DetectorConstruction::SetCrystalRadius (G4double value)
+{
+	crystalRadius = value;
+}
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+void DetectorConstruction::SetCrystalHalfLength (G4double value)
+{
+	crystalHalfLength = value;
+}
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+void DetectorConstruction::SetCrystalEndRadius (G4double value)
+{
+	crystalEndRadius = value;
+}
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+void DetectorConstruction::SetHoleDepth(G4double value)
+{
+	holeDepth = value;
+}
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+void DetectorConstruction::SetHoleRadius(G4double value)
+{
+	holeRadius= value;
+}
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+void DetectorConstruction::SetOuterDeadLayerThick(G4double value)
+{
+	outerDeadLayerThick = value;
+}
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+void DetectorConstruction::SetInnerDeadLayerThick(G4double value)
+{
+	innerDeadLayerThick = value;
+}
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+#include "G4RunManager.hh"
+void DetectorConstruction::UpdateGeometry()
+{
+	G4RunManager::GetRunManager()->DefineWorldVolume(this->Construct());
 }
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
