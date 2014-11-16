@@ -1,0 +1,12 @@
+##计算在80mm架位下，圆柱体源的探测效率
+
+/gps/pos/type Volume
+/gps/pos/shape Cylinder
+/gps/pos/centre 0.0 0.0 95. cm
+/gps/pos/radius 0.564 cm
+/gps/pos/halfz 0.5 cm
+/gps/ang/type iso
+
+
+/analysis/setFileName VC
+/run/beamOn 1000001
