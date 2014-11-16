@@ -102,7 +102,11 @@ G4GlobalMagFieldMessenger* DetectorConstruction::fMagFieldMessenger = 0;
 	holeRadius =0.5* 10.8 *mm;
 	outerDeadLayerThick = 0.7 *mm;
 	innerDeadLayerThick = 0.3 *um;
-	
+	//sample	
+	shapeRad = 0.564 *cm;
+	shapeHalfDepth = 0.5 *cm;
+	sampleMove = 90.*mm;
+
 	DefineMaterials();
 
 	detectorMessenger = new DetectorMessenger(this);	
@@ -141,6 +145,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		pLV = PVShieldDauther->GetLogicalVolume();
 	}
 	ConstructHPGeDetector(pLV);
+	ConstructSample(pLV);
 	return physiWorld;
 }
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -288,6 +293,29 @@ G4VPhysicalVolume* DetectorConstruction::ConstructPbShield(G4LogicalVolume* moth
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+//sample Geo
+void  DetectorConstruction::ConstructSample(G4LogicalVolume* motherLogicalVolume)
+{
+	G4NistManager* nist = G4NistManager::Instance();
+	sampleMaterial= nist->FindOrBuildMaterial("G4_WATER");
+
+	G4VSolid * sampleShape
+		= new G4Tubs("sampleShape", 0.*cm,shapeRad ,shapeHalfDepth ,
+				0. *deg,360. *deg);
+	G4LogicalVolume * logSample 
+		= new G4LogicalVolume(sampleShape,sampleMaterial,"sample_log",0,0,0);
+
+	//	G4VPhysicalVolume * physiWorldPbShield =
+	new G4PVPlacement(0,G4ThreeVector(0.,0.,sampleMove +shapeHalfDepth ),logSample,"sample_phys",
+			motherLogicalVolume,false,0,fCheckOverlaps);
+
+	G4VisAttributes* visAttSample
+		= new G4VisAttributes(G4Colour(0.3,0.2,1.0));
+	visAttSample->G4VisAttributes::SetForceSolid(true);
+	logSample->SetVisAttributes(visAttSample);
+
+}
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void   DetectorConstruction::ConstructHPGeDetector(G4LogicalVolume* matherLogicalVolume)
 {
@@ -304,7 +332,7 @@ void   DetectorConstruction::ConstructHPGeDetector(G4LogicalVolume* matherLogica
 	G4VSolid *cover = new G4Tubs("cover",
 			0. *mm,
 			shellRadius ,
-		0.5* coverThick ,	
+			0.5* coverThick ,	
 			sphi,
 			dphi);
 	G4LogicalVolume * logCover
@@ -490,7 +518,7 @@ void   DetectorConstruction::ConstructHPGeDetector(G4LogicalVolume* matherLogica
 	G4VisAttributes* shellVisAtt
 		= new G4VisAttributes(G4Colour(1.0,1.0,0.00));
 	logShell->SetVisAttributes(shellVisAtt);
-	
+
 	G4VisAttributes* CUPVisAtt
 		= new G4VisAttributes(G4Colour(0.2,1.0,0.00));
 	logCUP->SetVisAttributes(CUPVisAtt);
@@ -517,7 +545,7 @@ void   DetectorConstruction::ConstructHPGeDetector(G4LogicalVolume* matherLogica
 		logActiveCrystal->SetVisAttributes(G4VisAttributes::Invisible);
 		logInnerDeadLayer-> SetVisAttributes(G4VisAttributes::Invisible);
 	}
-G4bool shellInvisible= 1;
+	G4bool shellInvisible= 1;
 	if(shellInvisible)
 	{
 		logHPGe-> SetVisAttributes(G4VisAttributes::Invisible);

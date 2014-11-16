@@ -88,6 +88,7 @@ class   DetectorConstruction : public G4VUserDetectorConstruction
 		G4VPhysicalVolume* ConstructWorld();
 		G4VPhysicalVolume* ConstructPbShield(G4LogicalVolume* );
 		void ConstructHPGeDetector(G4LogicalVolume* );
+		void  ConstructSample(G4LogicalVolume* motherLogicalVolume);
 
 	private:
 		// data members
@@ -101,6 +102,7 @@ class   DetectorConstruction : public G4VUserDetectorConstruction
 		G4Material* Shield_Pb;
 		G4Material* Shield_Air;
 		G4Material* GeCrystal;
+		G4Material* sampleMaterial;
 
 		//cover
 		G4double coverThick;
@@ -127,6 +129,11 @@ class   DetectorConstruction : public G4VUserDetectorConstruction
 		G4double holeRadius;
 		G4double outerDeadLayerThick;
 		G4double innerDeadLayerThick ;
+
+		//sample
+		G4double shapeRad ;
+		G4double shapeHalfDepth ;
+		G4double sampleMove;
 
 		G4bool fCheckOverlaps;
 		G4bool flagPbShield;
