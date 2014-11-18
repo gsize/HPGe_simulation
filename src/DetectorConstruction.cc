@@ -80,6 +80,13 @@ G4GlobalMagFieldMessenger* DetectorConstruction::fMagFieldMessenger = 0;
 	,fCheckOverlaps(true)
 	 ,flagPbShield(true)
 {
+	//Pb Shield
+	Shield_Length = 630.*mm;
+	Shield_rMax = 0.5*510.*mm;
+	Shield_Fe_Thickness = 9.5*mm;
+	Shield_Pb_Thickness = 101.*mm;
+	Shield_Cu_Thickness= 1.6 *mm;
+	Shield_Sn_Thickness= 0.5*mm;
 	//cover
 	coverThick = 3.0 *mm;
 	//detector shell
@@ -87,7 +94,7 @@ G4GlobalMagFieldMessenger* DetectorConstruction::fMagFieldMessenger = 0;
 	shellLength= 120. *mm;
 	shellThick =1. *mm;
 	endGap =4.0 *mm;
-	detectorMove = -60.0 *mm;
+	detectorMove = -0.5 * shellLength;
 	//CUP
 	CUPLength =105.*mm;
 	CUPThick =0.8 *mm;
@@ -155,7 +162,7 @@ G4VPhysicalVolume*  DetectorConstruction::ConstructWorld()
 	//------------------------------
 	// World
 	//------------------------------
-	G4double fWorldLength = 640.*mm;
+	G4double fWorldLength = 1.2 * Shield_Length;
 	G4double HalfWorldLength = 0.5*fWorldLength;
 
 	G4GeometryManager::GetInstance()->SetWorldMaximumExtent(fWorldLength);
@@ -183,15 +190,9 @@ G4VPhysicalVolume*  DetectorConstruction::ConstructWorld()
 G4VPhysicalVolume* DetectorConstruction::ConstructPbShield(G4LogicalVolume* motherLogicalVolume)
 {
 	G4double Shield_Tubs_rmin = 0.*mm;
-	G4double Shield_Length = 630.*mm;
-	G4double Shield_rMax = 0.5*510.*mm;
 	G4double  Shield_Tubs_sphi =   0.*deg;
 	G4double  Shield_Tubs_dphi = 360.*deg;
 
-	G4double Shield_Fe_Thickness = 9.5*mm;
-	G4double Shield_Pb_Thickness = 101.*mm;
-	G4double Shield_Cu_Thickness= 1.6 *mm;
-	G4double Shield_Sn_Thickness= 0.5*mm;
 
 	//Shield Fe
 	G4double Shield_Fe_Tubs_rMax = Shield_rMax;
@@ -297,7 +298,7 @@ G4VPhysicalVolume* DetectorConstruction::ConstructPbShield(G4LogicalVolume* moth
 void  DetectorConstruction::ConstructSample(G4LogicalVolume* motherLogicalVolume)
 {
 	G4NistManager* nist = G4NistManager::Instance();
-	sampleMaterial= nist->FindOrBuildMaterial("G4_WATER");
+	sampleMaterial= nist->FindOrBuildMaterial("G4_Galactic");
 
 	G4VSolid * sampleShape
 		= new G4Tubs("sampleShape", 0.*cm,shapeRad ,shapeHalfDepth ,
@@ -322,7 +323,7 @@ void   DetectorConstruction::ConstructHPGeDetector(G4LogicalVolume* matherLogica
 	G4NistManager* nist = G4NistManager::Instance();
 	G4Material* shellAl = nist->FindOrBuildMaterial("G4_Al");
 	G4Material* vacuum = nist->FindOrBuildMaterial("G4_Galactic");
-	G4Material* plexiglass= nist->FindOrBuildMaterial("G4_PLEXIGLASS");
+	G4Material* coverMat= nist->FindOrBuildMaterial("G4_PLEXIGLASS");
 	G4Material* mylar= nist->FindOrBuildMaterial("G4_MYLAR");
 
 	G4double  sphi =   0.*deg;
@@ -336,10 +337,9 @@ void   DetectorConstruction::ConstructHPGeDetector(G4LogicalVolume* matherLogica
 			sphi,
 			dphi);
 	G4LogicalVolume * logCover
-		= new G4LogicalVolume(cover, plexiglass,"logCover",0,0,0);
+		= new G4LogicalVolume(cover, coverMat,"logCover",0,0,0);
 	new G4PVPlacement(0,G4ThreeVector(0. ,0. ,detectorMove + 0.5 *shellLength+ 0.5* coverThick),logCover,"physiCover",
 			matherLogicalVolume,false,0,fCheckOverlaps);
-
 
 	//detector
 	G4VSolid *HPGe = new G4Tubs("HPGe",
@@ -431,6 +431,7 @@ void   DetectorConstruction::ConstructHPGeDetector(G4LogicalVolume* matherLogica
 			innerDead1,innerDead2,0 ,  G4ThreeVector(0., 0.,0.5*(holeDepth- holeRadius) ) );
 	G4VSolid *innerDeadLayer = new G4SubtractionSolid("innerDeadLayer",
 			innerDead3,hole,0,G4ThreeVector(0., 0.,0.));
+
 	//Making final detector shape
 	G4VSolid * activeCrystal = new G4SubtractionSolid("activeCrystal",
 			activeCrystal4 ,innerDead3,0,G4ThreeVector(0., 0.,-activeHalfLength+ 0.5*(holeDepth - holeRadius) ) );
@@ -534,7 +535,7 @@ void   DetectorConstruction::ConstructHPGeDetector(G4LogicalVolume* matherLogica
 	logActiveCrystal->SetVisAttributes(activeCrystalVisAtt);
 
 	G4VisAttributes* innerDeadLayerVisAtt
-		= new G4VisAttributes(G4Colour(0.0,0.6,0.9,0.30));
+		= new G4VisAttributes(G4Colour(0.9,1.0,0.0,0.80));
 	innerDeadLayerVisAtt->G4VisAttributes::SetForceSolid(true);
 	logInnerDeadLayer->SetVisAttributes(innerDeadLayerVisAtt);
 

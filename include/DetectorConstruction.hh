@@ -104,6 +104,13 @@ class   DetectorConstruction : public G4VUserDetectorConstruction
 		G4Material* GeCrystal;
 		G4Material* sampleMaterial;
 
+		//Pb Shield
+		G4double Shield_Length;
+		G4double Shield_rMax ;
+		G4double Shield_Fe_Thickness ;
+		G4double Shield_Pb_Thickness ;
+		G4double Shield_Cu_Thickness;
+		G4double Shield_Sn_Thickness;
 		//cover
 		G4double coverThick;
 
