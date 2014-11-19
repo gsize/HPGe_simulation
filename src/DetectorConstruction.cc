@@ -298,7 +298,21 @@ G4VPhysicalVolume* DetectorConstruction::ConstructPbShield(G4LogicalVolume* moth
 void  DetectorConstruction::ConstructSample(G4LogicalVolume* motherLogicalVolume)
 {
 	G4NistManager* nist = G4NistManager::Instance();
-	sampleMaterial= nist->FindOrBuildMaterial("G4_Galactic");
+	/*	G4Element* elU= nist->FindOrBuildElement("U");
+		G4Element* elO= nist->FindOrBuildElement("O");
+		G4double density = 8.3 *g/cm3;
+		G4Material* matU3O8 = new G4Material("U3O8",density,2);
+		matU3O8->AddElement(elU, 3);
+		matU3O8->AddElement(elO, 8);*/
+	//sampleMaterial= nist->FindOrBuildMaterial("G4_Galactic");
+	G4Material* H2O = nist->FindOrBuildMaterial("G4_WATER");
+	G4Material* U = nist->FindOrBuildMaterial("G4_U");
+	G4double density = 1.001 *g/cm3; 
+	G4Material* mixtureUWater = new G4Material("UWater",density,2);
+	mixtureUWater->AddMaterial(H2O,0.999); 
+	mixtureUWater->AddMaterial(U,0.001); 
+
+	sampleMaterial =mixtureUWater ;
 
 	G4VSolid * sampleShape
 		= new G4Tubs("sampleShape", 0.*cm,shapeRad ,shapeHalfDepth ,
