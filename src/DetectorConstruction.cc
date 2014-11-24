@@ -77,8 +77,8 @@ G4GlobalMagFieldMessenger* DetectorConstruction::fMagFieldMessenger = 0;
 	:G4VUserDetectorConstruction()
 	,  physiWorld(0)
 	,  stepLimit(0)
-	,fCheckOverlaps(true)
-	 ,flagPbShield(true)
+	,  fCheckOverlaps(true)
+	,  flagPbShield(true)
 {
 	//Pb Shield
 	Shield_Length = 630.*mm;
@@ -143,16 +143,17 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
 	//--------- Material definition ---------
 	G4LogicalVolume* pLV = 0;
-	physiWorld = ConstructWorld();
+	physiWorld = this->ConstructWorld();
 
 	pLV = physiWorld->GetLogicalVolume();
 	if(flagPbShield == true)
 	{
-		G4VPhysicalVolume* PVShieldDauther = ConstructPbShield(pLV);
+		G4VPhysicalVolume* PVShieldDauther = this->ConstructPbShield(pLV);
 		pLV = PVShieldDauther->GetLogicalVolume();
 	}
-	ConstructHPGeDetector(pLV);
-	ConstructSample(pLV);
+	this->ConstructHPGeDetector(pLV);
+	this->ConstructSample(pLV);
+	this->ConstructCollimator(pLV);
 	return physiWorld;
 }
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -298,19 +299,76 @@ G4VPhysicalVolume* DetectorConstruction::ConstructPbShield(G4LogicalVolume* moth
 void  DetectorConstruction::ConstructSample(G4LogicalVolume* motherLogicalVolume)
 {
 	G4NistManager* nist = G4NistManager::Instance();
-	/*	G4Element* elU= nist->FindOrBuildElement("U");
-		G4Element* elO= nist->FindOrBuildElement("O");
-		G4double density = 8.3 *g/cm3;
-		G4Material* matU3O8 = new G4Material("U3O8",density,2);
-		matU3O8->AddElement(elU, 3);
-		matU3O8->AddElement(elO, 8);*/
-	//sampleMaterial= nist->FindOrBuildMaterial("G4_Galactic");
+	G4Element* elU= nist->FindOrBuildElement("U");
+	G4Element* elTh= nist->FindOrBuildElement("Th");
+	G4Element* elF= nist->FindOrBuildElement("F");
+	G4Element* elLi= nist->FindOrBuildElement("Li");
+	G4Element* elNa= nist->FindOrBuildElement("Na");
+	G4Element* elK= nist->FindOrBuildElement("K");
+	G4Element* elBe= nist->FindOrBuildElement("Be");
+	G4Element* elO= nist->FindOrBuildElement("O");
+
+	//define FLiNaK mixture
+	G4double density = 8.3 *g/cm3;
+	G4Material* U3O8 = new G4Material("U3O8",density,2);
+	U3O8->AddElement(elU, 3);
+	U3O8->AddElement(elO, 8);
+
+	density = 1.99 *g/cm3;
+	G4Material* BeF = new G4Material("BeF",density,2);
+	BeF->AddElement(elBe, 1);
+	BeF->AddElement(elF, 1);
+
+	density = 2.64 *g/cm3;
+	G4Material* LiF = new G4Material("LiF",density,2);
+	LiF->AddElement(elLi, 1);
+	LiF->AddElement(elF, 1);
+
+	density = 2.56 *g/cm3;
+	G4Material* NaF = new G4Material("NaF",density,2);
+	NaF->AddElement(elNa, 1);
+	NaF->AddElement(elF, 1);
+
+	density = 2.48 *g/cm3;
+	G4Material* KF = new G4Material("KF",density,2);
+	KF->AddElement(elK, 1);
+	KF->AddElement(elF, 1);
+
+	density = 6.30 *g/cm3;
+	G4Material* ThF4 = new G4Material("ThF4",density,2);
+	ThF4->AddElement(elTh, 1);
+	ThF4->AddElement(elF, 4);
+
+	density = 5.09 *g/cm3;
+	G4Material* UF4 = new G4Material("UF4",density,2);
+	UF4->AddElement(elU, 1);
+	UF4->AddElement(elF, 4);
+
+	//define FLiNaK_U mixture
+	density = 5.09 *g/cm3;
+	G4Material* FLINaK_U = new G4Material("FLINaK_U",density,4);
+	FLINaK_U->AddMaterial(LiF, 1);
+	FLINaK_U->AddMaterial(NaF, 4);
+	FLINaK_U->AddMaterial( KF, 1);
+	FLINaK_U->AddMaterial(UF4, 1);
+
+	//define FLiNaK_Th mixture
+	density = 5.09 *g/cm3;
+	G4Material* FLINaK_Th = new G4Material("FLINaK_Th",density,4);
+	FLINaK_Th->AddMaterial(LiF, 1);
+	FLINaK_Th->AddMaterial(NaF, 4);
+	FLINaK_Th->AddMaterial( KF, 1);
+	FLINaK_Th->AddMaterial(ThF4, 1);
+
 	G4Material* H2O = nist->FindOrBuildMaterial("G4_WATER");
 	G4Material* U = nist->FindOrBuildMaterial("G4_U");
-	G4double density = 1.001 *g/cm3; 
+
+	G4Material* vacuum = nist->FindOrBuildMaterial("G4_Galactic");
+	
+	density = 1.301 *g/cm3; 
 	G4Material* mixtureUWater = new G4Material("UWater",density,2);
-	mixtureUWater->AddMaterial(H2O,0.999); 
-	mixtureUWater->AddMaterial(U,0.001); 
+	mixtureUWater->AddMaterial(H2O,0.99); 
+	mixtureUWater->AddMaterial(U,0.01); 
 
 	sampleMaterial =mixtureUWater ;
 
@@ -329,6 +387,44 @@ void  DetectorConstruction::ConstructSample(G4LogicalVolume* motherLogicalVolume
 	visAttSample->G4VisAttributes::SetForceSolid(true);
 	logSample->SetVisAttributes(visAttSample);
 
+}
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+#include "G4Cons.hh" 
+#include "G4RotationMatrix.hh" 
+void  DetectorConstruction::ConstructCollimator(G4LogicalVolume* motherLogicalVolume)
+{
+	G4NistManager* nist = G4NistManager::Instance();
+	G4Material* lead = nist->FindOrBuildMaterial("G4_Pb");
+
+	G4double collimatorHalfLength = 100. *mm;
+	G4double outerRadius = 150. *mm;
+	G4double holeRadiusMax = 25. *mm;
+	G4double holeRadiusMin = 5.1 *mm;
+	G4double holeHalfLength =0.58* collimatorHalfLength ;
+	G4VSolid * collimator1 
+		= new G4Tubs("collimator1", 0.*cm,outerRadius ,collimatorHalfLength ,
+				0. *deg,360. *deg);
+	G4VSolid * collimator2 
+		= new G4Cons("collimator2", 0.*mm,holeRadiusMin,0. *mm,holeRadiusMax , holeHalfLength ,
+				0. *deg,360. *deg);
+	G4RotationMatrix* yRot = new G4RotationMatrix();
+	yRot ->rotateY(180. *deg);
+	G4VSolid *collimator3 = new G4UnionSolid("collimator3 ",
+			collimator2 ,collimator2 ,yRot,G4ThreeVector(0., 0., -2.0 *holeHalfLength ));
+	G4VSolid *collimator = new G4SubtractionSolid("collimator",
+			collimator1, collimator3,0,G4ThreeVector(0., 0., 0.5 *collimatorHalfLength ));
+
+	G4LogicalVolume * logCollimator
+		= new G4LogicalVolume(collimator ,lead,"collimator_log",0,0,0);
+
+	//	G4VPhysicalVolume * physiWorldPbShield =
+	new G4PVPlacement(0,G4ThreeVector(0.,0.,collimatorHalfLength +10.*mm  ),logCollimator,"collimator_phys",
+			motherLogicalVolume,false,0,fCheckOverlaps);
+
+	G4VisAttributes* visAttCollimator
+		= new G4VisAttributes(G4Colour(0.3,0.6,1.0,0.7));
+	visAttCollimator->G4VisAttributes::SetForceSolid(true);
+	logCollimator->SetVisAttributes(visAttCollimator);
 }
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 

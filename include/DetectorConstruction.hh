@@ -89,6 +89,7 @@ class   DetectorConstruction : public G4VUserDetectorConstruction
 		G4VPhysicalVolume* ConstructPbShield(G4LogicalVolume* );
 		void ConstructHPGeDetector(G4LogicalVolume* );
 		void  ConstructSample(G4LogicalVolume* motherLogicalVolume);
+		void  ConstructCollimator(G4LogicalVolume* motherLogicalVolume);
 
 	private:
 		// data members
