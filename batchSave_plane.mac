@@ -6,32 +6,39 @@
 #/gps/pos/type Point
 #/gps/position 0. 0. 0. mm
 #/gps/direction 0. 0. 1. 
-#/gps/ang/type iso
+/gps/ang/type iso
+/gps/ang/mintheta 150 deg
+/gps/ang/rot1 -1 0 0
 
-/gps/position 0. 0. 0. mm
+/gps/position 0. 0. 90. mm
 /gps/pos/type Plane
 /gps/pos/shape Circle
 
-gps/pos/radius 5 mm
-/analysis/setFileName output_plane_circle_5mm
+/gps/pos/radius 1 mm
+/analysis/setFileName plane1mmd90mmdl7cover1mm
 /run/beamOn 1000001
+
+/gps/pos/radius 2 mm
+/analysis/setFileName plane2mmd90mmdl7cover2mm
+/run/beamOn 1000001
+
+
+/gps/pos/radius 3 mm
+/analysis/setFileName plane3mmd90mmdl7cover3mm
+/run/beamOn 1000001
+
+
+/gps/pos/radius 5 mm
+/analysis/setFileName plane5mmd90mmdl7cover5mm
+/run/beamOn 1000001
+
 
 /gps/pos/radius 10 mm
-/analysis/setFileName output_plane_circle_10mm
+/analysis/setFileName plane10mmd90mmdl7cover10mm
 /run/beamOn 1000001
 
-/gps/pos/radius 15 mm
-/analysis/setFileName output_plane_circle_15mm
-/run/beamOn 1000001
 
 /gps/pos/radius 20 mm
-/analysis/setFileName output_plane_circle_20mm
+/analysis/setFileName plane20mmd90mmdl7cover20mm
 /run/beamOn 1000001
 
-/gps/pos/radius 30 mm
-/analysis/setFileName output_plane_circle_30mm
-/run/beamOn 1000001
-
-/gps/pos/radius 50 mm
-/analysis/setFileName output_plane_circle_50mm
-/run/beamOn 1000001

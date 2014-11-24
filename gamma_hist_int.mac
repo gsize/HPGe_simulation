@@ -1,22 +1,26 @@
 ##
+##
+/HPGe_simulation/det/setPbShield false
 /HPGe_simulation/phys/addPhysics empenelope
+/HPGe_simulation/det/setOutDeadLayerThickness 1.4 mm
 #
 /run/numberOfThreads 3
 /run/initialize
 
 #/control/verbose 1
-#/run/verbose 1
+/run/verbose 0
 #/event/verbose 0
 #/tracking/verbose 0
 
 #gps set
 #/gps/energy 1.332 MeV
 /gps/particle gamma
-
 /gps/pos/type Point
-#/gps/position 0. 0. -15. mm
-/gps/position 0. 0. 0. mm
+
+/gps/position 0. 0. 90. mm
 /gps/ang/type iso
+/gps/ang/mintheta 150 deg
+/gps/ang/rot1 -1 0 0
 
 #/gps/ene/type Arb
 #/gps/hist/type arb
@@ -25,37 +29,37 @@
 /gps/hist/point 0.0 0.
 
 /gps/hist/point 0.0531 0.
-/gps/hist/point 0.05312 4.
+/gps/hist/point 0.05312 14.
 
 /gps/hist/point 0.06251 0.
-/gps/hist/point 0.06252 4.
+/gps/hist/point 0.06252 14.
 
 /gps/hist/point 0.086 0.
-/gps/hist/point 0.08602 4.
+/gps/hist/point 0.08602 14.
 
 /gps/hist/point 0.098 0.
-/gps/hist/point 0.09802 4.
+/gps/hist/point 0.09802 14.
+
+/gps/hist/point 0.11178 0.
+/gps/hist/point 0.111781 14
 
 /gps/hist/point 0.12178 0.
-/gps/hist/point 0.121781 2
+/gps/hist/point 0.121781 15
+
+/gps/hist/point 0.16178 0.
+/gps/hist/point 0.161781 15
 
 /gps/hist/point 0.244698  0.
-/gps/hist/point 0.2446981  2.
+/gps/hist/point 0.2446981  15.
 
 /gps/hist/point 0.2959 0.
-/gps/hist/point 0.29591 3
+/gps/hist/point 0.29591 15
 
 /gps/hist/point 0.34428 0.
-/gps/hist/point 0.344281 6
-
-/gps/hist/point 0.36779 0.
-/gps/hist/point 0.367791 9
+/gps/hist/point 0.344281 16
 
 /gps/hist/point 0.41111  0.
 /gps/hist/point 0.411111  10
-
-/gps/hist/point 0.44397 0.
-/gps/hist/point 0.443971 13
 
 /gps/hist/point 0.5639 0
 /gps/hist/point 0.56391 15
@@ -63,39 +67,19 @@
 /gps/hist/point 0.68867 0.
 /gps/hist/point 0.688671 18
 
-/gps/hist/point 0.7889 0
-/gps/hist/point 0.78891 20
-
-/gps/hist/point 0.86737 0
-/gps/hist/point 0.867371 22
-
 /gps/hist/point 0.964079 0
-/gps/hist/point 0.9640791 24
-
-/gps/hist/point 1.08587 0.
-/gps/hist/point 1.085871 24
+/gps/hist/point 0.9640791 20
 
 /gps/hist/point 1.0897 0
-/gps/hist/point 1.08971  24
-
-/gps/hist/point 1.112069 0
-/gps/hist/point 1.1120691 26
-
-/gps/hist/point 1.212948 0
-/gps/hist/point 1.2129481 26
+/gps/hist/point 1.08971  20
 
 /gps/hist/point 1.29914 0
-/gps/hist/point 1.299141  28
+/gps/hist/point 1.299141  20
 
 /gps/hist/point 1.408 0
-/gps/hist/point 1.4081 28
+/gps/hist/point 1.4081 20
 
-/gps/hist/point 1.5281 0
-/gps/hist/point 1.52811 28
+/analysis/setFileName pointd90mmdl14cover3mm
+/run/beamOn 1000001
 
-#/gps/hist/inter Log
-
-/analysis/setFileName output_point_80mm
-/run/beamOn 10000001
-
-#/control/execute batchSave_point.mac
+#/control/execute batchSave_plane.mac
