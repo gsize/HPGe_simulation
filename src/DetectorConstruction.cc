@@ -153,7 +153,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 	}
 	this->ConstructHPGeDetector(pLV);
 	this->ConstructSample(pLV);
-	this->ConstructCollimator(pLV);
+//	this->ConstructCollimator(pLV);
 	return physiWorld;
 }
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -345,20 +345,20 @@ void  DetectorConstruction::ConstructSample(G4LogicalVolume* motherLogicalVolume
 	UF4->AddElement(elF, 4);
 
 	//define FLiNaK_U mixture
-	density = 5.09 *g/cm3;
-	G4Material* FLINaK_U = new G4Material("FLINaK_U",density,4);
-	FLINaK_U->AddMaterial(LiF, 1);
-	FLINaK_U->AddMaterial(NaF, 4);
-	FLINaK_U->AddMaterial( KF, 1);
-	FLINaK_U->AddMaterial(UF4, 1);
+	density = 2.50 *g/cm3;
+	G4Material* FLINaK_U = new G4Material("FLiNaK_U",density,4);
+	FLINaK_U->AddMaterial(LiF, 0.29);
+	FLINaK_U->AddMaterial(NaF, 0.12);
+	FLINaK_U->AddMaterial( KF, 0.589);
+	FLINaK_U->AddMaterial(UF4, 0.001);
 
 	//define FLiNaK_Th mixture
 	density = 5.09 *g/cm3;
-	G4Material* FLINaK_Th = new G4Material("FLINaK_Th",density,4);
-	FLINaK_Th->AddMaterial(LiF, 1);
-	FLINaK_Th->AddMaterial(NaF, 4);
-	FLINaK_Th->AddMaterial( KF, 1);
-	FLINaK_Th->AddMaterial(ThF4, 1);
+	G4Material* FLINaK_Th = new G4Material("FLiNaK_Th",density,4);
+	FLINaK_Th->AddMaterial(LiF, 0.1);
+	FLINaK_Th->AddMaterial(NaF, 0.4);
+	FLINaK_Th->AddMaterial( KF, 0.1);
+	FLINaK_Th->AddMaterial(ThF4, 0.4);
 
 	G4Material* H2O = nist->FindOrBuildMaterial("G4_WATER");
 	G4Material* U = nist->FindOrBuildMaterial("G4_U");
@@ -370,7 +370,7 @@ void  DetectorConstruction::ConstructSample(G4LogicalVolume* motherLogicalVolume
 	mixtureUWater->AddMaterial(H2O,0.99); 
 	mixtureUWater->AddMaterial(U,0.01); 
 
-	sampleMaterial =mixtureUWater ;
+	sampleMaterial = FLINaK_U;//mixtureUWater ;
 
 	G4VSolid * sampleShape
 		= new G4Tubs("sampleShape", 0.*cm,shapeRad ,shapeHalfDepth ,
