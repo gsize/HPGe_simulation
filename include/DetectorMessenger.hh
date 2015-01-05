@@ -59,7 +59,10 @@ class DetectorMessenger: public G4UImessenger
     
     G4UIdirectory*             fDetDir;
     G4UIcmdWithADoubleAndUnit* fOutDeadLayerThicknessCmd;
+    G4UIcmdWithADoubleAndUnit* fSampleMoveCmd;
 	G4UIcmdWithABool*  fFlagPbShieldCmd;
+  G4UIcmdWithABool* fFlagCollimatorCmd;
+  G4UIcmdWithABool* fFlagSampleCmd ;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

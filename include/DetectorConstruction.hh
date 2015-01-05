@@ -62,6 +62,8 @@ class   DetectorConstruction : public G4VUserDetectorConstruction
 
 		virtual void ConstructSDandField();
 		void SetPbShield(G4bool value);
+		void SetCollimator(G4bool value);
+		void SetSample(G4bool value);
 
 		void SetOutDeadLayerThickness(double value);
 		void SetCoverThick(G4double value);
@@ -82,6 +84,7 @@ class   DetectorConstruction : public G4VUserDetectorConstruction
 		void SetOuterDeadLayerThick(G4double value);
 		void SetInnerDeadLayerThick(G4double value);
 		void UpdateGeometry();
+		void SetSampleMove(G4double value);
 
 	private:
 		void DefineMaterials();
@@ -142,9 +145,12 @@ class   DetectorConstruction : public G4VUserDetectorConstruction
 		G4double shapeRad ;
 		G4double shapeHalfDepth ;
 		G4double sampleMove;
+		G4double collimatorMove;
 
 		G4bool fCheckOverlaps;
 		G4bool flagPbShield;
+		G4bool flagCollimator;
+		G4bool	flagSample ;
 
 		static G4ThreadLocal G4GlobalMagFieldMessenger*  fMagFieldMessenger; 
 		// magnetic field messenger

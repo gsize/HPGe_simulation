@@ -57,11 +57,25 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction * Det)
   fOutDeadLayerThicknessCmd->SetDefaultUnit("mm");
   fOutDeadLayerThicknessCmd->SetUnitCategory("Length");
   //fOutDeadLayerThicknessCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
- 
+         
+  fSampleMoveCmd = new G4UIcmdWithADoubleAndUnit("/HPGe_simulation/det/setSampleMove",this);
+  fSampleMoveCmd->SetGuidance("Set sample move .");
+  fSampleMoveCmd->SetParameterName("sampleMove",false);
+  fSampleMoveCmd->SetDefaultUnit("mm");
+  fSampleMoveCmd->SetUnitCategory("Length");
+
   fFlagPbShieldCmd = new G4UIcmdWithABool("/HPGe_simulation/det/setPbShield",this);
   fFlagPbShieldCmd->SetGuidance("add Pb Shield .");
   fFlagPbShieldCmd->SetParameterName("flagPbShield",false);
   //fFlagPbShieldCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+  
+  fFlagSampleCmd = new G4UIcmdWithABool("/HPGe_simulation/det/setSample",this);
+  fFlagSampleCmd ->SetGuidance("add Sample .");
+  fFlagSampleCmd ->SetParameterName("flagSample",false);
+  
+  fFlagCollimatorCmd= new G4UIcmdWithABool("/HPGe_simulation/det/setCollimator",this);
+  fFlagCollimatorCmd->SetGuidance("add Collimator .");
+  fFlagCollimatorCmd->SetParameterName("flagCollimator",false);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -69,20 +83,35 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction * Det)
 DetectorMessenger::~DetectorMessenger()
 {
   delete fOutDeadLayerThicknessCmd;
+  delete fSampleMoveCmd ;
   delete fDetDir;
   delete fFlagPbShieldCmd;
+  delete fFlagCollimatorCmd;
+  delete fFlagSampleCmd ;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
 { 
-   
   if( command == fOutDeadLayerThicknessCmd )
    { fDetector->SetOutDeadLayerThickness(fOutDeadLayerThicknessCmd->GetNewDoubleValue(newValue));}
+  if( command == fSampleMoveCmd )
+   { fDetector->SetSampleMove(fSampleMoveCmd ->GetNewDoubleValue(newValue));}
+
    if(command == fFlagPbShieldCmd) 
    {
 	   fDetector->SetPbShield(fFlagPbShieldCmd->GetNewBoolValue(newValue));
+   }
+
+   if(command == fFlagCollimatorCmd) 
+   {
+	   fDetector->SetCollimator(fFlagCollimatorCmd->GetNewBoolValue(newValue));
+   }
+
+   if(command == fFlagSampleCmd ) 
+   {
+	   fDetector->SetSample(fFlagSampleCmd ->GetNewBoolValue(newValue));
    }
 }
 

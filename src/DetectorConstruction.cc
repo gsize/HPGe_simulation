@@ -79,6 +79,8 @@ G4GlobalMagFieldMessenger* DetectorConstruction::fMagFieldMessenger = 0;
 	,  stepLimit(0)
 	,  fCheckOverlaps(true)
 	,  flagPbShield(true)
+	,flagCollimator(true) 
+	 ,flagSample(true) 
 {
 	//Pb Shield
 	Shield_Length = 630.*mm;
@@ -113,7 +115,7 @@ G4GlobalMagFieldMessenger* DetectorConstruction::fMagFieldMessenger = 0;
 	shapeRad = 0.564 *cm;
 	shapeHalfDepth = 0.5 *cm;
 	sampleMove = 90.*mm;
-
+	collimatorMove = 30. *mm; 
 	DefineMaterials();
 
 	detectorMessenger = new DetectorMessenger(this);	
@@ -152,8 +154,10 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		pLV = PVShieldDauther->GetLogicalVolume();
 	}
 	this->ConstructHPGeDetector(pLV);
-	this->ConstructSample(pLV);
-//	this->ConstructCollimator(pLV);
+	if(flagSample == true)
+		this->ConstructSample(pLV);
+	if(flagCollimator == true)
+		this->ConstructCollimator(pLV);
 	return physiWorld;
 }
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -349,8 +353,8 @@ void  DetectorConstruction::ConstructSample(G4LogicalVolume* motherLogicalVolume
 	G4Material* FLINaK_U = new G4Material("FLiNaK_U",density,4);
 	FLINaK_U->AddMaterial(LiF, 0.29);
 	FLINaK_U->AddMaterial(NaF, 0.12);
-	FLINaK_U->AddMaterial( KF, 0.589);
-	FLINaK_U->AddMaterial(UF4, 0.001);
+	FLINaK_U->AddMaterial( KF, 0.49);
+	FLINaK_U->AddMaterial(UF4, 0.1);
 
 	//define FLiNaK_Th mixture
 	density = 5.09 *g/cm3;
@@ -364,7 +368,7 @@ void  DetectorConstruction::ConstructSample(G4LogicalVolume* motherLogicalVolume
 	G4Material* U = nist->FindOrBuildMaterial("G4_U");
 
 	G4Material* vacuum = nist->FindOrBuildMaterial("G4_Galactic");
-	
+
 	density = 1.301 *g/cm3; 
 	G4Material* mixtureUWater = new G4Material("UWater",density,2);
 	mixtureUWater->AddMaterial(H2O,0.99); 
@@ -399,8 +403,8 @@ void  DetectorConstruction::ConstructCollimator(G4LogicalVolume* motherLogicalVo
 	G4double collimatorHalfLength = 100. *mm;
 	G4double outerRadius = 150. *mm;
 	G4double holeRadiusMax = 25. *mm;
-	G4double holeRadiusMin = 5.1 *mm;
-	G4double holeHalfLength =0.58* collimatorHalfLength ;
+	G4double holeRadiusMin = 5.0 *mm;
+	G4double holeHalfLength =0.50* collimatorHalfLength ;
 	G4VSolid * collimator1 
 		= new G4Tubs("collimator1", 0.*cm,outerRadius ,collimatorHalfLength ,
 				0. *deg,360. *deg);
@@ -418,7 +422,7 @@ void  DetectorConstruction::ConstructCollimator(G4LogicalVolume* motherLogicalVo
 		= new G4LogicalVolume(collimator ,lead,"collimator_log",0,0,0);
 
 	//	G4VPhysicalVolume * physiWorldPbShield =
-	new G4PVPlacement(0,G4ThreeVector(0.,0.,collimatorHalfLength +10.*mm  ),logCollimator,"collimator_phys",
+	new G4PVPlacement(0,G4ThreeVector(0.,0.,collimatorHalfLength +collimatorMove ),logCollimator,"collimator_phys",
 			motherLogicalVolume,false,0,fCheckOverlaps);
 
 	G4VisAttributes* visAttCollimator
@@ -831,5 +835,20 @@ void DetectorConstruction::SetInnerDeadLayerThick(G4double value)
 void DetectorConstruction::UpdateGeometry()
 {
 	G4RunManager::GetRunManager()->DefineWorldVolume(this->Construct());
+}
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+void DetectorConstruction::SetSampleMove(G4double value)
+{
+	sampleMove= value;
+}
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+void DetectorConstruction::SetCollimator(G4bool value)
+{
+	flagCollimator= value;
+}
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+void DetectorConstruction::SetSample(G4bool value)
+{
+	flagSample = value;
 }
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
