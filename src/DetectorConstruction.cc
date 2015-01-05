@@ -167,7 +167,7 @@ G4VPhysicalVolume*  DetectorConstruction::ConstructWorld()
 	//------------------------------
 	// World
 	//------------------------------
-	G4double fWorldLength = 1.2 * Shield_Length;
+	G4double fWorldLength = 10.2 * Shield_Length;
 	G4double HalfWorldLength = 0.5*fWorldLength;
 
 	G4GeometryManager::GetInstance()->SetWorldMaximumExtent(fWorldLength);
@@ -850,5 +850,10 @@ void DetectorConstruction::SetCollimator(G4bool value)
 void DetectorConstruction::SetSample(G4bool value)
 {
 	flagSample = value;
+}
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+void DetectorConstruction::SetCollimatorMove(G4double value)
+{
+	collimatorMove= value;
 }
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

@@ -85,6 +85,7 @@ class   DetectorConstruction : public G4VUserDetectorConstruction
 		void SetInnerDeadLayerThick(G4double value);
 		void UpdateGeometry();
 		void SetSampleMove(G4double value);
+		void SetCollimatorMove(G4double value);
 
 	private:
 		void DefineMaterials();

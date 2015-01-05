@@ -63,6 +63,12 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction * Det)
   fSampleMoveCmd->SetParameterName("sampleMove",false);
   fSampleMoveCmd->SetDefaultUnit("mm");
   fSampleMoveCmd->SetUnitCategory("Length");
+         
+  fCollimatorMoveCmd = new G4UIcmdWithADoubleAndUnit("/HPGe_simulation/det/setCollimatorMove",this);
+  fCollimatorMoveCmd->SetGuidance("Set Collimatormove .");
+  fCollimatorMoveCmd->SetParameterName("CollimatorMove",false);
+  fCollimatorMoveCmd->SetDefaultUnit("mm");
+  fCollimatorMoveCmd->SetUnitCategory("Length");
 
   fFlagPbShieldCmd = new G4UIcmdWithABool("/HPGe_simulation/det/setPbShield",this);
   fFlagPbShieldCmd->SetGuidance("add Pb Shield .");
@@ -84,6 +90,7 @@ DetectorMessenger::~DetectorMessenger()
 {
   delete fOutDeadLayerThicknessCmd;
   delete fSampleMoveCmd ;
+  delete fCollimatorMoveCmd;
   delete fDetDir;
   delete fFlagPbShieldCmd;
   delete fFlagCollimatorCmd;
@@ -96,8 +103,12 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
 { 
   if( command == fOutDeadLayerThicknessCmd )
    { fDetector->SetOutDeadLayerThickness(fOutDeadLayerThicknessCmd->GetNewDoubleValue(newValue));}
+
   if( command == fSampleMoveCmd )
    { fDetector->SetSampleMove(fSampleMoveCmd ->GetNewDoubleValue(newValue));}
+
+  if( command == fCollimatorMoveCmd)
+   { fDetector->SetCollimatorMove(fCollimatorMoveCmd ->GetNewDoubleValue(newValue));}
 
    if(command == fFlagPbShieldCmd) 
    {

@@ -46,23 +46,24 @@ class G4UIcmdWithABool;
 
 class DetectorMessenger: public G4UImessenger
 {
-  public:
-  
-    DetectorMessenger(DetectorConstruction* );
-   ~DetectorMessenger();
-    
-    virtual void SetNewValue(G4UIcommand*, G4String);
-    
-  private:
-  
-    DetectorConstruction*      fDetector;
-    
-    G4UIdirectory*             fDetDir;
-    G4UIcmdWithADoubleAndUnit* fOutDeadLayerThicknessCmd;
-    G4UIcmdWithADoubleAndUnit* fSampleMoveCmd;
-	G4UIcmdWithABool*  fFlagPbShieldCmd;
-  G4UIcmdWithABool* fFlagCollimatorCmd;
-  G4UIcmdWithABool* fFlagSampleCmd ;
+	public:
+
+		DetectorMessenger(DetectorConstruction* );
+		~DetectorMessenger();
+
+		virtual void SetNewValue(G4UIcommand*, G4String);
+
+	private:
+
+		DetectorConstruction*      fDetector;
+
+		G4UIdirectory*             fDetDir;
+		G4UIcmdWithADoubleAndUnit* fOutDeadLayerThicknessCmd;
+		G4UIcmdWithADoubleAndUnit* fSampleMoveCmd;
+		G4UIcmdWithADoubleAndUnit* fCollimatorMoveCmd;
+		G4UIcmdWithABool*  fFlagPbShieldCmd;
+		G4UIcmdWithABool* fFlagCollimatorCmd;
+		G4UIcmdWithABool* fFlagSampleCmd ;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
