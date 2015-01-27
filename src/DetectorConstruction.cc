@@ -401,9 +401,9 @@ void  DetectorConstruction::ConstructCollimator(G4LogicalVolume* motherLogicalVo
 	G4Material* lead = nist->FindOrBuildMaterial("G4_Pb");
 
 	G4double collimatorHalfLength = 100. *mm;
-	G4double outerRadius = 150. *mm;
-	G4double holeRadiusMax = 25. *mm;
-	G4double holeRadiusMin = 5.0 *mm;
+	G4double outerRadius = 40. *mm;
+	G4double holeRadiusMax = 3.5 *mm;
+	G4double holeRadiusMin = 2.5 *mm;
 	G4double holeHalfLength =0.50* collimatorHalfLength ;
 	G4VSolid * collimator1 
 		= new G4Tubs("collimator1", 0.*cm,outerRadius ,collimatorHalfLength ,
