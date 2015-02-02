@@ -37,6 +37,8 @@
 #include "G4RunManager.hh"
 #endif
 
+#include "G4ScoringManager.hh"
+
 //#include "FTFP_BERT.hh"
 //#include "QGSP_BERT_HP.hh"
 #include "PhysicsList.hh"
@@ -89,6 +91,15 @@ int main(int argc,char** argv)
 #else
   G4RunManager* runManager = new G4RunManager;
 #endif
+
+// Activate UI-command base scorer
+ G4ScoringManager * scManager = G4ScoringManager::GetScoringManager();
+ scManager->SetVerboseLevel(1);
+ 
+//====================================================================
+// Un-comment this line for user defined score writer
+//    scManager->SetScoreWriter(new RE03UserScoreWriter());
+//====================================================================
 
     // User Initialization classes (mandatory)
     //
