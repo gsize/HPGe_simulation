@@ -42,6 +42,7 @@ class G4UIdirectory;
 class G4UIcommand;
 class G4UIcmdWithADoubleAndUnit;
 class G4UIcmdWithABool;
+class G4UIcmdWithoutParameter; 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 class DetectorMessenger: public G4UImessenger
@@ -64,6 +65,7 @@ class DetectorMessenger: public G4UImessenger
 		G4UIcmdWithABool*  fFlagPbShieldCmd;
 		G4UIcmdWithABool* fFlagCollimatorCmd;
 		G4UIcmdWithABool* fFlagSampleCmd ;
+		G4UIcmdWithoutParameter *fUpdateCmd;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
