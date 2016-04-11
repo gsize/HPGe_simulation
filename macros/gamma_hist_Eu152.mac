@@ -1,5 +1,9 @@
 ##Eu-152
 
+/HPGe_simulation/det/setPbShield false
+/HPGe_simulation/det/setSample false
+/HPGe_simulation/det/setCollimator false
+/HPGe_simulation/det/setOutDeadLayerThickness 0.7 mm
 /HPGe_simulation/phys/addPhysics empenelope
 #
 /run/numberOfThreads 3
@@ -77,8 +81,11 @@
 
 #/gps/hist/inter Log
 
-#/analysis/setFileName output_point_00mm
-#/run/beamOn 1000001
+#/analysis/setFileName eu152
+/analysis/h1/set 1 4000 0. 2. MeV
+#/analysis/h1/set 2 4000 0. 2. MeV
+
+/run/beamOn 1000
 
 
 #/control/execute batchSave.mac

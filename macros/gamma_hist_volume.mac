@@ -83,6 +83,8 @@
 /gps/hist/point 1.4081 20
 
 /analysis/setFileName VCd90mm90degdl14cover3_FLi29Na12K59U100000ppmthick1mm_p250_1
+/analysis/h1/set 1 8192 0. 2. MeV
+/analysis/h1/set 2 8192 0. 2. MeV
 /run/beamOn 10000001
 
 #/control/execute batchSave_volume.mac

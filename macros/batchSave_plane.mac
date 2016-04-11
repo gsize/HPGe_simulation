@@ -16,29 +16,41 @@
 
 /gps/pos/radius 1 mm
 /analysis/setFileName plane1mmd90mmdl7cover1mm
+/analysis/h1/set 1 8192 0. 2. MeV
+/analysis/h1/set 2 8192 0. 2. MeV
 /run/beamOn 1000001
 
 /gps/pos/radius 2 mm
 /analysis/setFileName plane2mmd90mmdl7cover2mm
+/analysis/h1/set 1 8192 0. 2. MeV
+/analysis/h1/set 2 8192 0. 2. MeV
 /run/beamOn 1000001
 
 
 /gps/pos/radius 3 mm
 /analysis/setFileName plane3mmd90mmdl7cover3mm
+/analysis/h1/set 1 8192 0. 2. MeV
+/analysis/h1/set 2 8192 0. 2. MeV
 /run/beamOn 1000001
 
 
 /gps/pos/radius 5 mm
 /analysis/setFileName plane5mmd90mmdl7cover5mm
+/analysis/h1/set 1 8192 0. 2. MeV
+/analysis/h1/set 2 8192 0. 2. MeV
 /run/beamOn 1000001
 
 
 /gps/pos/radius 10 mm
 /analysis/setFileName plane10mmd90mmdl7cover10mm
+/analysis/h1/set 1 8192 0. 2. MeV
+/analysis/h1/set 2 8192 0. 2. MeV
 /run/beamOn 1000001
 
 
 /gps/pos/radius 20 mm
 /analysis/setFileName plane20mmd90mmdl7cover20mm
+/analysis/h1/set 1 8192 0. 2. MeV
+/analysis/h1/set 2 8192 0. 2. MeV
 /run/beamOn 1000001
 

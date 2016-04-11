@@ -79,6 +79,9 @@
 /gps/hist/point 1.4081 20
 
 /analysis/setFileName VCd150cm05degdl14cover3_CollimatorMove10cm_FLiNaKU10%
+/analysis/h1/set 1 8192 0. 2. MeV
+/analysis/h1/set 2 8192 0. 2. MeV
+
 /run/beamOn 30000000
 
 #/control/execute batchSave_volume.mac

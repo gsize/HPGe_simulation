@@ -59,7 +59,21 @@
 /gps/pos/type Point
 ###########################
 
+####4 Co-60 #########
+/gps/source/add 4.
+/gun/particle ion
+/gun/ion 27 60  0 0
+/gps/position 0. 0. 5. mm
+/gps/energy 0. keV
+/gps/pos/type Point
+###########################
+
+
+
 #/gps/source/multiplevertex true
 
 /analysis/setFileName GPS_point_80mm
-/run/beamOn 100000001
+/analysis/h1/set 1 8192 0. 2. MeV
+/analysis/h1/set 2 8192 0. 2. MeV
+
+/run/beamOn 1000000

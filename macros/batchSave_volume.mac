@@ -9,4 +9,6 @@
 
 
 /analysis/setFileName VC
+/analysis/h1/set 1 8192 0. 2. MeV
+/analysis/h1/set 2 8192 0. 2. MeV
 /run/beamOn 1000001

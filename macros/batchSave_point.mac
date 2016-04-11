@@ -10,24 +10,36 @@
 
 /gps/position 0. 0. -80. mm
 /analysis/setFileName output_point_00mm
+/analysis/h1/set 1 8192 0. 2. MeV
+/analysis/h1/set 2 8192 0. 2. MeV
 /run/beamOn 1000001
 
 /gps/position 0. 0. -40. mm
 /analysis/setFileName output_point_40mm
+/analysis/h1/set 1 8192 0. 2. MeV
+/analysis/h1/set 2 8192 0. 2. MeV
 /run/beamOn 3000001
 
 /gps/position 0. 0. 0. mm
 /analysis/setFileName output_point_80mm
+/analysis/h1/set 1 8192 0. 2. MeV
+/analysis/h1/set 2 8192 0. 2. MeV
 /run/beamOn 6000001
 
 /gps/position 0. 0. 40. mm
 /analysis/setFileName output_point_120mm
+/analysis/h1/set 1 8192 0. 2. MeV
+/analysis/h1/set 2 8192 0. 2. MeV
 /run/beamOn 10000001
 
 /gps/position 0. 0. 80. mm
 /analysis/setFileName output_point_160mm
+/analysis/h1/set 1 8192 0. 2. MeV
+/analysis/h1/set 2 8192 0. 2. MeV
 /run/beamOn 12000001
 
 /gps/position 0. 0. 120. mm
 /analysis/setFileName output_point_200mm
+/analysis/h1/set 1 8192 0. 2. MeV
+/analysis/h1/set 2 8192 0. 2. MeV
 /run/beamOn 30000001

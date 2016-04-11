@@ -80,6 +80,8 @@
 /gps/hist/point 1.4081 20
 
 /analysis/setFileName pointd90mmdl14cover3mm
+/analysis/h1/set 1 8192 0. 2. MeV
+/analysis/h1/set 2 8192 0. 2. MeV
 /run/beamOn 1000001
 
 #/control/execute batchSave_plane.mac
