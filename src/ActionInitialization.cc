@@ -49,23 +49,19 @@ ActionInitialization::~ActionInitialization()
 
 void ActionInitialization::BuildForMaster() const
 {
-	// Histo manager
- HistoManager* histo = new HistoManager();
-  SetUserAction(new RunAction(histo));
+  SetUserAction(new RunAction());
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void ActionInitialization::Build() const
 {
-	// Histo manager
- HistoManager* histo = new HistoManager();
   SetUserAction(new PrimaryGeneratorAction);
   
-  RunAction* runAction =new RunAction(histo);
+  RunAction* runAction =new RunAction();
   SetUserAction(runAction );
 
-  EventAction* eventAction =new EventAction(histo);
+  EventAction* eventAction =new EventAction();
   SetUserAction(eventAction);
 }  
 

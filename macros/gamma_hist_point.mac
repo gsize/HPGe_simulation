@@ -1,0 +1,29 @@
+##
+/HPGe_simulation/phys/addPhysics empenelope
+/HPGe_simulation/det/setOutDeadLayerThickness 0.7 mm
+#
+/run/numberOfThreads 3
+/run/initialize
+
+#/control/verbose 1
+#/run/verbose 1
+#/event/verbose 0
+#/tracking/verbose 0
+
+#gps set
+#/gps/energy 1.332 MeV
+/gps/particle gamma
+/gps/pos/type Point
+
+/gps/position 0. 0. 0. mm
+/gps/ang/type iso
+
+/gps/energy 0.121781 MeV
+
+
+#/gps/hist/inter Log
+
+/analysis/setFileName point_12178
+/run/beamOn 10000001
+
+#/control/execute batchSave_point.mac

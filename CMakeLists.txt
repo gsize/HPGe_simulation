@@ -41,8 +41,7 @@ target_link_libraries(HPGe_simulation ${Geant4_LIBRARIES} )
 # relies on these scripts being in the current working directory.
 #
 set(HPGe_simulation_SCRIPTS
-	vis.mac batchSave_plane.mac batchSave_point.mac testGPS_hist.mac  gamma_hist_Eu152.mac
-	 gamma_hist_int.mac
+	vis.mac 
   )
 
 foreach(_script ${HPGe_simulation_SCRIPTS})

@@ -45,9 +45,8 @@
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-	EventAction::  EventAction(HistoManager *histo)
-:G4UserEventAction(),
-	fHistManager(histo),
+EventAction::  EventAction()
+	:G4UserEventAction(),
 	fHPGeEdepHCID(-1)
 {}
 
@@ -71,24 +70,28 @@ void   EventAction::BeginOfEventAction(const G4Event* /*event*/)
 
 void   EventAction::EndOfEventAction(const G4Event* event)
 {
-// Get the energy of primary particle 
+	G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
+
+	// Get the energy of primary particle 
 	G4double primary_energy = event->GetPrimaryVertex()->GetPrimary()->GetTotalEnergy();
-	fHistManager->FillSourceData(primary_energy /MeV);
+	analysisManager->FillH1(1,primary_energy /MeV);
+	//	fHistManager->FillSourceData(primary_energy /MeV);
 
 	// Get hist collections IDs
 	G4double energyShield = 1. *keV;
 	if ( fHPGeEdepHCID < 0  ) {
 		fHPGeEdepHCID 
 			= G4SDManager::GetSDMpointer()->GetCollectionID("HPGe/Edep");
-		}
-		// Get sum values from hits collections
-		//
-		G4double HPGeEdep = GetSum(GetHitsCollection(fHPGeEdepHCID, event));
+	}
+	// Get sum values from hits collections
+	//
+	G4double HPGeEdep = GetSum(GetHitsCollection(fHPGeEdepHCID, event));
 
-		// fill histograms
-		//
-		if(HPGeEdep > energyShield) {
-		fHistManager->FillSDData(HPGeEdep/ MeV);
+	// fill histograms
+	//
+	if(HPGeEdep > energyShield) {
+		analysisManager->FillH1(2,HPGeEdep/ MeV);
+		//		fHistManager->FillSDData(HPGeEdep/ MeV);
 	}
 }
 

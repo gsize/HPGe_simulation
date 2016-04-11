@@ -41,9 +41,9 @@
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-  RunAction::  RunAction(HistoManager *histo)
+  RunAction::  RunAction()
 :G4UserRunAction(),
-	fHistoManager(histo)
+	fHistoManager(0)
 {
  //pMessenger = new RunMessenger(this);
    // set an HistoManager
@@ -53,7 +53,8 @@
 
   // set printing event number per each event
   G4RunManager::GetRunManager()->SetPrintProgress(1);    
- //fHistoManager->book();
+
+ fHistoManager = new HistoManager(); 
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -68,8 +69,13 @@
 void   RunAction::BeginOfRunAction(const G4Run* aRun)
 {
   G4cout << "### Run " << aRun->GetRunID() << " start." << G4endl;
-  
- fHistoManager->OpenFile();
+               
+  //histograms
+  //
+  G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
+  if ( analysisManager->IsActive() ) {
+    analysisManager->OpenFile();
+  } 
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -78,11 +84,13 @@ void   RunAction::EndOfRunAction(const G4Run* aRun)
 {
     G4int nofEvents = aRun->GetNumberOfEvent();
   if ( nofEvents == 0 ) return;
-
-  //save histograms
-  //
-  //histoManager->PrintStatistic();
-  fHistoManager->Save();   
+  
+  //save histograms      
+  G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
+  if ( analysisManager->IsActive() ) {
+    analysisManager->Write();
+    analysisManager->CloseFile();
+  }
 
 }
 

@@ -71,26 +71,47 @@ void HistoManager::Book()
 	// in HistoManager.hh
 	G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
 	analysisManager->SetVerboseLevel(1);
-	//analysisManager->SetActivation(true);   //enable inactivation of histograms
+	analysisManager->SetActivation(true);   //enable inactivation of histograms
 	G4cout << "Using"<< analysisManager->GetFileType() << G4endl;
 	analysisManager->SetFileName(fileName);
 
 	// Create directories 
 	analysisManager->SetHistoDirectoryName("histo");
 	analysisManager->SetNtupleDirectoryName("ntuple");
-
+	/*
 	// create selected histograms
 	//
 	analysisManager->SetFirstHistoId(1);
 	analysisManager->SetFirstNtupleId(1);
 	fHistId[0] = analysisManager->CreateH1("source","Gamma source (MeV)",
-			8192, 0., 2.0*MeV);
+	8192, 0., 2.0*MeV);
+	analysis->SetH1Activation(id, false);
 	fHistPt[0] = analysisManager->GetH1(fHistId[0]);
 
 	fHistId[1] = analysisManager->CreateH1("HPGe","Gamma HPGe (MeV)",
-			8192, 0., 2.0*MeV);
+	8192, 0., 2.0*MeV);
 	fHistPt[1] = analysisManager->GetH1(fHistId[1]);
+	*/
+	// Define histograms start values
+	const G4int kMaxHisto = 2;
+	const G4String id[] = {"source","HPGe"};
+	const G4String title[] = 
+	{
+		"Gamma source (MeV)",               //1
+		"Gamma HPGe (MeV)"      //2
+	};
 
+	// Default values (to be reset via /analysis/h1/set command)               
+	G4int nbins = 100;
+	G4double vmin = 0.;
+	G4double vmax = 100.;
+
+	// Create all histograms as inactivated 
+	// as we have not yet set nbins, vmin, vmax
+	for (G4int k=0; k<kMaxHisto; k++) {
+		G4int ih = analysisManager->CreateH1(id[k], title[k], nbins, vmin, vmax);
+		analysisManager->SetH1Activation(ih, false);
+	}
 	// Creating ntuple ID=1
 	//
 	analysisManager->CreateNtuple("101", "source");
@@ -101,6 +122,7 @@ void HistoManager::Book()
 	fNtColId[1] = analysisManager->CreateNtupleDColumn("Edep_HPGe");
 	analysisManager->FinishNtuple();
 
+	analysisManager->SetNtupleActivation(false);          
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -115,32 +137,30 @@ void HistoManager::OpenFile()
 	fileName = 	analysisManager->GetFileName();
 	// Open an output file
 	//
-	//	if ( analysisManager->IsActive() ) {
-	G4bool fileOpen = analysisManager->OpenFile();
-	if (!fileOpen) {
-		G4cout << "\n---> HistoManager::OpenFile(): cannot open " << fileName 
-			<< G4endl;
-		return;
-	}
-	//	}
+	if ( analysisManager->IsActive() ) {
+		G4bool fileOpen = analysisManager->OpenFile();
+		if (!fileOpen) {
+			G4cout << "\n---> HistoManager::OpenFile(): cannot open " << fileName 
+				<< G4endl;
+			return;
+		}
 
-	factoryOn = true;       
-	G4cout << "\n----> Histogram Tree is opened in " << fileName << G4endl;
+		factoryOn = true;       
+		G4cout << "\n----> Histogram Tree is opened in " << fileName << G4endl;
+	}
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void HistoManager::Save()
 {
-	if (factoryOn) {
-		G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
-		//	if ( analysisManager->IsActive() ) {    
+	G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
+	if ( analysisManager->IsActive() ) {    
 		analysisManager->Write();
 		analysisManager->CloseFile();  
-		G4cout << "\n----> Histogram Tree is saved in " << fileName << G4endl;
-		//	}
 		factoryOn = false;
-	}                    
+		G4cout << "\n----> Histogram Tree is saved in " << fileName << G4endl;
+	}
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

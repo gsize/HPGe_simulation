@@ -46,7 +46,7 @@ class HistoManager;
 class   RunAction : public G4UserRunAction
 {
   public:
-      RunAction(HistoManager *);
+      RunAction();
    ~  RunAction();
 
   public:

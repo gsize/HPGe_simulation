@@ -1,0 +1,16 @@
+##
+##
+/HPGe_simulation/det/setPbShield false
+
+/HPGe_simulation/det/setSample true
+/HPGe_simulation/det/setSampleMove 60  cm
+
+/HPGe_simulation/det/setCollimator true
+/HPGe_simulation/det/setCollimatorMove  10 cm
+
+/HPGe_simulation/phys/addPhysics empenelope
+/HPGe_simulation/det/setOutDeadLayerThickness 1.4 mm
+#
+/run/numberOfThreads 3
+/run/initialize
+

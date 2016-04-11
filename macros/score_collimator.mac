@@ -1,0 +1,84 @@
+
+/control/verbose 0
+/run/verbose 0
+/run/printProgress  -1
+
+##
+##
+/HPGe_simulation/det/setPbShield false
+
+/HPGe_simulation/det/setSample true
+/HPGe_simulation/det/setSampleMove 150  cm
+
+/HPGe_simulation/det/setCollimator true
+/HPGe_simulation/det/setCollimatorMove  10 cm
+
+/HPGe_simulation/phys/addPhysics empenelope
+/HPGe_simulation/det/setOutDeadLayerThickness 1.4 mm
+#
+/run/numberOfThreads 3
+/run/initialize
+
+# Use this open statement to create an OpenGL view:
+/vis/open OGL 600x600
+
+#
+# Draw geometry:
+/vis/drawVolume
+#
+# Specify view angle:
+/vis/viewer/set/viewpointThetaPhi  45. -90.
+#
+# Specify zoom value:
+/vis/viewer/zoom 2.35
+#
+# Specify style (surface or wireframe):
+#/vis/viewer/set/style wireframe
+#
+# Draw coordinate axes:
+#/vis/scene/add/axes 0 0 0 0.35 m
+#
+
+# for drawing the tracks
+# (if too many tracks cause core dump => storeTrajectory 0)
+#/tracking/storeTrajectory 1
+
+#gps set
+/gps/particle gamma
+
+/gps/pos/type Volume
+/gps/pos/shape Cylinder
+/gps/pos/centre 0.0 0.0 150.5 cm
+/gps/pos/radius 0.564 cm
+/gps/pos/halfz 0.5 cm
+/gps/ang/type iso
+/gps/ang/mintheta 175 deg
+/gps/ang/rot1 -1 0 0
+
+#/gps/ene/type Arb
+#/gps/hist/type arb
+/gps/ene/type User
+/gps/hist/type energy
+/gps/hist/point 0.0 0.
+
+/gps/hist/point 0.5639 0
+/gps/hist/point 0.56391 15
+
+/gps/hist/point 0.68867 0.
+/gps/hist/point 0.688671 18
+
+/gps/hist/point 0.964079 0
+/gps/hist/point 0.9640791 20
+
+/gps/hist/point 1.0897 0
+/gps/hist/point 1.08971  20
+
+/gps/hist/point 1.408 0
+/gps/hist/point 1.4081 20
+
+#/analysis/setFileName VCd150cm05degdl14cover3_CollimatorMove10cm_FLiNaKU10%_score
+
+#/run/beamOn 30000
+
+
+#/control/execute batchSave_volume.mac

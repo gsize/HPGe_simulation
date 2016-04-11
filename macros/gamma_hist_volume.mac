@@ -1,11 +1,11 @@
 ##
 ##
-#/HPGe_simulation/det/setPbShield false
-#/HPGe_simulation/phys/addPhysics empenelope
-#/HPGe_simulation/det/setOutDeadLayerThickness 1.4 mm
+/HPGe_simulation/det/setPbShield false
+/HPGe_simulation/phys/addPhysics empenelope
+/HPGe_simulation/det/setOutDeadLayerThickness 1.4 mm
 #
-#/run/numberOfThreads 3
-#/run/initialize
+/run/numberOfThreads 3
+/run/initialize
 
 #/control/verbose 1
 /run/verbose 0
@@ -18,9 +18,9 @@
 
 /gps/pos/type Volume
 /gps/pos/shape Cylinder
-/gps/pos/centre 0.0 0.0 95. mm
+/gps/pos/centre 0.0 0.0 90.5 mm
 /gps/pos/radius 0.564 cm
-/gps/pos/halfz 0.5 cm
+/gps/pos/halfz 0.5 mm
 /gps/ang/type iso
 /gps/ang/mintheta 90 deg
 /gps/ang/rot1 -1 0 0
@@ -82,7 +82,7 @@
 /gps/hist/point 1.408 0
 /gps/hist/point 1.4081 20
 
-/analysis/setFileName VCd90mm90degdl14cover3_galactic_1
-/run/beamOn 1000001
+/analysis/setFileName VCd90mm90degdl14cover3_FLi29Na12K59U100000ppmthick1mm_p250_1
+/run/beamOn 10000001
 
 #/control/execute batchSave_volume.mac

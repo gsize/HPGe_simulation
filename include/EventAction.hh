@@ -38,13 +38,13 @@
 #include "globals.hh"
 
 class G4Event;
-class HistoManager;
+//class HistoManager;
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 class   EventAction : public G4UserEventAction
 {
   public:
-      EventAction(HistoManager *);
+      EventAction();
    ~  EventAction();
 
   public:
@@ -60,7 +60,7 @@ class   EventAction : public G4UserEventAction
   
   private:
   // data members                   
-  HistoManager *fHistManager;
+//  HistoManager *fHistManager;
   G4int  fHPGeEdepHCID;
 };
 

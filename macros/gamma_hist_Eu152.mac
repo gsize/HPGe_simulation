@@ -5,10 +5,12 @@
 /run/numberOfThreads 3
 /run/initialize
 
+
 #/control/verbose 1
 #/run/verbose 1
 #/event/verbose 0
 #/tracking/verbose 0
+/run/printProgress  -1
 
 #gps set
 #/gps/energy 1.332 MeV

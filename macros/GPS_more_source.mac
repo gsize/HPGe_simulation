@@ -1,0 +1,65 @@
+##Eu-152
+/HPGe_simulation/det/setPbShield false
+/HPGe_simulation/det/setSample false
+/HPGe_simulation/det/setCollimator false
+/HPGe_simulation/det/setOutDeadLayerThickness 0.7 mm
+/HPGe_simulation/phys/addPhysics empenelope
+#
+/run/numberOfThreads 3
+/run/initialize
+
+
+#/control/verbose 1
+#/run/verbose 1
+#/event/verbose 0
+#/tracking/verbose 0
+/run/printProgress  -1
+
+
+
+#gps set
+/gps/position 0. 0. 5. mm
+/gps/energy 0. keV
+
+####1 Cs-137 #########
+/gps/source/add 1.
+/gps/particle ion
+/gps/ion 55 137  0 0
+/gps/position 0. 0. 5. mm
+/gps/energy 0. keV
+/gps/pos/type Point
+###########################
+
+
+####2 Eu-152 #########
+/gps/source/add 2.
+/gps/particle ion
+/gps/ion 63 152  0 0
+/gps/position 0. 0. 5. mm
+/gps/energy 0. keV
+/gps/pos/type Point
+###########################
+
+
+####3 Am-241 #########
+/gps/source/add 3.
+/gps/particle ion
+/gps/ion 95 241  0 0
+/gps/position 0. 0. 5. mm
+/gps/energy 0. keV
+/gps/pos/type Point
+###########################
+
+####4 Ba-133 #########
+/gps/source/add 4.
+/gps/particle ion
+/gps/ion 56 133  0 0
+/gps/position 0. 0. 5. mm
+/gps/energy 0. keV
+/gps/pos/type Point
+###########################
+
+#/gps/source/multiplevertex true
+
+/analysis/setFileName GPS_point_80mm
+/run/beamOn 100000001
