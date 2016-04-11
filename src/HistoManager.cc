@@ -78,11 +78,12 @@ void HistoManager::Book()
 	// Create directories 
 	analysisManager->SetHistoDirectoryName("histo");
 	analysisManager->SetNtupleDirectoryName("ntuple");
-	/*
+	
 	// create selected histograms
 	//
 	analysisManager->SetFirstHistoId(1);
 	analysisManager->SetFirstNtupleId(1);
+/*
 	fHistId[0] = analysisManager->CreateH1("source","Gamma source (MeV)",
 	8192, 0., 2.0*MeV);
 	analysis->SetH1Activation(id, false);
