@@ -150,7 +150,7 @@ void PhysicsList::ConstructProcess()
 	//
 	//     // Radioactive decay
 	RegisterPhysics(new G4RadioactiveDecayPhysics());
-
+/*
 	// Em options
 	//
 	// Main options and setting parameters are shown here.
@@ -172,6 +172,7 @@ void PhysicsList::ConstructProcess()
 	//emOptions.SetSplineFlag(true);        //default
 
 	emOptions.SetVerbose(0);  
+*/
 }
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 #include "G4PhysListFactory.hh"

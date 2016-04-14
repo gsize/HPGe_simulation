@@ -125,7 +125,7 @@ G4GlobalMagFieldMessenger* DetectorConstruction::fMagFieldMessenger = 0;
 
 DetectorConstruction::~  DetectorConstruction()
 {
-	delete stepLimit;
+	//delete stepLimit;
 	delete detectorMessenger;
 }
 
