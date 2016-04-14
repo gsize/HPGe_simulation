@@ -36,7 +36,7 @@
 #else
 #include "G4RunManager.hh"
 #endif
-
+#include "SteppingVerbose.hh"
 #include "G4ScoringManager.hh"
 
 //#include "FTFP_BERT.hh"
@@ -89,6 +89,8 @@ int main(int argc,char** argv)
   G4cout << "##### Application started for " << runManager->GetNumberOfThreads() 
          << " threads" << " #####" << G4endl;
 #else
+//my Verbose output class
+  G4VSteppingVerbose::SetInstance(new SteppingVerbose);
   G4RunManager* runManager = new G4RunManager;
 #endif
 
