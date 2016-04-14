@@ -1,0 +1,37 @@
+##Ba-133
+/HPGe_simulation/det/setPbShield false
+/HPGe_simulation/det/setSample false
+/HPGe_simulation/det/setCollimator false
+/HPGe_simulation/det/setOutDeadLayerThickness 0.7 mm
+/HPGe_simulation/phys/addPhysics empenelope
+/HPGe_simulation/phys/addPackage  Shielding
+#
+/run/numberOfThreads 1
+/run/initialize
+
+/control/verbose 2
+/run/verbose 1
+/process/list
+
+#/event/verbose 0
+/tracking/verbose 4
+
+####4 Ba-133 #########
+#/gps/source/add 2.
+/gps/particle ion
+/gps/ion 56 133  0 0
+/gps/position 0. 0. 1. mm
+/gps/energy 0. keV
+/gps/pos/type Point
+/gps/ang/type iso
+###########################
+
+#/gps/source/multiplevertex true
+
+/analysis/setFileName ba133
+/analysis/h1/set 1 4000 8. 2000. keV
+/analysis/h1/set 2 4000 8. 2000. keV
+
+/run/printProgress 10000
+#/run/beamOn 100000
+/run/beamOn 2
