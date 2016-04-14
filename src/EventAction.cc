@@ -74,7 +74,7 @@ void   EventAction::EndOfEventAction(const G4Event* event)
 
 	// Get the energy of primary particle 
 	G4double primary_energy = event->GetPrimaryVertex()->GetPrimary()->GetTotalEnergy();
-	analysisManager->FillH1(1,primary_energy /MeV);
+//	analysisManager->FillH1(1,primary_energy /MeV);
 	//	fHistManager->FillSourceData(primary_energy /MeV);
 
 	// Get hist collections IDs

@@ -33,7 +33,8 @@
 #include "PrimaryGeneratorAction.hh"
 #include "RunAction.hh"
 #include "EventAction.hh"
-
+#include "TrackingAction.hh"
+#include "SteppingVerbose.hh"
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 ActionInitialization::ActionInitialization()
@@ -63,6 +64,17 @@ void ActionInitialization::Build() const
 
   EventAction* eventAction =new EventAction();
   SetUserAction(eventAction);
+
+  TrackingAction* trackingAction = new TrackingAction();
+  SetUserAction(trackingAction);
 }  
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+G4VSteppingVerbose* ActionInitialization::InitializeSteppingVerbose() const
+{
+	  return new SteppingVerbose();
+}  
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
