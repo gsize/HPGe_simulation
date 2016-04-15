@@ -61,7 +61,6 @@ void TrackingAction::PreUserTrackingAction(const G4Track* track)
   if(particle == G4Gamma::Gamma())
   {
 	  G4AnalysisManager::Instance()->FillH1(1,energy/MeV);
-G4cout<<"energy "<<energy<<G4endl;	
   }
 
 }
