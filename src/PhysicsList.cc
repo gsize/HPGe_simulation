@@ -35,14 +35,8 @@
 #include "PhysicsList.hh"
 #include "PhysicsListMessenger.hh"
 
-#include "PhysListEmStandard.hh"
-#include "G4EmStandardPhysics.hh"
-#include "G4EmStandardPhysics_option1.hh"
-#include "G4EmStandardPhysics_option2.hh"
-#include "G4EmStandardPhysics_option3.hh"
-#include "G4EmStandardPhysics_option4.hh"
-#include "G4EmLivermorePhysics.hh"
-#include "G4EmPenelopePhysics.hh"
+#include "G4DecayPhysics.hh"
+#include "G4RadioactiveDecayPhysics.hh"
 
 #include "G4LossTableManager.hh"
 #include "G4UnitsTable.hh"
@@ -52,7 +46,7 @@
 
 PhysicsList::PhysicsList() 
 	: G4VModularPhysicsList(),fCutForGamma(0),fCutForElectron(0),fCutForPositron(0),
-	fCurrentDefaultCut(0),fEmPhysicsList(0),fEmName("local"),fMessenger(0)
+	fCurrentDefaultCut(0),fEmPhysicsList(0),fEmName("emlivermore"),fMessenger(0)
 {    
 	G4LossTableManager::Instance();
 
@@ -66,9 +60,14 @@ PhysicsList::PhysicsList()
 	SetVerboseLevel(1);
 
 	// EM physics
-	fEmName = G4String("local");
-	fEmPhysicsList = new PhysListEmStandard(fEmName);
+	AddPhysicsList(fEmName);
+	//fEmPhysicsList = new PhysListEmStandard(fEmName);
 
+	// Decay
+	RegisterPhysics(new G4DecayPhysics());
+
+    // Radioactive decay
+	RegisterPhysics(new G4RadioactiveDecayPhysics());
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -105,7 +104,7 @@ void PhysicsList::ConstructParticle()
 	G4Gamma::GammaDefinition();
 
 	//bosons 
-	
+
 	G4BosonConstructor  pBosonConstructor;
 	pBosonConstructor.ConstructParticle();
 
@@ -132,25 +131,19 @@ void PhysicsList::ConstructParticle()
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 #include "G4EmProcessOptions.hh"
-#include "G4DecayPhysics.hh"
-#include "G4RadioactiveDecayPhysics.hh"
 
 void PhysicsList::ConstructProcess()
 {
+	G4VModularPhysicsList::ConstructProcess();
 	// Transportation
 	//
-	AddTransportation();
+//	AddTransportation();
 
 	// Electromagnetic physics list
 	//
-	fEmPhysicsList->ConstructProcess();
+//	fEmPhysicsList->ConstructProcess();
 
-	// Decay
-	RegisterPhysics(new G4DecayPhysics());
-	//
-	//     // Radioactive decay
-	RegisterPhysics(new G4RadioactiveDecayPhysics());
-/*
+	/*
 	// Em options
 	//
 	// Main options and setting parameters are shown here.
@@ -172,7 +165,7 @@ void PhysicsList::ConstructProcess()
 	//emOptions.SetSplineFlag(true);        //default
 
 	emOptions.SetVerbose(0);  
-*/
+	*/
 }
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 #include "G4PhysListFactory.hh"
@@ -180,18 +173,25 @@ void PhysicsList::AddPackage(const G4String& name)
 {
 	G4PhysListFactory factory;
 	G4VModularPhysicsList* phys =factory.GetReferencePhysList(name);
-	G4int i=0;
-	const G4VPhysicsConstructor* elem= phys->GetPhysics(i);
-	G4VPhysicsConstructor* tmp = const_cast<G4VPhysicsConstructor*> (elem);
-	while (elem !=0)
-	{
-		RegisterPhysics(tmp);
-		elem= phys->GetPhysics(++i) ;
-		tmp = const_cast<G4VPhysicsConstructor*> (elem);
+
+	for (G4int i = 0; ; ++i) {
+		G4VPhysicsConstructor* elem =
+			const_cast<G4VPhysicsConstructor*> (phys->GetPhysics(i));
+		if (elem == NULL) break;
+		G4cout << "RegisterPhysics: " << elem->GetPhysicsName() << G4endl;
+		RegisterPhysics(elem);
 	}
 }
 
 
+#include "PhysListEmStandard.hh"
+#include "G4EmStandardPhysics.hh"
+#include "G4EmStandardPhysics_option1.hh"
+#include "G4EmStandardPhysics_option2.hh"
+#include "G4EmStandardPhysics_option3.hh"
+#include "G4EmStandardPhysics_option4.hh"
+#include "G4EmLivermorePhysics.hh"
+#include "G4EmPenelopePhysics.hh"
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void PhysicsList::AddPhysicsList(const G4String& name)
@@ -259,8 +259,8 @@ void PhysicsList::AddPhysicsList(const G4String& name)
 
 void PhysicsList::SetCuts()
 { 
-/*	// fixe lower limit for cut
-	G4ProductionCutsTable::GetProductionCutsTable()->SetEnergyRange(100*eV, 1*GeV);
+	/*	// fixe lower limit for cut
+		G4ProductionCutsTable::GetProductionCutsTable()->SetEnergyRange(100*eV, 1*GeV);
 
 	// set cut values for gamma at first and for e- second and next for e+,
 	// because some processes for e+/e- need cut values for gamma

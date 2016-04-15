@@ -6,6 +6,7 @@
 /HPGe_simulation/phys/addPhysics empenelope
 /HPGe_simulation/phys/addPackage  Shielding
 #
+/run/setCutForAGivenParticle gamma  10.  km
 /run/numberOfThreads 1
 /run/initialize
 
