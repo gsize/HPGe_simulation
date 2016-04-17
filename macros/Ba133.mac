@@ -4,11 +4,11 @@
 /HPGe_simulation/det/setCollimator false
 /HPGe_simulation/det/setOutDeadLayerThickness 0.7 mm
 #/HPGe_simulation/phys/addPhysics empenelope
-#/HPGe_simulation/phys/addPackage  Shielding
+/HPGe_simulation/phys/addPackage  Shielding
 #
 
 /run/setCutForAGivenParticle gamma  10.  mm
-/run/numberOfThreads 1
+/run/numberOfThreads 3
 /run/initialize
 
 /control/verbose 2
@@ -35,7 +35,7 @@
 
 /tracking/verbose 0
 
-/analysis/setFileName ba133-3
+/analysis/setFileName ba133-4
 /analysis/h1/set 1 8000 8. 2000. keV
 /analysis/h1/set 2 8000 8. 2000. keV
 
