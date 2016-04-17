@@ -57,8 +57,8 @@ void TrackingAction::PreUserTrackingAction(const G4Track* track)
  
 	G4ParticleDefinition* particle =track->GetDefinition();
   G4double energy = track->GetKineticEnergy();
-  
-  if(particle == G4Gamma::Gamma())
+  G4double shield = 1. *keV;
+  if(particle == G4Gamma::Gamma() && energy > shield)
   {
 	  G4AnalysisManager::Instance()->FillH1(1,energy/MeV);
   }
