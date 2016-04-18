@@ -3,8 +3,8 @@
 /HPGe_simulation/det/setSample false
 /HPGe_simulation/det/setCollimator false
 /HPGe_simulation/det/setOutDeadLayerThickness 0.7 mm
-#/HPGe_simulation/phys/addPhysics empenelope
-/HPGe_simulation/phys/addPackage  Shielding
+/HPGe_simulation/phys/addPhysics empenelope
+#/HPGe_simulation/phys/addPackage  Shielding
 #
 
 /run/setCutForAGivenParticle gamma  10.  mm
@@ -31,14 +31,14 @@
 
 #/gps/source/multiplevertex true
 
-/run/beamOn 1
+#/run/beamOn 1
 
 /tracking/verbose 0
 
-/analysis/setFileName ba133-4
+/analysis/setFileName ba133-pen
 /analysis/h1/set 1 8000 8. 2000. keV
 /analysis/h1/set 2 8000 8. 2000. keV
 
-/run/printProgress 100000
-/run/beamOn 1000000
+/run/printProgress 10000
+/run/beamOn 100000
 #/run/beamOn 2

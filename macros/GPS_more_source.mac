@@ -3,6 +3,7 @@
 /HPGe_simulation/det/setSample false
 /HPGe_simulation/det/setCollimator false
 /HPGe_simulation/det/setOutDeadLayerThickness 0.7 mm
+/HPGe_simulation/phys/addPackage  Shielding
 #/HPGe_simulation/phys/addPhysics empenelope
 #
 /run/numberOfThreads 3
@@ -20,7 +21,7 @@
 #/gps/energy 0. keV
 
 ####1 Cs-137 #########
-/gps/source/add 1.
+#/gps/source/add 1.
 /gps/particle ion
 /gps/ion 55 137  0 0
 /gps/position 0. 0. 80. mm
@@ -30,7 +31,7 @@
 
 
 ####2 Eu-152 #########
-/gps/source/add 1.
+/gps/source/add 0.5
 /gps/particle ion
 /gps/ion 63 152  0 0
 /gps/position 0. 0. 80. mm
@@ -40,7 +41,7 @@
 
 
 ####3 Am-241 #########
-/gps/source/add 1.
+/gps/source/add 100.
 /gps/particle ion
 /gps/ion 95 241  0 0
 /gps/position 0. 0. 80. mm
@@ -49,7 +50,7 @@
 ###########################
 
 ####4 Ba-133 #########
-/gps/source/add 1.
+/gps/source/add 0.33.
 /gps/particle ion
 /gps/ion 56 133  0 0
 /gps/position 0. 0. 80. mm
@@ -58,7 +59,7 @@
 ###########################
 
 ####4 Co-60 #########
-/gps/source/add 1.
+/gps/source/add 0.1
 /gps/particle ion
 /gps/ion 27 60  0 0
 /gps/position 0. 0. 80. mm
@@ -68,9 +69,9 @@
 
 #/gps/source/multiplevertex true
 
-/analysis/setFileName GPS_point_80mm
+/analysis/setFileName GPS_point_80mm-1
 /analysis/h1/set 1 8192 0. 2. MeV
 /analysis/h1/set 2 8192 0. 2. MeV
 
-/run/printProgress 100000
-/run/beamOn 1000000
+/run/printProgress 1000000
+/run/beamOn 10000000

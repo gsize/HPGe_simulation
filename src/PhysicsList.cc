@@ -35,6 +35,7 @@
 #include "PhysicsList.hh"
 #include "PhysicsListMessenger.hh"
 
+#include "G4EmLivermorePhysics.hh"
 #include "G4DecayPhysics.hh"
 #include "G4RadioactiveDecayPhysics.hh"
 
@@ -60,8 +61,8 @@ PhysicsList::PhysicsList()
 	SetVerboseLevel(1);
 
 	// EM physics
-	AddPhysicsList(fEmName);
-	//fEmPhysicsList = new PhysListEmStandard(fEmName);
+	fEmPhysicsList = new G4EmLivermorePhysics();
+	RegisterPhysics(fEmPhysicsList);
 
 	// Decay
 	RegisterPhysics(new G4DecayPhysics());
@@ -75,7 +76,7 @@ PhysicsList::PhysicsList()
 PhysicsList::~PhysicsList()
 {
 	delete fMessenger;
-	delete fEmPhysicsList;
+
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -96,6 +97,7 @@ PhysicsList::~PhysicsList()
 
 void PhysicsList::ConstructParticle()
 {
+G4VModularPhysicsList::ConstructParticle();
 	// pseudo-particles
 	G4Geantino::GeantinoDefinition();
 	G4ChargedGeantino::ChargedGeantinoDefinition();
@@ -140,7 +142,7 @@ void PhysicsList::ConstructProcess()
 //	AddTransportation();
 
 	// Electromagnetic physics list
-	//
+//if(fEmPhysicsList)	
 //	fEmPhysicsList->ConstructProcess();
 
 	/*
@@ -179,7 +181,8 @@ void PhysicsList::AddPackage(const G4String& name)
 			const_cast<G4VPhysicsConstructor*> (phys->GetPhysics(i));
 		if (elem == NULL) break;
 		G4cout << "RegisterPhysics: " << elem->GetPhysicsName() << G4endl;
-		RegisterPhysics(elem);
+		//RegisterPhysics(elem);
+		ReplacePhysics(elem);
 	}
 }
 
@@ -199,49 +202,58 @@ void PhysicsList::AddPhysicsList(const G4String& name)
 	if (verboseLevel>0) {
 		G4cout << "PhysicsList::AddPhysicsList: <" << name << ">" << G4endl;
 	}
+	G4bool flag = 0;
 
 	if (name == fEmName) return;
 
 	if (name == "local") {
 
 		fEmName = name;
-		delete fEmPhysicsList;
+		//delete fEmPhysicsList;
 		fEmPhysicsList = new PhysListEmStandard(name);
+		flag = 1;
 
 	} else if (name == "emstandard_opt0"){
 		fEmName = name;
-		delete fEmPhysicsList;
+		//delete fEmPhysicsList;
 		fEmPhysicsList = new G4EmStandardPhysics();
+		flag = 1;
 
 	} else if (name == "emstandard_opt1"){
 		fEmName = name;
-		delete fEmPhysicsList;
+		//delete fEmPhysicsList;
 		fEmPhysicsList = new G4EmStandardPhysics_option1();
+		flag = 1;
 
 	} else if (name == "emstandard_opt2"){
 		fEmName = name;
-		delete fEmPhysicsList;
+		//delete fEmPhysicsList;
 		fEmPhysicsList = new G4EmStandardPhysics_option2();
+		flag = 1;
 
 	} else if (name == "emstandard_opt3"){
 		fEmName = name;
-		delete fEmPhysicsList;
+		//delete fEmPhysicsList;
 		fEmPhysicsList = new G4EmStandardPhysics_option3();
+		flag = 1;
 
 	} else if (name == "emstandard_opt4"){
 		fEmName = name;
-		delete fEmPhysicsList;
+		//delete fEmPhysicsList;
 		fEmPhysicsList = new G4EmStandardPhysics_option4();
+		flag = 1;
 
 	} else if (name == "empenelope"){
 		fEmName = name;
-		delete fEmPhysicsList;
+		//delete fEmPhysicsList;
 		fEmPhysicsList = new G4EmPenelopePhysics();
+		flag = 1;
 
 	} else if (name == "emlivermore"){
 		fEmName = name;
-		delete fEmPhysicsList;
+		//delete fEmPhysicsList;
 		fEmPhysicsList = new G4EmLivermorePhysics();
+		flag = 1;
 
 	} else {
 
@@ -249,6 +261,10 @@ void PhysicsList::AddPhysicsList(const G4String& name)
 			<< " is not defined"
 			<< G4endl;
 	}
+	
+	if(flag)
+		ReplacePhysics(fEmPhysicsList);
+
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
