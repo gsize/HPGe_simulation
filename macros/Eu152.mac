@@ -1,4 +1,4 @@
-##Ba-133
+#Eu-152
 /HPGe_simulation/det/setPbShield false
 /HPGe_simulation/det/setSample false
 /HPGe_simulation/det/setCollimator false
@@ -16,14 +16,14 @@
 /process/list
 
 #/event/verbose 0
-/tracking/verbose 4
+/tracking/verbose 2
 
 
-####4 Ba-133 #########
+#### Eu-152 #########
 #/gps/source/add 2.
 /gps/particle ion
-/gps/ion 56 133  0 0
-/gps/position 0. 0. 40. mm
+/gps/ion 63 152 0 0
+/gps/position 0. 0. 9. mm
 /gps/energy 0. keV
 /gps/pos/type Point
 /gps/ang/type iso
@@ -35,10 +35,10 @@
 
 /tracking/verbose 0
 
-/analysis/setFileName ba133-pen
+/analysis/setFileName Eu152-pen
 /analysis/h1/set 1 8000 8. 2000. keV
 /analysis/h1/set 2 8000 8. 2000. keV
 
-/run/printProgress 100000
-/run/beamOn 1000000
+/run/printProgress 10000
+/run/beamOn 100000
 #/run/beamOn 2

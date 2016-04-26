@@ -47,35 +47,46 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 TrackingAction::TrackingAction()
-:G4UserTrackingAction()
+	:G4UserTrackingAction()
 { }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+#include "G4VProcess.hh"
 
 void TrackingAction::PreUserTrackingAction(const G4Track* track)
 {  
- 
-	G4ParticleDefinition* particle =track->GetDefinition();
-  G4double energy = track->GetKineticEnergy();
-  G4double shield = 1. *keV;
-  if(particle == G4Gamma::Gamma() && energy > shield)
-  {
-	  G4AnalysisManager::Instance()->FillH1(1,energy/MeV);
-  }
 
+	G4ParticleDefinition* particle =track->GetDefinition();
+	G4double energy = track->GetKineticEnergy();
+	G4double shield = 1. *keV;
+
+	//判断粒子是否为gamma光子且来自于放射性衰变产生的
+	//如果是，保存gamma离散谱，作为初始gamma源。
+	const G4VProcess* creatorProcess = track->GetCreatorProcess();
+	if(creatorProcess)
+	{
+	if(creatorProcess->GetProcessName() == "RadioactiveDecay" && particle == G4Gamma::Gamma() )
+	{
+			G4AnalysisManager::Instance()->FillH1(1,energy/MeV);
+	}
+	}
+	if(track->GetTrackID() == 1 && particle == G4Gamma::Gamma())
+	{
+			G4AnalysisManager::Instance()->FillH1(1,energy/MeV);
+	}
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void TrackingAction::PostUserTrackingAction(const G4Track* track)
 {
- // keep only outgoing particle
- G4StepStatus status = track->GetStep()->GetPostStepPoint()->GetStepStatus();
- if (status != fWorldBoundary) return; 
- 
- const G4ParticleDefinition* particle = track->GetParticleDefinition();
- G4String name   = particle->GetParticleName();
- G4double energy = track->GetKineticEnergy();
+	// keep only outgoing particle
+	G4StepStatus status = track->GetStep()->GetPostStepPoint()->GetStepStatus();
+	if (status != fWorldBoundary) return; 
+
+	const G4ParticleDefinition* particle = track->GetParticleDefinition();
+	G4String name   = particle->GetParticleName();
+	G4double energy = track->GetKineticEnergy();
 
 }
 

@@ -26,6 +26,9 @@
 /analysis/setFileName point_12178
 /analysis/h1/set 1 8192 0. 2. MeV
 /analysis/h1/set 2 8192 0. 2. MeV
-/run/beamOn 10000001
+
+
+/run/printProgress 10000
+/run/beamOn 100001
 
 #/control/execute batchSave_point.mac
