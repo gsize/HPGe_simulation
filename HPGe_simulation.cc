@@ -68,7 +68,8 @@ int main(int argc,char** argv)
 	// random engine
 	// CLHEP::Ranlux64Engine randomEngine;
 	// CLHEP::HepRandom::setTheEngine(&randomEngine);
-	//G4Random::setTheEngine(new CLHEP::RanecuEngine);
+	G4Random::setTheEngine(new CLHEP::RanecuEngine);
+	G4Random::setTheSeed(1234554321);
 
 	// User Verbose output class
 	//
