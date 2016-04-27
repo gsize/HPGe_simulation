@@ -23,73 +23,39 @@
 // * acceptance of all terms of the Geant4 Software license.          *
 // ********************************************************************
 //
-/// \file electromagnetic/TestEm12/src/TrackingAction.cc
-/// \brief Implementation of the TrackingAction class
+/// \file electromagnetic/TestEm5/include/StackingAction.hh
+/// \brief Definition of the StackingAction class
 //
-// $Id: TrackingAction.cc 69099 2013-04-18 12:25:19Z maire $
+// $Id: StackingAction.hh 83921 2014-09-23 09:14:40Z gcosmo $
 //
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#include "TrackingAction.hh"
+#ifndef StackingAction_h
+#define StackingAction_h 1
 
-#include "EventAction.hh"
-#include "HistoManager.hh"
+#include "G4UserStackingAction.hh"
+#include "globals.hh"
 
-#include "G4RunManager.hh"
-#include "G4Track.hh"
-#include "G4StepStatus.hh"
-#include "G4ParticleTypes.hh"
-
-#include "G4SystemOfUnits.hh"
-#include "G4UnitsTable.hh"
+class EventAction;
+class StackingMessenger;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-TrackingAction::TrackingAction()
-	:G4UserTrackingAction()
-{ }
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-#include "G4VProcess.hh"
-
-void TrackingAction::PreUserTrackingAction(const G4Track* track)
-{  
-/*
-	G4ParticleDefinition* particle =track->GetDefinition();
-	G4double energy = track->GetKineticEnergy();
-	G4double shield = 1. *keV;
-
-	//判断粒子是否为gamma光子且来自于放射性衰变产生的
-	//如果是，保存gamma离散谱，作为初始gamma源。
-	const G4VProcess* creatorProcess = track->GetCreatorProcess();
-	if(creatorProcess)
-	{
-	if(creatorProcess->GetProcessName() == "RadioactiveDecay" && particle == G4Gamma::Gamma() )
-	{
-			G4AnalysisManager::Instance()->FillH1(1,energy/MeV);
-	}
-	}
-	if(track->GetTrackID() == 1 && particle == G4Gamma::Gamma())
-	{
-			G4AnalysisManager::Instance()->FillH1(1,energy/MeV);
-	}
-*/
-}
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
-void TrackingAction::PostUserTrackingAction(const G4Track* track)
+class StackingAction : public G4UserStackingAction
 {
-	// keep only outgoing particle
-	G4StepStatus status = track->GetStep()->GetPostStepPoint()->GetStepStatus();
-	if (status != fWorldBoundary) return; 
-
-	const G4ParticleDefinition* particle = track->GetParticleDefinition();
-	G4String name   = particle->GetParticleName();
-	G4double energy = track->GetKineticEnergy();
-
-}
+  public:
+    StackingAction();
+   ~StackingAction();
+   
+  public:
+    virtual G4ClassificationOfNewTrack ClassifyNewTrack(const G4Track*);
+    
+  private:
+        
+};
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+#endif
 

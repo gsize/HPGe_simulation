@@ -23,39 +23,45 @@
 // * acceptance of all terms of the Geant4 Software license.          *
 // ********************************************************************
 //
-/// \file electromagnetic/TestEm12/src/TrackingAction.cc
-/// \brief Implementation of the TrackingAction class
+/// \file electromagnetic/TestEm5/src/StackingAction.cc
+/// \brief Implementation of the StackingAction class
 //
-// $Id: TrackingAction.cc 69099 2013-04-18 12:25:19Z maire $
+// $Id: StackingAction.cc 88674 2015-03-05 08:29:46Z gcosmo $
 //
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#include "TrackingAction.hh"
+#include "StackingAction.hh"
 
-#include "EventAction.hh"
 #include "HistoManager.hh"
 
-#include "G4RunManager.hh"
 #include "G4Track.hh"
-#include "G4StepStatus.hh"
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+StackingAction::StackingAction()
+ : G4UserStackingAction()
+{
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+StackingAction::~StackingAction()
+{
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
 #include "G4ParticleTypes.hh"
 
+#include "G4VProcess.hh"
 #include "G4SystemOfUnits.hh"
 #include "G4UnitsTable.hh"
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+G4ClassificationOfNewTrack
+StackingAction::ClassifyNewTrack(const G4Track* track)
+{
 
-TrackingAction::TrackingAction()
-	:G4UserTrackingAction()
-{ }
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-#include "G4VProcess.hh"
-
-void TrackingAction::PreUserTrackingAction(const G4Track* track)
-{  
-/*
 	G4ParticleDefinition* particle =track->GetDefinition();
 	G4double energy = track->GetKineticEnergy();
 	G4double shield = 1. *keV;
@@ -74,22 +80,8 @@ void TrackingAction::PreUserTrackingAction(const G4Track* track)
 	{
 			G4AnalysisManager::Instance()->FillH1(1,energy/MeV);
 	}
-*/
+
+ return fUrgent; 
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
-void TrackingAction::PostUserTrackingAction(const G4Track* track)
-{
-	// keep only outgoing particle
-	G4StepStatus status = track->GetStep()->GetPostStepPoint()->GetStepStatus();
-	if (status != fWorldBoundary) return; 
-
-	const G4ParticleDefinition* particle = track->GetParticleDefinition();
-	G4String name   = particle->GetParticleName();
-	G4double energy = track->GetKineticEnergy();
-
-}
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
