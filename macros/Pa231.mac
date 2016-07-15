@@ -8,7 +8,7 @@
 #
 
 /run/setCutForAGivenParticle gamma  10.  mm
-/run/numberOfThreads 3
+/run/numberOfThreads 14
 /run/initialize
 
 /control/verbose 2
@@ -39,6 +39,6 @@
 /analysis/h1/set 1 8000 8. 2000. keV
 /analysis/h1/set 2 8000 8. 2000. keV
 
-/run/printProgress 10000
-/run/beamOn 100000
+/run/printProgress 100000
+/run/beamOn 6000000
 #/run/beamOn 2

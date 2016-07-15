@@ -35,10 +35,10 @@
 
 /tracking/verbose 0
 
-/analysis/setFileName Cs133-pen
+/analysis/setFileName Cs133-pen-5
 /analysis/h1/set 1 8000 8. 2000. keV
 /analysis/h1/set 2 8000 8. 2000. keV
 
-/run/printProgress 10000
-/run/beamOn 100000
+/run/printProgress 1000
+/run/beamOn 10000
 #/run/beamOn 2
