@@ -94,6 +94,9 @@ class   DetectorConstruction : public G4VUserDetectorConstruction
 		void ConstructHPGeDetector(G4LogicalVolume* );
 		void  ConstructSample(G4LogicalVolume* motherLogicalVolume);
 		void  ConstructCollimator(G4LogicalVolume* motherLogicalVolume);
+		void  ConstructHotCellShield(G4LogicalVolume* motherLogicalVolume);
+void ConstructShieldWall(G4LogicalVolume* motherLogicalVolume);
+void ConstructPreCollimator(G4LogicalVolume* motherLogicalVolume);
 
 	private:
 		// data members
@@ -152,6 +155,9 @@ class   DetectorConstruction : public G4VUserDetectorConstruction
 		G4bool flagPbShield;
 		G4bool flagCollimator;
 		G4bool	flagSample ;
+		G4bool flagHotCell;
+		G4bool flagShieldWall;
+		G4bool flagPreCollimator;
 
 		static G4ThreadLocal G4GlobalMagFieldMessenger*  fMagFieldMessenger; 
 		// magnetic field messenger

@@ -78,10 +78,13 @@ G4GlobalMagFieldMessenger* DetectorConstruction::fMagFieldMessenger = 0;
 	,  physiWorld(0)
 	,  stepLimit(0)
 	,  fCheckOverlaps(true)
-	,  flagPbShield(true)
-	,flagCollimator(true) 
-	 ,flagSample(true) 
+	,  flagPbShield(false)
+	,flagCollimator(false) 
+	 ,flagSample(false) 
+	 ,flagHotCell(false) 
+	 ,flagShieldWall(true) 
 {
+		flagPreCollimator = true;
 	//Pb Shield
 	Shield_Length = 630.*mm;
 	Shield_rMax = 0.5*510.*mm;
@@ -158,6 +161,12 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		this->ConstructSample(pLV);
 	if(flagCollimator == true)
 		this->ConstructCollimator(pLV);
+	if(flagHotCell == true)
+		this->ConstructHotCellShield(pLV);
+	if(flagShieldWall== true)
+		this->ConstructShieldWall(pLV);
+	if(flagPreCollimator== true)
+		this->ConstructPreCollimator(pLV);
 	return physiWorld;
 }
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -167,7 +176,7 @@ G4VPhysicalVolume*  DetectorConstruction::ConstructWorld()
 	//------------------------------
 	// World
 	//------------------------------
-	G4double fWorldLength = 10.2 * Shield_Length;
+	G4double fWorldLength = 8.*m;
 	G4double HalfWorldLength = 0.5*fWorldLength;
 
 	G4GeometryManager::GetInstance()->SetWorldMaximumExtent(fWorldLength);
@@ -189,6 +198,135 @@ G4VPhysicalVolume*  DetectorConstruction::ConstructWorld()
 			0,              // copy number
 			fCheckOverlaps);
 	return phyWorld;
+}
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+void DetectorConstruction::ConstructPreCollimator(G4LogicalVolume* motherLogicalVolume)
+{
+	G4NistManager* nist = G4NistManager::Instance();
+	G4Material* matPb= nist->FindOrBuildMaterial("G4_Pb");
+	G4Material* matFe= nist->FindOrBuildMaterial("G4_Fe");
+
+	G4double holeLength= 2. *mm;
+	G4double holeWidth= 5. *cm;
+	G4double holeDepth = 1.5 *m;
+	G4double collimatorRadius = 5.99 *cm;
+	G4double collimatorLength = holeDepth;
+
+	G4double moveLength = 0.5* holeDepth;
+	//  collimator hole ,material is Fe.
+	G4VSolid* holeSol= new G4Box("holeSol",0.5* holeLength ,0.5*holeWidth,0.5*holeDepth);
+
+	G4VSolid * collimatorSol1
+		= new G4Tubs("collimatorSol1",0.,collimatorRadius,0.5* collimatorLength,
+				0. *deg,360. *deg);
+	G4VSolid *collimatorHoleSol= new G4SubtractionSolid("CollimatorHoleSol",
+			collimatorSol1, holeSol,0,G4ThreeVector(0.,0.,0. ));
+
+	G4LogicalVolume* collimatorHoleLV= new G4LogicalVolume( collimatorHoleSol, matFe, "collimatorHoleLV", 0, 0, 0);
+	new G4PVPlacement(0,G4ThreeVector(0.,0.,moveLength + 0.5*cm),collimatorHoleLV,"CollimatorHolePV",
+			motherLogicalVolume,false,0,fCheckOverlaps);
+
+// shield block,material is Pb
+	G4double blockLength = 20 *cm;
+	G4double blockWidth = 20 *cm;
+	G4double blockDepth = 5 *cm;
+	G4double blockHoleDepth= 5 *cm;
+	G4VSolid* blockWithHoleSol1= new G4Box("BlockWithHoleSol1",0.5* blockLength,0.5*blockWidth,0.5*blockDepth);
+	G4VSolid* blockWithHoleSol2= new G4Box("BlockWithHoleSol2",0.5* holeLength,0.5*holeWidth,0.5*blockHoleDepth);
+	G4VSolid *blockWithHoleSol= new G4SubtractionSolid("BlockWithHoleSol",
+			blockWithHoleSol1,blockWithHoleSol2 ,0,G4ThreeVector(0.,0.,0. ));
+	G4LogicalVolume* blockWithHoleLV= new G4LogicalVolume( blockWithHoleSol, matPb, "BlockWithHoleLV", 0, 0, 0);
+	new G4PVPlacement(0,G4ThreeVector(0.,0.,2.0*moveLength+ 0.5 *blockDepth + 0.5*cm),blockWithHoleLV,"blockWithHolePV",
+			motherLogicalVolume,false,0,fCheckOverlaps);
+
+	G4VSolid* preBlockSol= new G4Box("PreBlockSol",0.5* blockLength,0.5*blockWidth,0.5*blockDepth);
+	G4LogicalVolume* preBlockLV= new G4LogicalVolume( preBlockSol, matPb, "PreBlockLV", 0, 0, 0);
+	new G4PVPlacement(0,G4ThreeVector(0.,0.,2.0*moveLength+ 2.5 *blockDepth + 0.5*cm),preBlockLV,"PreBlockPV",
+			motherLogicalVolume,false,0,fCheckOverlaps);
+	//G4VSolid *collimator3 = new G4UnionSolid("collimator3 ",
+	//		collimator2 ,collimator2 ,yRot,G4ThreeVector(0., 0., -2.0 *holeHalfLength ));
+
+	G4VisAttributes* collimatorHoleVis= new G4VisAttributes(G4Colour(0.5,0.5,0.5,0.5));
+	collimatorHoleLV->SetVisAttributes(collimatorHoleVis);
+	collimatorHoleVis->SetForceSolid(true);
+	G4VisAttributes* blockWithHoleVis= new G4VisAttributes(G4Colour(0.5,0.5,0.5,0.5));
+	blockWithHoleLV->SetVisAttributes(blockWithHoleVis);
+	blockWithHoleVis->SetForceSolid(true);
+	G4VisAttributes* preBlockVis= new G4VisAttributes(G4Colour(0.5,0.5,0.5,0.5));
+	preBlockLV->SetVisAttributes(preBlockVis);
+	preBlockVis->SetForceSolid(true);
+}
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+void DetectorConstruction::ConstructShieldWall(G4LogicalVolume* motherLogicalVolume)
+{
+	G4NistManager* nist = G4NistManager::Instance();
+	G4Material* wallMat= nist->FindOrBuildMaterial("G4_GLASS_LEAD");
+
+	G4double WallLen = 2. *m;
+	G4double WallWidth= 2. *m;
+	G4double wallThickness = 0.5 *m;
+	G4double holeRadius = 6. *cm;
+	G4double holeLength = wallThickness;
+
+	G4VSolid* WallSol1= new G4Box("Wall",0.5* WallLen ,0.5*WallWidth,0.5*wallThickness);
+
+	G4VSolid * collimatorHoleSol
+		= new G4Tubs("collimatorHoleSol",0.,holeRadius,0.5* holeLength,
+				0. *deg,360. *deg);
+	G4VSolid *shieldWallSol= new G4SubtractionSolid("shieldWall",
+			WallSol1, collimatorHoleSol,0,G4ThreeVector(0.,0.,0. ));
+
+	G4LogicalVolume* shieldWallLV= new G4LogicalVolume( shieldWallSol, wallMat, "shieldWall", 0, 0, 0);
+	new G4PVPlacement(0,G4ThreeVector(0.,0.,0.5* wallThickness + 0.5*cm),shieldWallLV,"shieldWallPV",
+			motherLogicalVolume,false,0,fCheckOverlaps);
+
+	//G4VSolid *collimator3 = new G4UnionSolid("collimator3 ",
+	//		collimator2 ,collimator2 ,yRot,G4ThreeVector(0., 0., -2.0 *holeHalfLength ));
+
+	G4VisAttributes* wallVis
+		= new G4VisAttributes(G4Colour(0.5,0.5,0.5,0.5));
+	shieldWallLV->SetVisAttributes(wallVis);
+	wallVis->SetForceSolid(true);
+}
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+void DetectorConstruction::ConstructHotCellShield(G4LogicalVolume* motherLogicalVolume)
+{
+	G4NistManager* nist = G4NistManager::Instance();
+	G4Material* hotCellWall= nist->FindOrBuildMaterial("G4_GLASS_LEAD");
+
+	G4double outWallLen = 3. *m;
+	G4double outWallWidth= 3. *m;
+	G4double outWallHeight = 3. *m;
+	G4double wallThickness = 0.5 *m;
+	G4double holeRadius = 6. *cm;
+	G4double holeLength = wallThickness;
+
+	G4VSolid* outWallSol= new G4Box("OutWall",0.5* outWallLen ,0.5*outWallWidth,0.5*outWallHeight);
+	G4VSolid* inWallSol= new G4Box("inWall",0.5* outWallLen -wallThickness ,
+			0.5*outWallWidth-wallThickness ,0.5*outWallHeight-wallThickness );
+
+	G4VSolid *hotCell1= new G4SubtractionSolid("HotCell1",
+			outWallSol, inWallSol,0,G4ThreeVector(0., 0., 0. ));
+	G4VSolid * collimatorHoleSol
+		= new G4Tubs("collimatorHoleSol",0.,holeRadius,0.5*holeLength,
+				0. *deg,360. *deg);
+	G4VSolid *hotCellWallSol= new G4SubtractionSolid("HotCellWall",
+			hotCell1, collimatorHoleSol,0,G4ThreeVector(0.5 *m,-0.5 *m,-0.5*(outWallHeight-holeLength) ));
+
+	G4LogicalVolume* hotCellWallLV= new G4LogicalVolume( hotCellWallSol, hotCellWall, "HotCellWall", 0, 0, 0);
+	new G4PVPlacement(0,G4ThreeVector(),hotCellWallLV,"HotCellWallPV",
+			motherLogicalVolume,false,0,fCheckOverlaps);
+
+	//G4VSolid *collimator3 = new G4UnionSolid("collimator3 ",
+	//		collimator2 ,collimator2 ,yRot,G4ThreeVector(0., 0., -2.0 *holeHalfLength ));
+
+	G4VisAttributes* hotCellVis
+		= new G4VisAttributes(G4Colour(1.0,0.3,1.0));
+	hotCellWallLV->SetVisAttributes(hotCellVis);
+	hotCellVis->G4VisAttributes::SetForceSolid(true);
 }
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -627,8 +765,9 @@ void   DetectorConstruction::ConstructHPGeDetector(G4LogicalVolume* matherLogica
 
 	//Detector Visualization Attributes
 	G4VisAttributes* HPGeVisAtt
-		= new G4VisAttributes(G4Colour(1.0,1.0,0.00));
+		= new G4VisAttributes(G4Colour(0.590,0.690,0.50,0.7));
 	logHPGe->SetVisAttributes(HPGeVisAtt);
+	HPGeVisAtt->SetForceSolid(true);
 
 	G4VisAttributes* shellVisAtt
 		= new G4VisAttributes(G4Colour(1.0,1.0,0.00));
@@ -660,7 +799,7 @@ void   DetectorConstruction::ConstructHPGeDetector(G4LogicalVolume* matherLogica
 		logActiveCrystal->SetVisAttributes(G4VisAttributes::Invisible);
 		logInnerDeadLayer-> SetVisAttributes(G4VisAttributes::Invisible);
 	}
-	G4bool shellInvisible= 1;
+	G4bool shellInvisible= 0;
 	if(shellInvisible)
 	{
 		logHPGe-> SetVisAttributes(G4VisAttributes::Invisible);
